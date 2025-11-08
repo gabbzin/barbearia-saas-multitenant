@@ -11,6 +11,7 @@ import {
   PageSectionScroller,
   PageSectionTitle,
 } from "./_components/ui/page";
+import Footer from "./_components/footer";
 
 const Home = async () => {
   const reccommendedBarbershops = await prisma.barbershop.findMany({
@@ -65,6 +66,7 @@ const Home = async () => {
           </PageSectionScroller>
         </PageSection>
       </PageContainer>
+      <Footer />
     </main>
   );
 };
