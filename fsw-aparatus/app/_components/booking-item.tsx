@@ -27,6 +27,7 @@ const BookingItem = ({
               <Avatar>
                 <AvatarImage src={barbershopImageUrl} />
               </Avatar>
+              <p className="text-xs font-bold">{barbershopName}</p>
             </div>
           </div>
         </div>
