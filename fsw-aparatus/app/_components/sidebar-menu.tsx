@@ -1,0 +1,143 @@
+"use client";
+
+import { authClient } from "@/lib/auth-client";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+import { Button } from "./ui/button";
+import { MenuIcon, Home, Calendar, LogOut, LogIn } from "lucide-react";
+import { Separator } from "./ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import Link from "next/link";
+
+const CATEGORIES = [
+  "Cabelo",
+  "Barba",
+  "Acabamento",
+  "Sombrancelha",
+  "Massagem",
+  "Hidratação",
+];
+
+export const SidebarMenu = () => {
+  const { data: session } = authClient.useSession();
+
+  const handleLogin = async () => {
+    await authClient.signIn.social({
+      provider: "google",
+    });
+  };
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+  };
+
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="icon">
+          <MenuIcon />
+        </Button>
+      </SheetTrigger>
+
+      <SheetContent side="right" className="w-[90vw] max-w-[370px] p-0 gap-6">
+        <SheetHeader className="px-5 py-2 text-left">
+          <SheetTitle className="text-lg font-bold">Menu</SheetTitle>
+        </SheetHeader>
+
+        <Separator />
+
+        {session ? (
+          <div className="flex items-center gap-3 px-5">
+            <Avatar className="size-12">
+              <AvatarImage src={session.user.image || ""} />
+              <AvatarFallback>
+                {session.user.name?.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col leading-tight">
+              <p className="text-base font-semibold text-foreground">
+                {session.user.name}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {session.user.email}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between px-5">
+            <div className="flex items-center h-12">
+              <p className="text-base font-semibold text-foreground leading-tight">
+                Olá. Faça seu login!
+              </p>
+            </div>
+            <Button
+              onClick={handleLogin}
+              className="gap-3 rounded-full px-6"
+              size="sm"
+            >
+              <span className="text-sm font-semibold">Login</span>
+              <LogIn className="size-4" />
+            </Button>
+          </div>
+        )}
+
+        <div className="flex flex-col w-full">
+          <Button
+            variant="ghost"
+            className="justify-start gap-3 rounded-full px-5 py-3 w-full"
+            asChild
+          >
+            <Link href="/">
+              <Home className="size-4" />
+              <span className="text-sm font-medium">Início</span>
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            className="justify-start gap-3 rounded-full px-5 py-3 w-full"
+            asChild
+          >
+            <Link href="/bookings">
+              <Calendar className="size-4" />
+              <span className="text-sm font-medium">Agendamentos</span>
+            </Link>
+          </Button>
+        </div>
+
+        <Separator />
+
+        <div className="flex flex-col gap-1 w-full">
+          {CATEGORIES.map((category) => (
+            <Button
+              key={category}
+              variant="ghost"
+              className="justify-start rounded-full px-5 py-3 h-10 w-full"
+            >
+              <span className="text-sm font-medium">{category}</span>
+            </Button>
+          ))}
+        </div>
+
+        <Separator />
+
+        {session && (
+          <Button
+            variant="ghost"
+            className="justify-start gap-3 rounded-full px-5 py-3 w-full"
+            onClick={handleLogout}
+          >
+            <LogOut className="size-4" />
+            <span className="text-sm font-medium text-muted-foreground">
+              Sair da conta
+            </span>
+          </Button>
+        )}
+      </SheetContent>
+    </Sheet>
+  );
+};

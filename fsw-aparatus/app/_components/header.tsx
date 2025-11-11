@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { LogInIcon, LogOutIcon, MenuIcon } from "lucide-react";
+import { LogInIcon, LogOutIcon } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { SidebarMenu } from "./sidebar-menu";
 
 const Header = () => {
   const { data: session } = authClient.useSession();
@@ -34,9 +35,7 @@ const Header = () => {
             <LogInIcon />
           </Button>
         )}
-        <Button variant={"outline"} size={"icon"}>
-          <MenuIcon />
-        </Button>
+        <SidebarMenu />
       </div>
     </header>
   );
