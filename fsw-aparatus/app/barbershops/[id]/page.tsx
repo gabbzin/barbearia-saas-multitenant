@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ServiceItem } from "@/app/_components/service-item";
 import { Button } from "@/app/_components/ui/button";
 import { Separator } from "@/app/_components/ui/separator";
-import { ChevronLeft, Smartphone } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { PhoneItem } from "@/app/_components/phone-item";
 import Footer from "@/app/_components/footer";
