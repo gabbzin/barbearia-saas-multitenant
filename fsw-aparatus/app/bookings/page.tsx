@@ -31,8 +31,10 @@ const BookingsPage = async () => {
     (booking) => booking.date > now && !booking.cancelled,
   );
 
+  const cancelledBookings = bookings.filter((booking) => booking.cancelled);
+
   const finishedBookings = bookings.filter(
-    (booking) => booking.date <= now || booking.cancelled,
+    (booking) => booking.date <= now && !booking.cancelled,
   );
 
   return (
@@ -68,6 +70,37 @@ const BookingsPage = async () => {
                     },
                   }}
                   status="confirmed"
+                />
+              ))
+            )}
+          </PageSection>
+          <PageSection>
+            <h2 className="text-muted-foreground text-xs font-bold uppercase">
+              Cancelados
+            </h2>
+            {cancelledBookings.length === 0 ? (
+              <p className="text-muted-foreground text-sm">
+                Você não tem agendamentos cancelados.
+              </p>
+            ) : (
+              cancelledBookings.map((booking) => (
+                <BookingItem
+                  key={booking.id}
+                  booking={{
+                    id: booking.id,
+                    date: booking.date,
+                    service: {
+                      name: booking.service.name,
+                      priceInCents: booking.service.priceInCents,
+                    },
+                    barbershop: {
+                      name: booking.barbershop.name,
+                      address: booking.barbershop.address,
+                      imageUrl: booking.barbershop.imageUrl,
+                      phones: booking.barbershop.phones,
+                    },
+                  }}
+                  status="cancelled"
                 />
               ))
             )}

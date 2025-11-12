@@ -21,7 +21,7 @@ interface BookingItemProps {
       phones: string[];
     };
   };
-  status: "confirmed" | "finished";
+  status: "confirmed" | "finished" | "cancelled";
 }
 
 const BookingItem = ({ booking, status }: BookingItemProps) => {
@@ -35,8 +35,20 @@ const BookingItem = ({ booking, status }: BookingItemProps) => {
       >
         {/* ESQUERDA */}
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <Badge variant={status === "confirmed" ? "default" : "secondary"}>
-            {status === "confirmed" ? "CONFIRMADO" : "FINALIZADO"}
+          <Badge
+            variant={
+              status === "confirmed"
+                ? "default"
+                : status === "cancelled"
+                  ? "destructive"
+                  : "secondary"
+            }
+          >
+            {status === "confirmed"
+              ? "CONFIRMADO"
+              : status === "cancelled"
+                ? "CANCELADO"
+                : "FINALIZADO"}
           </Badge>
           <div className="flex flex-col gap-2">
             <p className="font-bold">{booking.service.name}</p>
