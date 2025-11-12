@@ -22,6 +22,15 @@ Tecnologias utilizadas:
 - Ao usar Figma MCP, **SEMPRE** seja 100% fiel ao Figma **CUSTE O QUE CUSTAR**.
 - Todo scroll horizontal **DEVE SEMPRE** esconder a barra de scroll usando className="[&::-webkit-scrollbar]:hidden"
 
+<!-- Server Actions -->
+
+## Server Actions
+
+- **SEMPRE** use a biblioteca "next-safe-action" para criar Server Actions.
+- **SEMPRE** Use o hook "useAction" da biblioteca "next-safe-action" para chamar uma Server Action.
+- **SEMPRE** use a Server Action @app/\_actions/create-booking.ts como base para criar as suas.
+- **SEMPRE** faça validações de autorização e autenticação em uma Server Action conforme o usuário.
+
 <!-- Instruções do TypeScript -->
 
 - **USE** as regras abaixo apenas para escrever código em TypeScript.
