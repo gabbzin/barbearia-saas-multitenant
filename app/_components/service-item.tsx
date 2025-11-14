@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { SpinLoader } from "./spinLoader";
 import { useQuery } from "@tanstack/react-query";
 import { getDateAvailableTimeSlots } from "../_actions/get-date-available-time-slots";
+import PagamentForm, { payMethods } from "./pagament-form";
 
 interface ServiceItemProps {
   service: BarbershopService & {
@@ -33,19 +34,24 @@ export function ServiceItem({ service }: ServiceItemProps) {
 
   const { executeAsync, isPending } = useAction(createBooking);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [payMethod, setPayMethod] = useState<payMethods>("cartao");
 
-  const { data: availableTimeSlots } = useQuery({
-    queryKey: ["date-available-time-slots", service.barbershopId, selectedDate],
-    queryFn: () =>
-      getDateAvailableTimeSlots({
-        barbershopId: service.barbershopId,
-        date: selectedDate!,
-      }),
-    enabled: !!selectedDate,
-  });
+  const { data: availableTimeSlots, isPending: isAvailableTimePending } =
+    useQuery({
+      queryKey: [
+        "date-available-time-slots",
+        service.barbershopId,
+        selectedDate,
+      ],
+      queryFn: () =>
+        getDateAvailableTimeSlots({
+          barbershopId: service.barbershopId,
+          date: selectedDate!,
+        }),
+      enabled: !!selectedDate,
+    });
 
   const handleDateSelect = (date: Date | undefined) => {
-    console.log(date);
     setSelectedDate(date);
   };
 
@@ -152,17 +158,36 @@ export function ServiceItem({ service }: ServiceItemProps) {
             <>
               <Separator />
 
-              <div className="flex gap-3 overflow-x-auto px-5 [&::-webkit-scrollbar]:hidden">
-                {availableTimeSlots?.data?.map((time) => (
-                  <Button
-                    key={time}
-                    variant={selectedTime === time ? "default" : "outline"}
-                    className="shrink-0 rounded-full px-4 py-2"
-                    onClick={() => setSelectedTime(time)}
-                  >
-                    {time}
-                  </Button>
-                ))}
+              <div className="flex px-5">
+                <div className="flex items-center gap-4 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+                  {isAvailableTimePending && <SpinLoader />}
+                  {availableTimeSlots?.data?.map((time) => (
+                    <Button
+                      key={time}
+                      variant={selectedTime === time ? "default" : "secondary"}
+                      size={"sm"}
+                      onClick={() => setSelectedTime(time)}
+                      disabled={
+                        time <
+                        new Date().toLocaleTimeString("pt-BR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      }
+                    >
+                      {time}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="flex flex-col gap-3 px-5">
+                <PagamentForm
+                  payMethod={payMethod}
+                  onPaymentMethodSelect={setPayMethod}
+                />
               </div>
 
               <Separator />
@@ -178,6 +203,12 @@ export function ServiceItem({ service }: ServiceItemProps) {
                     </p>
                   </div>
 
+                  <div className="text-muted-foreground flex items-center justify-between text-sm">
+                    <p>Método de pagamento</p>
+                    <p className="capitalize">
+                      {payMethod === "cartao" ? "Cartão" : payMethod}
+                    </p>
+                  </div>
                   <div className="text-muted-foreground flex items-center justify-between text-sm">
                     <p>Data</p>
                     <p>{formattedDate}</p>
