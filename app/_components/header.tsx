@@ -36,7 +36,7 @@ const Header = () => {
             <LogInIcon />
           </Button>
         )}
-        <Button variant={"outline"} size={"icon"} onClick={handleLogin} asChild>
+        <Button variant={"outline"} size={"icon"} asChild>
           <Link href={"/chat"}>
             <MessageCircleIcon />
           </Link>
