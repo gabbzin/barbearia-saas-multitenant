@@ -77,7 +77,7 @@ const Home = async () => {
           <PageSectionTitle>Barbearias</PageSectionTitle>
           <PageSectionScroller>
             {recommendedBarbershops.map((barbershop) => (
-              <BarbershopItem key={barbershop.id} barbershop={barbershop} />
+              <BarbershopItem key={barbershop.id} barber={barbershop} />
             ))}
           </PageSectionScroller>
         </PageSection>
@@ -86,7 +86,7 @@ const Home = async () => {
           <PageSectionTitle>Recomendados</PageSectionTitle>
           <PageSectionScroller>
             {popularBarbershops.map((barbershop) => (
-              <BarbershopItem key={barbershop.id} barbershop={barbershop} />
+              <BarbershopItem key={barbershop.id} barber={barbershop} />
             ))}
           </PageSectionScroller>
         </PageSection>

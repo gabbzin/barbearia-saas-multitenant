@@ -17,7 +17,7 @@ interface BookingItemProps {
     barber: {
       name: string;
       imageUrl: string;
-      phone: string;
+      phone: string[];
     };
   };
   status: "confirmed" | "finished" | "cancelled";

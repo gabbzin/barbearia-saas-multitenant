@@ -43,7 +43,7 @@ interface CancelBookingProps {
     barber: {
       name: string;
       imageUrl: string;
-      phone: string;
+      phone: string[];
     };
   };
   status: "confirmed" | "finished" | "cancelled";
@@ -115,9 +115,7 @@ export function CancelBooking({
                 <AvatarImage src={booking.barber.imageUrl} />
               </Avatar>
               <div className="flex-1 overflow-hidden">
-                <h3 className="truncate font-bold">
-                  {booking.barber.name}
-                </h3>
+                <h3 className="truncate font-bold">{booking.barber.name}</h3>
               </div>
             </Card>
           </div>
@@ -162,7 +160,9 @@ export function CancelBooking({
 
           {/* Telefones */}
           <div className="flex flex-col gap-3">
-            <PhoneItem phone={booking.barber.phone} />
+            {booking.barber.phone.map((phone, index) => (
+              <PhoneItem key={index} phone={phone} />
+            ))}
           </div>
         </div>
 

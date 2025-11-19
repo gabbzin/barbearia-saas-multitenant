@@ -47,7 +47,7 @@ export const POST = async (request: Request) => {
     if (exists) {
       return NextResponse.json({ received: true });
     }
-    if (!date || !serviceId || !barbershopId || !userId) {
+    if (!date || !serviceId || !userId) {
       return NextResponse.error();
     }
 
@@ -68,7 +68,6 @@ export const POST = async (request: Request) => {
 
     await prisma.booking.create({
       data: {
-        barbershopId,
         serviceId,
         date,
         userId,

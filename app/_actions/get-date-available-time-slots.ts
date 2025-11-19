@@ -8,7 +8,7 @@ import { endOfDay, format, startOfDay } from "date-fns";
 import z from "zod";
 
 const inputSchema = z.object({
-  barbershopId: z.uuid(),
+  barberId: z.uuid(),
   date: z.date(),
 });
 
@@ -36,7 +36,7 @@ const TIME_SLOTS = [
 
 export const getDateAvailableTimeSlots = actionClient
   .inputSchema(inputSchema)
-  .action(async ({ parsedInput: { barbershopId, date } }) => {
+  .action(async ({ parsedInput: { barberId, date } }) => {
     // lógica para buscar horários disponíveis para o serviço na data fornecida
     // const { headers } = await import("next/headers");
     // const session = await auth.api.getSession({ headers: await headers() });
@@ -50,7 +50,7 @@ export const getDateAvailableTimeSlots = actionClient
     const bookings = await prisma.booking.findMany({
       where: {
         service: {
-          barberId: barbershopId,
+          barberId: barberId,
         },
         date: {
           gte: startOfDay(date),

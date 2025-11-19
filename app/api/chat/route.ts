@@ -79,15 +79,15 @@ export const POST = async (request: Request) => {
         }),
         execute: async ({ name }) => {
           if (!name?.trim()) {
-            const barbershops = await prisma.barbershop.findMany({
+            const barbers = await prisma.barber.findMany({
               include: {
                 services: true,
               },
             });
-            return barbershops.map((barbershop) => ({
-              id: barbershop.id,
-              name: barbershop.name,
-              services: barbershop.services.map((service) => ({
+            return barbers.map((barber) => ({
+              id: barber.id,
+              name: barber.name,
+              services: barber.services.map((service) => ({
                 name: service.name,
                 description: service.description,
                 price: service.priceInCents / 100,
@@ -96,7 +96,7 @@ export const POST = async (request: Request) => {
             }));
           }
 
-          const barbershops = await prisma.barbershop.findMany({
+          const barbers = await prisma.barber.findMany({
             where: {
               name: {
                 contains: name,
@@ -105,7 +105,7 @@ export const POST = async (request: Request) => {
             },
           });
 
-          return barbershops;
+          return barbers;
         },
       }),
       getAvailableTimeSlotsForBarbershop: tool({
@@ -115,12 +115,14 @@ export const POST = async (request: Request) => {
           barbershopId: z.uuid().describe("ID da barbearia"),
           date: z
             .string()
-            .describe("Data em ISOString para verificar os horários disponíveis"),
+            .describe(
+              "Data em ISOString para verificar os horários disponíveis",
+            ),
         }),
         execute: async ({ barbershopId, date }) => {
           const parsedDate = new Date(date);
           const result = await getDateAvailableTimeSlots({
-            barbershopId,
+            barberId: barbershopId,
             date: parsedDate,
           });
 

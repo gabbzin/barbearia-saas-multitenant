@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { BarbershopService, Barbershop } from "@/generated/prisma";
+import { BarberService, Barber } from "@/generated/prisma";
 import { Button } from "./ui/button";
 import {
   Sheet,
@@ -26,8 +26,8 @@ import { Spinner } from "./ui/spinner";
 import { createBookingCheckoutSession } from "../_actions/create-booking-checkout-session";
 
 interface ServiceItemProps {
-  service: BarbershopService & {
-    barbershop: Barbershop;
+  service: BarberService & {
+    barber: Barber;
   };
 }
 
@@ -52,12 +52,12 @@ export function ServiceItem({ service }: ServiceItemProps) {
     useQuery<string[]>({
       queryKey: [
         "date-available-time-slots",
-        service.barbershopId,
+        service.barberId,
         selectedDateKey,
       ],
       queryFn: async () => {
         const result = await getDateAvailableTimeSlots({
-          barbershopId: service.barbershopId,
+          barberId: service.barberId,
           date: selectedDate!,
         });
 
@@ -254,7 +254,7 @@ export function ServiceItem({ service }: ServiceItemProps) {
 
                   <div className="text-muted-foreground flex items-center justify-between text-sm">
                     <p>Barbearia</p>
-                    <p>{service.barbershop.name}</p>
+                    <p>{service.barber.name}</p>
                   </div>
                 </div>
               </div>
