@@ -124,6 +124,7 @@ model Barber {
   // barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
 
   services BarberService[]
+  bookings Booking[]
 
   @@index([email])
 }
@@ -215,6 +216,9 @@ model Booking {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
+  barberId String
+  barber   Barber @relation(fields: [barberId], references: [id])
+
   // Subscription (optional - only if paid with subscription)
   userSubscriptionId   String?
   userSubscription     UserSubscription? @relation(fields: [userSubscriptionId], references: [id])
@@ -232,6 +236,7 @@ model Booking {
 
   @@index([serviceId])
   @@index([userId])
+  @@index([barberId])
   @@index([date])
   @@index([userSubscriptionId])
 }

@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 
 const inputSchema = z.object({
-  bookingId: z.string().uuid(),
+  bookingId: z.uuid(),
 });
 
 export const cancelBooking = actionClient

@@ -1,7 +1,6 @@
-import { prisma } from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { stripe } from "@/lib/stripe-client";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
+import { handleCheckoutCompleted } from "./handlers/handleCheckoutCompleted";
 
 export const POST = async (request: Request) => {
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
@@ -15,9 +14,6 @@ export const POST = async (request: Request) => {
   }
 
   const text = await request.text();
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2025-07-30.basil",
-  });
 
   const event = stripe.webhooks.constructEvent(
     text,
@@ -26,57 +22,10 @@ export const POST = async (request: Request) => {
   );
 
   // Validando os eventos
-  if (event.type === "checkout.session.completed") {
-    // Lógica para lidar com a finalização do checkout SUCESSO
-    const session = event.data.object;
-    const date = session.metadata?.date
-      ? new Date(session.metadata.date)
-      : null;
-
-    const serviceId = session.metadata?.serviceId;
-    const barbershopId = session.metadata?.barbershopId;
-    const userId = session.metadata?.userId;
-    const eventId = event.id;
-
-    const exists = await prisma.booking.findUnique({
-      where: {
-        stripeEventId: eventId,
-      },
-    });
-
-    if (exists) {
-      return NextResponse.json({ received: true });
+  switch (event.type) {
+    case "checkout.session.completed": {
+      await handleCheckoutCompleted(event);
+      break;
     }
-    if (!date || !serviceId || !userId) {
-      return NextResponse.error();
-    }
-
-    const expandedSession = await stripe.checkout.sessions.retrieve(
-      session.id,
-      {
-        expand: ["payment_intent"],
-      },
-    );
-
-    const paymentIntent =
-      expandedSession.payment_intent as Stripe.PaymentIntent;
-
-    const chargeId =
-      typeof paymentIntent.latest_charge === "string"
-        ? paymentIntent.latest_charge
-        : paymentIntent.latest_charge?.id;
-
-    await prisma.booking.create({
-      data: {
-        serviceId,
-        date,
-        userId,
-        stripeChargeId: chargeId || null,
-        stripeEventId: eventId,
-      },
-    });
   }
-
-  revalidatePath("/bookings");
-  return NextResponse.json({ received: true });
 };

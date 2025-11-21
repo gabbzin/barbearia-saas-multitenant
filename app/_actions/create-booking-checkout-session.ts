@@ -3,10 +3,10 @@
 import { actionClient } from "@/lib/actionClient";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { stripe } from "@/lib/stripe-client";
 import { format } from "date-fns";
 import { returnValidationErrors } from "next-safe-action";
 import { headers } from "next/headers";
-import Stripe from "stripe";
 import z from "zod";
 
 const inputSchema = z.object({
@@ -22,10 +22,6 @@ export const createBookingCheckoutSession = actionClient
     }),
   )
   .action(async ({ parsedInput: { serviceId, date } }) => {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      throw new Error("Stripe secret key is not configured.");
-    }
-
     const session = await auth.api.getSession({ headers: await headers() });
 
     if (!session || !session.user) {
@@ -49,10 +45,6 @@ export const createBookingCheckoutSession = actionClient
       });
     }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2025-07-30.basil",
-    });
-
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
@@ -60,7 +52,7 @@ export const createBookingCheckoutSession = actionClient
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}`,
       metadata: {
         serviceId: serviceId,
-        barberId: service.barberId,
+        barberId: service.barber.id,
         userId: session.user.id,
         date: date.toISOString(),
       },
