@@ -27,20 +27,6 @@ async function seedDatabase() {
       "https://utfs.io/f/07842cfb-7b30-4fdc-accc-719618dfa1f2-17s.png",
       "https://utfs.io/f/0522fdaf-0357-4213-8f52-1d83c3dcb6cd-18e.png",
     ];
-    // Nomes criativos para as barbearias
-    const creativeNames = [
-      "João Cortes",
-      "Pedro Navalha",
-      "Carlos Fade",
-      "Rafael Estilo",
-      "Lucas Ferreira",
-      "Vitor da Navalha",
-      "André Cabeleira",
-      "Fernando Lima",
-      "Daniel Corte Fino",
-      "Henrique Barbeiro",
-    ];
-
     const services = [
       {
         name: "Corte de Cabelo",
@@ -86,16 +72,12 @@ async function seedDatabase() {
       },
     ];
 
-    // Criar 10 barbearias com nomes e endereços fictícios
     const barbershops = [];
     for (let i = 0; i < 10; i++) {
-      const name = creativeNames[i];
       const imageUrl = images[i];
 
       const barber = await prisma.barber.create({
         data: {
-          name,
-          email: `contato.${name.replace(" ", "").toLowerCase()}@gmail.com`,
           imageUrl: imageUrl,
           phone: ["(11) 99999-9999"],
         },

@@ -40,7 +40,7 @@ export default function LoginForm() {
         <GenericForm<loginSchemaType>
           schema={registerSchema}
           onSubmit={handleLogin}
-          submitText="Criar conta"
+          submitText="Logar conta"
           buttons={<GoogleButton />}
         >
           <InputForm
