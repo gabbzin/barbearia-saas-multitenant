@@ -35,7 +35,7 @@ export function ServiceItem({ service }: ServiceItemProps) {
 
         <div className="flex grow basis-0 flex-row items-center self-stretch">
           <div className="relative flex h-full min-h-0 min-w-0 grow basis-0 flex-col items-start justify-between">
-            <div className="flex h-[67.5px] w-full flex-col items-start gap-1 text-sm leading-[1.4]">
+            <div className="flex w-full flex-col items-start gap-1 text-sm leading-[1.4]">
               <p className="text-card-foreground w-full font-bold">
                 {service.name}
               </p>

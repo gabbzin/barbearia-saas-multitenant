@@ -9,7 +9,7 @@ interface BarberItemProps {
 const BarberItem = ({ barber }: BarberItemProps) => {
   return (
     <Link
-      href={`/barbershops/${barber.id}`}
+      href={`/barber/${barber.id}`}
       className="relative min-h-[200px] min-w-[290px] rounded-xl"
     >
       <div className="absolute top-0 left-0 z-10 h-full w-full rounded-lg bg-linear-to-t from-black to-transparent"></div>

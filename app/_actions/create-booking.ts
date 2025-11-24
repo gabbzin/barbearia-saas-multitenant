@@ -59,8 +59,9 @@ export const createBooking = actionClient
 
     const booking = await prisma.booking.create({
       data: {
+        barberId: service.barberId,
         userId: session!.user.id,
-        serviceId: service.id,
+        serviceId: serviceId,
         date,
       },
     });

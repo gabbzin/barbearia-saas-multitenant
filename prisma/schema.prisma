@@ -45,6 +45,7 @@ model User {
   bookings            Booking[]
   activeSubscription  UserSubscription?  @relation("ActiveSubscription")
   subscriptionHistory UserSubscription[] @relation("SubscriptionHistory")
+  barberProfile       Barber?            @relation("BarberAccount")
 
   @@unique([email])
   @@map("user")
@@ -115,10 +116,13 @@ model Verification {
 
 model Barber {
   id       String   @id @default(uuid())
-  name     String
-  email    String   @unique
+  // name     String
+  // email    String   @unique
   imageUrl String   @default("https://3tlh7aktl6.ufs.sh/f/tcFRjMXVSkQ0Asb1IxZDwZ30bIph8P2qjXfOcVJmTvFtnMxi")
   phone    String[]
+
+  userId String? @unique
+  user   User?   @relation("BarberAccount", fields: [userId], references: [id])
 
   // barbershopId String
   // barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
@@ -126,7 +130,7 @@ model Barber {
   services BarberService[]
   bookings Booking[]
 
-  @@index([email])
+  @@index([userId])
 }
 
 model BarberService {
@@ -234,6 +238,7 @@ model Booking {
   // barbershopId String
   // barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
 
+  @@unique([barberId, date])
   @@index([serviceId])
   @@index([userId])
   @@index([barberId])
