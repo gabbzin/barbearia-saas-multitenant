@@ -40,7 +40,7 @@ const ROUTES = [
 export const SidebarMenu = ({
   barbers,
 }: {
-  barbers: (Barber & { user: User })[];
+  barbers: (Barber & { user: User | null })[];
 }) => {
   const { data: session } = authClient.useSession();
   const { push } = useRouter();
@@ -120,7 +120,7 @@ export const SidebarMenu = ({
                         href={`/barber/${barber.id}`}
                         className="px-10 py-2 text-sm hover:underline"
                       >
-                        {barber.user.name}
+                        {barber.user?.name}
                       </Link>
                     ))}
                   </AccordionContent>
