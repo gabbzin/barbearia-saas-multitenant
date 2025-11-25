@@ -1,6 +1,7 @@
 import { stripe } from "@/lib/stripe-client";
 import { NextResponse } from "next/server";
 import { handleCheckoutCompleted } from "./handlers/handleCheckoutCompleted";
+import { handleSignatureCompleted } from "./handlers/handleSignatureCompleted";
 
 export const POST = async (request: Request) => {
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
@@ -25,6 +26,10 @@ export const POST = async (request: Request) => {
   switch (event.type) {
     case "checkout.session.completed": {
       await handleCheckoutCompleted(event);
+      break;
+    }
+    case "customer.subscription.created": {
+      await handleSignatureCompleted(event);
       break;
     }
   }

@@ -1,17 +1,44 @@
+"use client";
 import Image from "next/image";
 import { Button } from "../ui/button";
-import { Subscription } from "@/generated/prisma";
+import type { SubscriptionPlan } from "@/generated/prisma";
 import { Badge } from "../ui/badge";
+import { useAction } from "next-safe-action/hooks";
+import { createSignature } from "@/app/_actions/create-signature";
+import { toast } from "sonner";
 
 type SignatureItemProps = {
-  signature: Subscription;
+  signature: SubscriptionPlan;
 };
 
 const SignatureItem = ({ signature }: SignatureItemProps) => {
+  const { executeAsync, isPending } = useAction(createSignature);
+
   const priceInReais = (signature.priceInCents / 100).toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
   });
+
+  const handleConfirm = async () => {
+    const data = {
+      signatureId: signature.id,
+      date: new Date(),
+    };
+    const result = await executeAsync(data);
+
+    if (result.serverError || result.validationErrors) {
+      toast.error(result.validationErrors?._errors?.[0]);
+      return;
+    }
+
+    if (result.data && "url" in result.data) {
+      if (result.data.url) {
+        window.location.href = result.data.url;
+        return;
+      }
+    }
+    toast.success("Assinatura realizada com sucesso!");
+  };
 
   return (
     <>
@@ -50,8 +77,13 @@ const SignatureItem = ({ signature }: SignatureItemProps) => {
               {priceInReais}
             </Badge>
           </p>
-          {/* <Badge>R$ 100 por mês</Badge> */}
-          <Button className="rounded-full px-4 py-2">Assinar</Button>
+          <Button
+            className="rounded-full px-4 py-2"
+            onClick={handleConfirm}
+            disabled={isPending}
+          >
+            Assinar
+          </Button>
         </div>
       </div>
     </>

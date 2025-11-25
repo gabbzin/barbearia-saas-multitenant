@@ -9,24 +9,40 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { Button } from "./ui/button";
-import { MenuIcon, Home, Calendar, LogOut, LogIn } from "lucide-react";
+import {
+  MenuIcon,
+  Home,
+  Calendar,
+  LogOut,
+  LogIn,
+  CreditCard,
+  Scissors,
+} from "lucide-react";
 import { Separator } from "./ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Barber, User } from "@/generated/prisma";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
 
-const CATEGORIES = [
-  "Cabelo",
-  "Barba",
-  "Acabamento",
-  "Sombrancelha",
-  "Massagem",
-  "Hidratação",
+const ROUTES = [
+  { name: "Início", path: "/", icon: Home },
+  { name: "Barbeiros", path: "/barber", icon: Scissors },
+  { name: "Agendamentos", path: "/bookings", icon: Calendar },
+  { name: "Assinatura", path: "/signature", icon: CreditCard },
 ];
 
-export const SidebarMenu = () => {
+export const SidebarMenu = ({
+  barbers,
+}: {
+  barbers: (Barber & { user: User })[];
+}) => {
   const { data: session } = authClient.useSession();
-
   const { push } = useRouter();
 
   const handleLogout = async () => {
@@ -49,7 +65,7 @@ export const SidebarMenu = () => {
         <Separator />
 
         {session ? (
-          <div className="flex items-center gap-3 px-5">
+          <div className="flex items-center gap-3 px-5 pb-2">
             <Avatar className="size-12">
               <AvatarImage src={session.user.image || ""} />
               <AvatarFallback>
@@ -57,70 +73,64 @@ export const SidebarMenu = () => {
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col leading-tight">
-              <p className="text-foreground text-base font-semibold">
-                {session.user.name}
-              </p>
+              <p className="text-base font-semibold">{session.user.name}</p>
               <p className="text-muted-foreground text-xs">
                 {session.user.email}
               </p>
             </div>
           </div>
         ) : (
-          <div className="flex items-center justify-between px-5">
-            <div className="flex h-12 items-center">
-              <p className="text-foreground text-base leading-tight font-semibold">
-                Olá. Faça seu login!
-              </p>
-            </div>
-            <Button
-              onClick={() => push("/login")}
-              className="gap-3 rounded-full px-6"
-              size="sm"
-            >
-              <span className="text-sm font-semibold">Login</span>
-              <LogIn className="size-4" />
+          <div className="flex items-center justify-between px-5 pb-3">
+            <p className="text-base font-semibold">Olá. Faça seu login!</p>
+            <Button onClick={() => push("/login")} size="sm" className="gap-2">
+              Login <LogIn className="size-4" />
             </Button>
           </div>
         )}
 
-        <div className="flex w-full flex-col">
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 rounded-full px-5 py-3"
-            asChild
-          >
-            <Link href="/">
-              <Home className="size-4" />
-              <span className="text-sm font-medium">Início</span>
-            </Link>
-          </Button>
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 rounded-full px-5 py-3"
-            asChild
-          >
-            <Link href="/bookings">
-              <Calendar className="size-4" />
-              <span className="text-sm font-medium">Agendamentos</span>
-            </Link>
-          </Button>
+        {/* ROTAS */}
+        <div className="flex w-full flex-col px-2">
+          {ROUTES.map((route) =>
+            route.name !== "Barbeiros" ? (
+              <Button
+                key={route.name}
+                variant="ghost"
+                className="w-full justify-start gap-3 rounded-full px-5 py-3"
+                asChild
+              >
+                <Link href={route.path}>
+                  <route.icon className="size-4" />
+                  <span className="text-sm font-medium">{route.name}</span>
+                </Link>
+              </Button>
+            ) : (
+              <Accordion key={route.name} type="single" collapsible className="-my-2">
+                <AccordionItem value="barbers">
+                  <AccordionTrigger className="px-3">
+                    <div className="flex items-center gap-3">
+                      <route.icon className="size-4" />
+                      Barbeiros
+                    </div>
+                  </AccordionTrigger>
+
+                  <AccordionContent className="flex flex-col">
+                    {barbers.map((barber) => (
+                      <Link
+                        key={barber.id}
+                        href={`/barber/${barber.id}`}
+                        className="px-10 py-2 text-sm hover:underline"
+                      >
+                        {barber.user.name}
+                      </Link>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            ),
+          )}
         </div>
 
-        <Separator />
-
-        <div className="flex w-full flex-col gap-1">
-          {CATEGORIES.map((category) => (
-            <Button
-              key={category}
-              variant="ghost"
-              className="h-10 w-full justify-start rounded-full px-5 py-3"
-            >
-              <span className="text-sm font-medium">{category}</span>
-            </Button>
-          ))}
-        </div>
-
-        <Separator />
+        <Separator className="mt-4" />
 
         {session && (
           <Button
@@ -129,9 +139,7 @@ export const SidebarMenu = () => {
             onClick={handleLogout}
           >
             <LogOut className="size-4" />
-            <span className="text-muted-foreground text-sm font-medium">
-              Sair da conta
-            </span>
+            <span className="text-sm font-medium">Sair da conta</span>
           </Button>
         )}
       </SheetContent>

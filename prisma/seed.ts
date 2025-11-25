@@ -81,6 +81,31 @@ async function seedDatabase() {
       },
     ];
 
+    // Criar planos de assinatura
+    const subscriptionPlans = [
+      {
+        name: "Corte ilimitado",
+        description: "Cortes de cabelo ilimitados por mês",
+        priceInCents: 10000, // R$ 100
+      },
+      {
+        name: "Barba ilimitada",
+        description: "Serviços de barba ilimitados por mês",
+        priceInCents: 8000, // R$ 80
+      },
+      {
+        name: "Corte e barba ilimitados",
+        description: "Cortes e barba ilimitados por mês",
+        priceInCents: 15000, // R$ 150
+      },
+    ];
+
+    for (const plan of subscriptionPlans) {
+      await prisma.subscriptionPlan.create({
+        data: plan,
+      });
+    }
+
     const barbershops = [];
     for (let i = 0; i < 5; i++) {
       const name = barberNames[i];

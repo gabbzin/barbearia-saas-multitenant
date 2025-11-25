@@ -18,6 +18,14 @@ import BarberItem from "./_components/barber-item";
 
 const Home = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
+  const user = await prisma.userSubscription.findUnique({
+    where: {
+      userId: session?.user.id,
+    },
+    include: {
+      plan: true,
+    },
+  });
 
   const recommendedBarbershops = await prisma.barber.findMany({
     include: {
@@ -47,7 +55,7 @@ const Home = async () => {
   return (
     <main>
       <Header />
-      <div className="mx-auto w-1/2">
+      <div className="mx-auto px-12">
         <Alert variant={session ? "success" : "warn"} className="mb-2">
           <AlertTitle className="flex items-center gap-4">
             {session?.user.name ? (
@@ -59,6 +67,24 @@ const Home = async () => {
               <>
                 <TriangleAlertIcon />
                 <p>Login não realizado ainda</p>
+              </>
+            )}
+          </AlertTitle>
+        </Alert>
+        <Alert
+          variant={user?.status === "ACTIVE" ? "success" : "destructive"}
+          className="mb-2"
+        >
+          <AlertTitle className="flex items-center gap-4">
+            {user?.status === "ACTIVE" ? (
+              <>
+                <CheckCircleIcon />
+                <p>Você é assinante do plano {user.plan.name}</p>
+              </>
+            ) : (
+              <>
+                <TriangleAlertIcon />
+                <p>Ainda não é assinante</p>
               </>
             )}
           </AlertTitle>

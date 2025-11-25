@@ -8,7 +8,7 @@ import { verifySession } from "@/utils/verifySession";
 import { returnValidationErrors } from "next-safe-action";
 import z from "zod";
 
-export const inputSchema = z.object({
+const inputSchema = z.object({
   signatureId: z.uuid(),
   date: z.date(),
 });
@@ -30,7 +30,7 @@ export const createSignature = actionClient
 
     const isActiveSignature = await prisma.userSubscription.findFirst({
       where: {
-        activeUserId: user.id,
+        userId: user.id,
         status: SubscriptionStatus.ACTIVE,
       },
     });
@@ -41,7 +41,7 @@ export const createSignature = actionClient
       });
     }
 
-    const signature = await prisma.subscription.findUnique({
+    const signature = await prisma.subscriptionPlan.findUnique({
       where: {
         id: signatureId,
       },
@@ -82,5 +82,6 @@ export const createSignature = actionClient
         },
       ],
     });
+
     return { url: checkoutSession.url };
   });

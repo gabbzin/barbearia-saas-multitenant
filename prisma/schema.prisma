@@ -49,12 +49,11 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt
 
   // Relations
-  sessions            Session[]
-  accounts            Account[]
-  bookings            Booking[]
-  activeSubscription  UserSubscription?  @relation("ActiveSubscription")
-  subscriptionHistory UserSubscription[] @relation("SubscriptionHistory")
-  barberProfile       Barber?            @relation("BarberAccount")
+  sessions          Session[]
+  accounts          Account[]
+  bookings          Booking[]
+  barberProfile     Barber?            @relation("BarberAccount")
+  userSubscriptions UserSubscription[]
 
   @@map("user")
 }
@@ -69,13 +68,13 @@ model Session {
   userAgent String?
 
   userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("session")
 }
 
 model Account {
-  id                    String   @id
+  id                    String    @id
   accountId             String
   providerId            String
   userId                String
@@ -86,8 +85,8 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -142,52 +141,42 @@ model BarberService {
 // SUBSCRIPTION MODELS
 // ========================================================
 
-model Subscription {
+model SubscriptionPlan {
   id           String @id @default(uuid())
   name         String
   description  String
   priceInCents Int
 
-  userSubscriptions UserSubscription[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  userSubscriptions UserSubscription[]
 }
 
 model UserSubscription {
   id String @id @default(uuid())
 
-  // Subscription plan
-  subscriptionId String
-  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // User relation (1:1 for active, 1:N for history)
-  activeUserId  String? @unique
-  activeUser    User?   @relation("ActiveSubscription", fields: [activeUserId], references: [id])
-  historyUserId String
-  historyUser   User    @relation("SubscriptionHistory", fields: [historyUserId], references: [id])
+  planId String
+  plan   SubscriptionPlan @relation(fields: [planId], references: [id])
 
-  // Period control
+  stripeSubscriptionId String  @unique
+  stripeEventId        String
+  stripeChargeId       String?
+
+  status SubscriptionStatus @default(ACTIVE)
+
   currentPeriodStart DateTime
   currentPeriodEnd   DateTime?
 
-  // Status
-  status      SubscriptionStatus @default(ACTIVE)
-  cancelledAt DateTime?
-
-  // Stripe integration
-  stripeSubscriptionId String? @unique
-
-  // Relations
   bookings Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([activeUserId])
-  @@index([historyUserId])
-  @@index([status])
-  @@index([subscriptionId])
+  @@unique([userId])
 }
 
 // ========================================================
@@ -205,7 +194,7 @@ model Booking {
 
   // User
   userId String
-  user   User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   barberId String
   barber   Barber @relation(fields: [barberId], references: [id])
@@ -213,7 +202,7 @@ model Booking {
   // Subscription (optional)
   userSubscriptionId   String?
   userSubscription     UserSubscription? @relation(fields: [userSubscriptionId], references: [id])
-  paidWithSubscription Boolean @default(false)
+  paidWithSubscription Boolean           @default(false)
 
   // Payment
   stripeChargeId String?
