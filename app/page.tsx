@@ -23,22 +23,25 @@ const Home = async () => {
     include: {
       user: true,
     },
-    orderBy: {
-      user: {
-        name: "asc",
-      },
-    },
   });
 
   const popularBarbershops = await prisma.barber.findMany({
     include: {
       user: true,
     },
-    orderBy: {
-      user: {
-        name: "desc",
-      },
-    },
+  });
+
+  // Ordenar no JavaScript após buscar os dados
+  recommendedBarbershops.sort((a, b) => {
+    const nameA = a.user?.name ?? "";
+    const nameB = b.user?.name ?? "";
+    return nameA.localeCompare(nameB);
+  });
+
+  popularBarbershops.sort((a, b) => {
+    const nameA = a.user?.name ?? "";
+    const nameB = b.user?.name ?? "";
+    return nameB.localeCompare(nameA);
   });
 
   return (
