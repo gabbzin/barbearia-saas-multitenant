@@ -27,6 +27,15 @@ async function seedDatabase() {
       "https://utfs.io/f/07842cfb-7b30-4fdc-accc-719618dfa1f2-17s.png",
       "https://utfs.io/f/0522fdaf-0357-4213-8f52-1d83c3dcb6cd-18e.png",
     ];
+
+    const barberNames = [
+      "João Cortes",
+      "Pedro Navalha",
+      "Carlos Fade",
+      "Rafael Estilo",
+      "Lucas Ferreira",
+    ];
+
     const services = [
       {
         name: "Corte de Cabelo",
@@ -73,13 +82,27 @@ async function seedDatabase() {
     ];
 
     const barbershops = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
+      const name = barberNames[i];
       const imageUrl = images[i];
+      const email = `${name.toLowerCase().replace(" ", ".")}@barbearia.com`;
+
+      const user = await prisma.user.create({
+        data: {
+          id: `barber-${i + 1}`,
+          name,
+          email,
+          emailVerified: true,
+          role: "BARBER",
+          image: imageUrl,
+        },
+      });
 
       const barber = await prisma.barber.create({
         data: {
-          imageUrl: imageUrl,
+          imageUrl,
           phone: ["(11) 99999-9999"],
+          userId: user.id,
         },
       });
 

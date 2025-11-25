@@ -19,15 +19,24 @@ import BarberItem from "./_components/barber-item";
 const Home = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  const recommendedBarbershops = await prisma.barber.findMany({
+  const recommendedBarbershops = await prisma.user.findMany({
+    where: {
+      role: "BARBER",
+    },
     orderBy: {
       name: "asc",
     },
   });
 
-  const popularBarbershops = await prisma.barber.findMany({
+  const popularBarbershops = await prisma.user.findMany({
+    where: {
+      role: "BARBER",
+    },
     orderBy: {
       name: "desc",
+    },
+    include: {
+      barberProfile: true,
     },
   });
 
@@ -77,7 +86,14 @@ const Home = async () => {
           <PageSectionTitle>Barbeiros</PageSectionTitle>
           <PageSectionScroller>
             {recommendedBarbershops.map((barber) => (
-              <BarberItem key={barber.id} barber={barber} />
+              <BarberItem
+                key={barber.id}
+                barber={{
+                  id: barber.id,
+                  name: barber.name,
+                  imageUrl: barber.image ?? "",
+                }}
+              />
             ))}
           </PageSectionScroller>
         </PageSection>
@@ -86,7 +102,14 @@ const Home = async () => {
           <PageSectionTitle>Recomendados</PageSectionTitle>
           <PageSectionScroller>
             {popularBarbershops.map((barber) => (
-              <BarberItem key={barber.id} barber={barber} />
+              <BarberItem
+                key={barber.id}
+                barber={{
+                  id: barber.id,
+                  name: barber.name,
+                  imageUrl: barber.image ?? "",
+                }}
+              />
             ))}
           </PageSectionScroller>
         </PageSection>

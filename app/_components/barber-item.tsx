@@ -1,9 +1,12 @@
 import Image from "next/image";
-import { Barber } from "@/generated/prisma";
 import Link from "next/link";
 
 interface BarberItemProps {
-  barber: Barber;
+  barber: {
+    id: string;
+    name: string;
+    imageUrl: string;
+  };
 }
 
 const BarberItem = ({ barber }: BarberItemProps) => {
