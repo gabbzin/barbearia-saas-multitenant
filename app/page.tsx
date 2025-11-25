@@ -18,14 +18,17 @@ import BarberItem from "./_components/barber-item";
 
 const Home = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
-  const user = await prisma.userSubscription.findUnique({
-    where: {
-      userId: session?.user.id,
-    },
-    include: {
-      plan: true,
-    },
-  });
+  let user;
+  if (session?.user) {
+    user = await prisma.userSubscription.findUniqueOrThrow({
+      where: {
+        userId: session?.user?.id,
+      },
+      include: {
+        plan: true,
+      },
+    });
+  }
 
   const recommendedBarbershops = await prisma.barber.findMany({
     include: {
