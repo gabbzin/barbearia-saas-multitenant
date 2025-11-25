@@ -1,8 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ========================================================
+// PRISMA SCHEMA
+// ========================================================
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Learn more about Prisma: https://pris.ly/d/prisma-schema
 
 generator client {
   provider   = "prisma-client-js"
@@ -16,9 +16,9 @@ datasource db {
   // directUrl = env("DIRECT_URL")
 }
 
-// ============================================
+// ========================================================
 // ENUMS
-// ============================================
+// ========================================================
 
 enum SubscriptionStatus {
   ACTIVE
@@ -26,26 +26,27 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
-// ============================================
-// AUTHENTICATION & USER MODELS
-// ============================================
-
 enum userRole {
   USER
   ADMIN
   BARBER
 }
 
+// ========================================================
+// AUTHENTICATION & USER MODELS
+// ========================================================
+
 model User {
-  id            String   @id
+  id            String   @id @default(uuid())
   name          String
-  email         String
+  email         String   @unique
   emailVerified Boolean  @default(false)
   role          userRole @default(USER)
-  
-  image         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
+  passwordHash  String?
+
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   // Relations
   sessions            Session[]
@@ -55,28 +56,26 @@ model User {
   subscriptionHistory UserSubscription[] @relation("SubscriptionHistory")
   barberProfile       Barber?            @relation("BarberAccount")
 
-  @@unique([email])
   @@map("user")
 }
 
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
   userAgent String?
 
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id
+  id                    String   @id
   accountId             String
   providerId            String
   userId                String
@@ -87,8 +86,8 @@ model Account {
   refreshTokenExpiresAt DateTime?
   scope                 String?
   password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -106,34 +105,17 @@ model Verification {
   @@map("verification")
 }
 
-// ============================================
+// ========================================================
 // BARBERSHOP MODELS
-// ============================================
-
-// model Barbershop {
-//   id          String              @id @default(uuid())
-//   name        String
-//   address     String
-//   description String
-//   imageUrl    String
-//   phones      String[]
-//   services    BarberService[]
-//   bookings    Booking[]
-//   barbers     Barber[]
-// }
+// ========================================================
 
 model Barber {
   id       String   @id @default(uuid())
-  // name     String
-  // email    String   @unique
   imageUrl String   @default("https://3tlh7aktl6.ufs.sh/f/tcFRjMXVSkQ0Asb1IxZDwZ30bIph8P2qjXfOcVJmTvFtnMxi")
   phone    String[]
 
   userId String? @unique
   user   User?   @relation("BarberAccount", fields: [userId], references: [id])
-
-  // barbershopId String
-  // barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
 
   services BarberService[]
   bookings Booking[]
@@ -148,9 +130,6 @@ model BarberService {
   imageUrl     String
   priceInCents Int
 
-  // barbershopId String
-  // barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
-
   barberId String
   barber   Barber @relation(fields: [barberId], references: [id])
 
@@ -159,9 +138,9 @@ model BarberService {
   @@index([barberId])
 }
 
-// ============================================
+// ========================================================
 // SUBSCRIPTION MODELS
-// ============================================
+// ========================================================
 
 model Subscription {
   id           String @id @default(uuid())
@@ -211,9 +190,9 @@ model UserSubscription {
   @@index([subscriptionId])
 }
 
-// ============================================
+// ========================================================
 // BOOKING MODEL
-// ============================================
+// ========================================================
 
 model Booking {
   id        String   @id @default(uuid())
@@ -226,15 +205,15 @@ model Booking {
 
   // User
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
 
   barberId String
   barber   Barber @relation(fields: [barberId], references: [id])
 
-  // Subscription (optional - only if paid with subscription)
+  // Subscription (optional)
   userSubscriptionId   String?
   userSubscription     UserSubscription? @relation(fields: [userSubscriptionId], references: [id])
-  paidWithSubscription Boolean           @default(false)
+  paidWithSubscription Boolean @default(false)
 
   // Payment
   stripeChargeId String?
@@ -242,9 +221,6 @@ model Booking {
 
   // Cancellation
   cancelledAt DateTime? @db.Timestamptz
-
-  // barbershopId String
-  // barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
 
   @@unique([barberId, date])
   @@index([serviceId])

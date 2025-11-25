@@ -1,8 +1,5 @@
-import { convertToModelMessages, streamText, tool } from "ai";
+import { convertToModelMessages, streamText } from "ai";
 import { google } from "@ai-sdk/google";
-import z from "zod";
-import { prisma } from "@/lib/prisma";
-import { getDateAvailableTimeSlots } from "@/app/_actions/get-date-available-time-slots";
 
 export const POST = async (request: Request) => {
   const { messages } = await request.json();
@@ -69,78 +66,81 @@ export const POST = async (request: Request) => {
     - Se não houver horários disponíveis, sugira uma data alternativa
     - Quando o usuário mencionar "hoje", "amanhã", "depois de amanhã" ou dias da semana, calcule a data correta automaticamente`,
     messages: convertToModelMessages(messages),
-    tools: {
-      // São aqui que definimos as ferramentas disponíveis para o modelo
-      searchBarbershops: tool({
-        description:
-          "Pesquisa barbearias pelo nome. Se nenhum nome é fornecido, retorna todas as barbearias",
-        inputSchema: z.object({
-          name: z.string().optional().describe("Nome opcional da barbearia"),
-        }),
-        execute: async ({ name }) => {
-          if (!name?.trim()) {
-            const barbers = await prisma.barber.findMany({
-              include: {
-                services: true,
-              },
-            });
-            return barbers.map((barber) => ({
-              id: barber.id,
-              name: barber.name,
-              services: barber.services.map((service) => ({
-                name: service.name,
-                description: service.description,
-                price: service.priceInCents / 100,
-                imageUrl: service.imageUrl,
-              })),
-            }));
-          }
+    //   tools: {
+    //     // São aqui que definimos as ferramentas disponíveis para o modelo
+    //     searchBarbershops: tool({
+    //       description:
+    //         "Pesquisa barbearias pelo nome. Se nenhum nome é fornecido, retorna todas as barbearias",
+    //       inputSchema: z.object({
+    //         name: z.string().optional().describe("Nome opcional da barbearia"),
+    //       }),
+    //       execute: async ({ name }) => {
+    //         if (!name?.trim()) {
+    //           const barbers = await prisma.barber.findMany({
+    //             include: {
+    //               services: true,
+    //             },
+    //           });
+    //           return barbers.map((barber) => ({
+    //             id: barber.id,
+    //             name: barber.name,
+    //             services: barber.services.map((service) => ({
+    //               name: service.name,
+    //               description: service.description,
+    //               price: service.priceInCents / 100,
+    //               imageUrl: service.imageUrl,
+    //             })),
+    //           }));
+    //         }
 
-          const barbers = await prisma.barber.findMany({
-            where: {
-              name: {
-                contains: name,
-                mode: "insensitive",
-              },
-            },
-          });
+    //         const barbers = await prisma.barber.findMany({
+    //           where: {
+    //             name: {
+    //               contains: name,
+    //               mode: "insensitive",
+    //             },
+    //           },
+    //         });
 
-          return barbers;
-        },
-      }),
-      getAvailableTimeSlotsForBarbershop: tool({
-        description:
-          "Obtém os horários disponíveis para uma barbearia em uma data específica",
-        inputSchema: z.object({
-          barbershopId: z.uuid().describe("ID da barbearia"),
-          date: z
-            .string()
-            .describe(
-              "Data em ISOString para verificar os horários disponíveis",
-            ),
-        }),
-        execute: async ({ barbershopId, date }) => {
-          const parsedDate = new Date(date);
-          const result = await getDateAvailableTimeSlots({
-            barberId: barbershopId,
-            date: parsedDate,
-          });
+    //         return barbers;
+    //       },
+    //     }),
+    //     getAvailableTimeSlotsForBarbershop: tool({
+    //       description:
+    //         "Obtém os horários disponíveis para uma barbearia em uma data específica",
+    //       inputSchema: z.object({
+    //         barbershopId: z.uuid().describe("ID da barbearia"),
+    //         date: z
+    //           .string()
+    //           .describe(
+    //             "Data em ISOString para verificar os horários disponíveis",
+    //           ),
+    //       }),
+    //       execute: async ({ barbershopId, date }) => {
+    //         const parsedDate = new Date(date);
+    //         const result = await getDateAvailableTimeSlots({
+    //           barberId: barbershopId,
+    //           date: parsedDate,
+    //         });
 
-          if (result.serverError || result.validationErrors) {
-            return {
-              error: result.validationErrors?._errors?.[0],
-            };
-          }
+    //         if (result.serverError || result.validationErrors) {
+    //           return {
+    //             error: result.validationErrors?._errors?.[0],
+    //           };
+    //         }
 
-          return {
-            barbershopId,
-            date,
-            availableTimeSlots: result.data,
-          };
-        },
-      }),
-    },
+    //         return {
+    //           barbershopId,
+    //           date,
+    //           availableTimeSlots: result.data,
+    //         };
+    //       },
+    //     }),
+    //   },
+    // });
+
+    // return result.toUIMessageStreamResponse();
   });
 
-  return result.toUIMessageStreamResponse();
+  return result.toTextStreamResponse();
 };

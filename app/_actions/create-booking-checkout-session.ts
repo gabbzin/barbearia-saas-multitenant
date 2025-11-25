@@ -35,7 +35,11 @@ export const createBookingCheckoutSession = actionClient
         id: serviceId,
       },
       include: {
-        barber: true,
+        barber: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 
@@ -62,7 +66,7 @@ export const createBookingCheckoutSession = actionClient
             currency: "brl",
             unit_amount: service.priceInCents,
             product_data: {
-              name: `${service.barber.name} - ${service.name} em ${format(date, "dd/MM/yyyy HH:mm")}`,
+              name: `${service.barber.user?.name} - ${service.name} em ${format(date, "dd/MM/yyyy HH:mm")}`,
               description: `${service.description}`,
               images: [service.imageUrl],
             },

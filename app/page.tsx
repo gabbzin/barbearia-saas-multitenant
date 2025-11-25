@@ -19,24 +19,25 @@ import BarberItem from "./_components/barber-item";
 const Home = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  const recommendedBarbershops = await prisma.user.findMany({
-    where: {
-      role: "BARBER",
+  const recommendedBarbershops = await prisma.barber.findMany({
+    include: {
+      user: true,
     },
     orderBy: {
-      name: "asc",
+      user: {
+        name: "asc",
+      },
     },
   });
 
-  const popularBarbershops = await prisma.user.findMany({
-    where: {
-      role: "BARBER",
+  const popularBarbershops = await prisma.barber.findMany({
+    include: {
+      user: true,
     },
     orderBy: {
-      name: "desc",
-    },
-    include: {
-      barberProfile: true,
+      user: {
+        name: "desc",
+      },
     },
   });
 
@@ -90,8 +91,8 @@ const Home = async () => {
                 key={barber.id}
                 barber={{
                   id: barber.id,
-                  name: barber.name,
-                  imageUrl: barber.image ?? "",
+                  name: barber.user?.name ?? "Barbeiro",
+                  imageUrl: barber.imageUrl,
                 }}
               />
             ))}
@@ -106,8 +107,8 @@ const Home = async () => {
                 key={barber.id}
                 barber={{
                   id: barber.id,
-                  name: barber.name,
-                  imageUrl: barber.image ?? "",
+                  name: barber.user?.name ?? "Barbeiro",
+                  imageUrl: barber.imageUrl,
                 }}
               />
             ))}

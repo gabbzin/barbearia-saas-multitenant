@@ -18,6 +18,7 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
     },
     include: {
       services: true,
+      user: true,
     },
   });
 
@@ -31,7 +32,7 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
       <div className="relative h-[297px] w-full">
         <Image
           src={barber.imageUrl}
-          alt={barber.name}
+          alt={barber.user?.name ?? ""}
           fill
           className="object-cover"
           priority
@@ -60,12 +61,14 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
             <div className="relative size-[30px] overflow-hidden rounded-full">
               <Image
                 src={barber.imageUrl}
-                alt={barber.name}
+                alt={barber.user?.name ?? ""}
                 fill
                 className="object-cover"
               />
             </div>
-            <h1 className="text-foreground text-xl font-bold">{barber.name}</h1>
+            <h1 className="text-foreground text-xl font-bold">
+              {barber.user?.name}
+            </h1>
           </div>
           {/* <p className="text-muted-foreground text-sm">{barber.address}</p> */}
         </div>
@@ -91,7 +94,13 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
           </h2>
           <div className="space-y-3">
             {barber.services.map((service) => (
-              <ServiceItem key={service.id} service={{ ...service, barber }} />
+              <ServiceItem
+                key={service.id}
+                service={{
+                  ...service,
+                  barber: { ...barber, user: barber.user! },
+                }}
+              />
             ))}
           </div>
         </div>

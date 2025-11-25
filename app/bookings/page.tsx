@@ -20,7 +20,11 @@ const BookingsPage = async () => {
     include: {
       service: {
         include: {
-          barber: true,
+          barber: {
+            include: {
+              user: true,
+            },
+          },
         },
       },
     },

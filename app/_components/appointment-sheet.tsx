@@ -1,6 +1,6 @@
 "use client";
 
-import { Barber, BarberService } from "@/generated/prisma";
+import { Barber, BarberService, User } from "@/generated/prisma";
 import PagamentForm, { payMethods } from "./pagament-form";
 import { SpinLoader } from "./spinLoader";
 import { Button } from "./ui/button";
@@ -21,7 +21,9 @@ import { toast } from "sonner";
 interface AppointmentSheetProps {
   setSheetOpen: (open: boolean) => void;
   service: BarberService & {
-    barber: Barber;
+    barber: Barber & {
+      user: User;
+    };
   };
 }
 
@@ -208,7 +210,7 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
 
                 <div className="text-muted-foreground flex items-center justify-between text-sm">
                   <p>Barbearia</p>
-                  <p>{service.barber.name}</p>
+                  <p>{service.barber.user.name}</p>
                 </div>
               </div>
             </div>

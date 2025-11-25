@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { BarberService, Barber } from "@/generated/prisma";
+import { BarberService, Barber, User } from "@/generated/prisma";
 import { Button } from "./ui/button";
 import { Sheet, SheetTrigger } from "./ui/sheet";
 import { useState } from "react";
@@ -9,7 +9,9 @@ import AppointmentSheet from "./appointment-sheet";
 
 interface ServiceItemProps {
   service: BarberService & {
-    barber: Barber;
+    barber: Barber & {
+      user: User;
+    };
   };
 }
 

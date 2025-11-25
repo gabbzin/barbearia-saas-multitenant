@@ -1,10 +1,14 @@
 import BookingItem from "@/app/_components/booking-item";
 import { PageContainer, PageSection } from "@/app/_components/ui/page";
-import { BarberService, Booking, User } from "@/generated/prisma";
+import { Barber, BarberService, Booking, User } from "@/generated/prisma";
 
 interface BookingsClientProps {
   bookings: (Booking & {
-    service: BarberService;
+    service: BarberService & {
+      barber: Barber & {
+        user: User;
+      };
+    };
     user: User;
   })[];
 }
@@ -44,7 +48,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                   priceInCents: booking.service.priceInCents,
                 },
                 barber: {
-                  name: booking.service.barber.name,
+                  name: booking.service.barber.user.name,
                   imageUrl: booking.service.barber.imageUrl,
                   phone: booking.service.barber.phone,
                 },
@@ -74,7 +78,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                   priceInCents: booking.service.priceInCents,
                 },
                 barber: {
-                  name: booking.service.barber.name,
+                  name: booking.service.barber.user.name,
                   imageUrl: booking.service.barber.imageUrl,
                   phone: booking.service.barber.phone,
                 },
@@ -104,7 +108,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                   priceInCents: booking.service.priceInCents,
                 },
                 barber: {
-                  name: booking.service.barber.name,
+                  name: booking.service.barber.user.name,
                   imageUrl: booking.service.barber.imageUrl,
                   phone: booking.service.barber.phone,
                 },
