@@ -18,17 +18,16 @@ import BarberItem from "./_components/barber-item";
 
 const Home = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
-  let user;
-  if (session?.user) {
-    user = await prisma.userSubscription.findUniqueOrThrow({
-      where: {
-        userId: session?.user?.id,
-      },
-      include: {
-        plan: true,
-      },
-    });
-  }
+  const user = session?.user.id
+    ? await prisma.userSubscription.findUnique({
+        where: {
+          userId: session.user.id,
+        },
+        include: {
+          plan: true,
+        },
+      })
+    : null;
 
   const recommendedBarbershops = await prisma.barber.findMany({
     include: {
@@ -79,7 +78,7 @@ const Home = async () => {
           className="mb-2"
         >
           <AlertTitle className="flex items-center gap-4">
-            {user?.status === "ACTIVE" ? (
+            {user && user.status === "ACTIVE" ? (
               <>
                 <CheckCircleIcon />
                 <p>Você é assinante do plano {user.plan.name}</p>
