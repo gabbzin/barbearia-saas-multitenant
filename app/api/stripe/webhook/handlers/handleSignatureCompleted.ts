@@ -1,61 +1,57 @@
 import { SubscriptionStatus } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe-client";
 import { revalidatePath } from "next/cache";
-import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-// Lógica para lidar com a finalização do checkout SUCESSO
+// Lógica para lidar com a finalização da assinatura
 export async function handleSignatureCompleted(
   event: Stripe.CustomerSubscriptionCreatedEvent,
 ) {
-  const session = event.data.object;
-  const date = session.metadata?.date ? new Date(session.metadata.date) : null;
+  try {
+    const subscription = event.data.object;
+    const subscriptionId = subscription.id;
+    const eventId = event.id;
 
-  const signatureId = session.metadata?.signatureId;
-  const userId = session.metadata?.userId;
-  const eventId = event.id;
+    const signatureId = subscription.metadata?.signatureId;
+    const userId = subscription.metadata?.userId;
 
-  const exists = await prisma.userSubscription.findUnique({
-    where: {
-      stripeSubscriptionId: eventId,
-    },
-  });
+    const exists = await prisma.userSubscription.findUnique({
+      where: {
+        stripeSubscriptionId: subscriptionId,
+      },
+    });
 
-  const subscriptionId = session.id;
+    if (exists) {
+      return { ok: true };
+    }
 
-  if (exists) {
+    if (!signatureId || !userId) {
+      return { ok: false };
+    }
+
+    const currentPeriodStart = new Date();
+    const currentPeriodEnd = new Date();
+    currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1);
+
+    await prisma.userSubscription.create({
+      data: {
+        currentPeriodStart,
+        currentPeriodEnd,
+        stripeSubscriptionId: subscriptionId,
+        userId,
+        planId: signatureId,
+        status: SubscriptionStatus.ACTIVE,
+        stripeEventId: eventId,
+        stripeChargeId: null,
+      },
+    });
+
+    revalidatePath("/signature");
     return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
-  if (!date || !signatureId || !userId) {
-    return NextResponse.error();
-  }
-
-  const expandedSession = await stripe.checkout.sessions.retrieve(session.id, {
-    expand: ["payment_intent"],
-  });
-
-  const paymentIntent = expandedSession.payment_intent as Stripe.PaymentIntent;
-
-  const chargeId =
-    typeof paymentIntent.latest_charge === "string"
-      ? paymentIntent.latest_charge
-      : paymentIntent.latest_charge?.id;
-
-  await prisma.userSubscription.create({
-    data: {
-      currentPeriodStart: new Date(),
-      currentPeriodEnd: new Date(
-        new Date(date).setMonth(new Date(date).getMonth() + 1),
-      ),
-      stripeSubscriptionId: subscriptionId,
-      userId,
-      planId: signatureId,
-      status: SubscriptionStatus.ACTIVE,
-      stripeEventId: eventId,
-      stripeChargeId: chargeId || null,
-    },
-  });
-  revalidatePath("/signature");
-  return { ok: true };
 }

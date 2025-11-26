@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { SidebarMenu } from "./sidebar-menu";
 import { prisma } from "@/lib/prisma";
+import { AnimatedThemeToggler } from "./ui/animated-theme-toggler";
 
 const Header = async () => {
   const barbers = await prisma.barber.findMany({
@@ -10,7 +11,7 @@ const Header = async () => {
   }); // Ajustar para pegar de user, as características do barbeiro estão em user
 
   return (
-    <header className="flex items-center justify-between bg-white px-5 py-6">
+    <header className="flex items-center justify-between bg-background px-5 py-6">
       <Image src="/logo.svg" alt="Aparatus" width={80} height={26.09} />
       <div className="flex items-center gap-2">
         {/* {session ? (
@@ -37,6 +38,7 @@ const Header = async () => {
             <MessageCircleIcon />
           </Link>
         </Button> */}
+        <AnimatedThemeToggler />
         <SidebarMenu barbers={barbers} />
       </div>
     </header>
