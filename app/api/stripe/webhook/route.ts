@@ -22,15 +22,21 @@ export const POST = async (request: Request) => {
     process.env.STRIPE_WEBHOOK_SECRET,
   );
 
-  // Validando os eventos
-  switch (event.type) {
-    case "checkout.session.completed": {
-      await handleCheckoutCompleted(event);
-      break;
-    }
-    case "customer.subscription.created": {
-      await handleSignatureCompleted(event);
-      break;
-    }
+  if (event.type === "checkout.session.completed") {
+    await handleCheckoutCompleted(event);
   }
+
+  // Validando os eventos
+  // switch (event.type) {
+  //   case "checkout.session.completed": {
+  //     await handleCheckoutCompleted(event);
+  //     break;
+  //   }
+  //   case "customer.subscription.created": {
+  //     await handleSignatureCompleted(event);
+  //     break;
+  //   }
+  // }
+
+  return NextResponse.json({ received: true });
 };
