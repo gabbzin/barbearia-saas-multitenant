@@ -3,7 +3,7 @@ import RegisterForm from "./register-form";
 
 export default function RegisterPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
+    <main className="flex min-h-screen flex-col items-center justify-center px-4">
       <Image
         src={"/Background.png"}
         alt="Background"

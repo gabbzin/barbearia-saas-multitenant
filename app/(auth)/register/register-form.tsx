@@ -34,7 +34,7 @@ const RegisterForm = () => {
       <CardHeader className="text-center text-3xl font-bold">
         Criar conta
       </CardHeader>
-      <CardContent className="p-8">
+      <CardContent className="px-8">
         <GenericForm<registerSchemaType>
           schema={registerSchema}
           onSubmit={handleRegister}

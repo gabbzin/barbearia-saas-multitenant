@@ -2,15 +2,18 @@
 
 import InputForm from "@/app/_components/form/input-form";
 import GenericForm from "@/app/_components/form/generic-form";
-import {
-  loginSchemaType,
-  registerSchema,
-} from "@/schemas/userSchema";
+import { loginSchemaType, registerSchema } from "@/schemas/userSchema";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation"; // Use router.push em Client Components
 import { GoogleButton } from "@/app/_components/google-button";
-import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/app/_components/ui/card";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -36,7 +39,7 @@ export default function LoginForm() {
       <CardHeader className="text-center text-3xl font-bold">
         Fazer login
       </CardHeader>
-      <CardContent className="p-8">
+      <CardContent className="px-8">
         <GenericForm<loginSchemaType>
           schema={registerSchema}
           onSubmit={handleLogin}
@@ -57,6 +60,12 @@ export default function LoginForm() {
           />
         </GenericForm>
       </CardContent>
+      <CardFooter className="flex flex-col">
+        <p>Ainda não possui conta? </p>
+        <Link href={"/register"} className="text-blue-500">
+          Crie uma agora.
+        </Link>
+      </CardFooter>
     </Card>
   );
 }

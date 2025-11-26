@@ -18,14 +18,6 @@ export async function handleCheckoutCompleted(
     const eventId = event.id;
     const barberId = session.metadata?.barberId;
 
-    console.log("Processing checkout completed:", {
-      serviceId,
-      userId,
-      barberId,
-      date,
-      eventId,
-    });
-
     const exists = await prisma.booking.findUnique({
       where: {
         stripeEventId: eventId,
@@ -36,12 +28,6 @@ export async function handleCheckoutCompleted(
       return { ok: true };
     }
     if (!date || !serviceId || !userId || !barberId) {
-      console.error("Missing metadata in checkout session", {
-        date,
-        serviceId,
-        userId,
-        barberId,
-      });
       return { ok: false };
     }
 
@@ -71,15 +57,9 @@ export async function handleCheckoutCompleted(
       },
     });
 
-    console.log("Booking created successfully", {
-      serviceId,
-      userId,
-      barberId,
-    });
     revalidatePath("/bookings");
     return { ok: true };
   } catch (error) {
-    console.error("Error handling checkout completed:", error);
     return {
       ok: false,
       error: error instanceof Error ? error.message : "Unknown error",
