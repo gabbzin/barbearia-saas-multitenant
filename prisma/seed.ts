@@ -28,26 +28,20 @@ async function seedDatabase() {
       "https://utfs.io/f/0522fdaf-0357-4213-8f52-1d83c3dcb6cd-18e.png",
     ];
 
-    const barberNames = [
-      "João Cortes",
-      "Pedro Navalha",
-      "Carlos Fade",
-      "Rafael Estilo",
-      "Lucas Ferreira",
-    ];
+    const barberNames = ["Ceara do Corte", "Tuco do Corte", "Davi Barber"];
 
     const services = [
       {
         name: "Corte de Cabelo",
         description: "Estilo personalizado com as últimas tendências.",
-        price: 60.0,
+        price: 35.0,
         imageUrl:
           "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
       },
       {
         name: "Barba",
         description: "Modelagem completa para destacar sua masculinidade.",
-        price: 40.0,
+        price: 30.0,
         imageUrl:
           "https://utfs.io/f/e6bdffb6-24a9-455b-aba3-903c2c2b5bde-1jo6tu.png",
       },
@@ -61,7 +55,7 @@ async function seedDatabase() {
       {
         name: "Sobrancelha",
         description: "Expressão acentuada com modelagem precisa.",
-        price: 20.0,
+        price: 10.0,
         imageUrl:
           "https://utfs.io/f/2118f76e-89e4-43e6-87c9-8f157500c333-b0ps0b.png",
       },
@@ -76,6 +70,20 @@ async function seedDatabase() {
         name: "Hidratação",
         description: "Hidratação profunda para cabelo e barba.",
         price: 25.0,
+        imageUrl:
+          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+      },
+      {
+        name: "Platinado + Corte",
+        description: "Hidratação profunda para cabelo e barba.",
+        price: 120.0,
+        imageUrl:
+          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+      },
+      {
+        name: "Luzes + Corte",
+        description: "Hidratação profunda para cabelo e barba.",
+        price: 100.0,
         imageUrl:
           "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
       },

@@ -1,7 +1,4 @@
-import Image from "next/image";
 import Header from "./_components/header";
-import SearchInput from "./_components/search-input";
-import banner from "../public/banner.png";
 import { prisma } from "@/lib/prisma";
 import {
   PageContainer,
@@ -102,13 +99,13 @@ const Home = async () => {
         </Alert>
       </div>
       <PageContainer>
-        <SearchInput />
-        <Image
+        {/* <SearchInput /> */}
+        {/* <Image
           src={banner} // Fazemos isso para otimizar a imagem e evitar problemas de Cumulative Layout Shift (CLS)
           alt="Banner"
           sizes="100vw"
           className="h-auto w-full"
-        />
+        /> */}
 
         <PageSection>
           <PageSectionTitle>Agendamentos</PageSectionTitle>
