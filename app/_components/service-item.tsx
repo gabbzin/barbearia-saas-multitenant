@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { Sheet, SheetTrigger } from "./ui/sheet";
 import { useState } from "react";
 import AppointmentSheet from "./appointment-sheet";
+import { convertBRL } from "@/utils/convertBRL";
 
 interface ServiceItemProps {
   service: BarberService & {
@@ -18,10 +19,7 @@ interface ServiceItemProps {
 export function ServiceItem({ service }: ServiceItemProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const priceInReais = (service.priceInCents / 100).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
+  const priceInReais = convertBRL(service.priceInCents);
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>

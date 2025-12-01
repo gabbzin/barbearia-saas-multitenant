@@ -13,7 +13,7 @@ interface BookingsClientProps {
   })[];
 }
 
-export default function BookingsClient({ bookings }: BookingsClientProps) {
+export default function BookingsBarber({ bookings }: BookingsClientProps) {
   const now = new Date();
 
   const confirmedBookings = bookings.filter(
