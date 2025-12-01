@@ -118,7 +118,7 @@ async function seedDatabase() {
     for (let i = 0; i < 5; i++) {
       const name = barberNames[i];
       const imageUrl = images[i];
-      const email = `${name.toLowerCase().replace(" ", ".")}@barbearia.com`;
+      const email = `${name.toLowerCase().replace(" ", ".")}@barber.com`;
 
       const user = await prisma.user.create({
         data: {

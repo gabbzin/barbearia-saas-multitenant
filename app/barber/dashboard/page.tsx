@@ -55,7 +55,7 @@ const BarberDashboardPage = async () => {
       <Separator />
       <PageContainer>
         <h3 className="text-lg font-bold lg:text-2xl">Próximo atendimento</h3>
-        <Card>
+        <Card className="border-primary border-2">
           <CardContent className="flex flex-col gap-3">
             <div className="flex items-center gap-4 font-semibold">
               <Avatar>
@@ -82,7 +82,7 @@ const BarberDashboardPage = async () => {
           </CardContent>
         </Card>
       </PageContainer>
-
+      <Separator />
       <PageContainer>
         <h3 className="text-lg font-bold lg:text-2xl">
           Seus serviços cadastrados
