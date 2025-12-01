@@ -5,24 +5,17 @@ import { Card, CardContent } from "@/app/_components/ui/card";
 import { PageContainer } from "@/app/_components/ui/page";
 import { Separator } from "@/app/_components/ui/separator";
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { convertBRL } from "@/utils/convertBRL";
 import { Banknote, Scissors, UserIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Image from "next/image";
 import { TableService } from "./components/table-service";
 
-const barberId = "24da6e42-94ff-437e-ad64-0db1fe0513dd";
+const barberId = "c26c52ae-dc7d-4523-8607-6e4ff66d5568";
 
 const BarberDashboardPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   const faturamento = convertBRL(12500);
-
-  const services = await prisma.barberService.findMany({
-    where: {
-      barberId,
-    },
-  });
 
   // Adicionar a verificação de tipo de usuário depois
   // (session.user.role !== "BARBER")

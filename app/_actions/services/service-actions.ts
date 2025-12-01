@@ -13,11 +13,11 @@ export async function getServicesByBarberId(data: { barberId: string }) {
 }
 
 export async function createService(data: FormData) {
-  await prisma.barberService.create({
+  return await prisma.barberService.create({
     data: {
       name: data.get("name") as string,
       description: data.get("description") as string,
-      priceInCents: Number(data.get("priceInCents")),
+      priceInCents: Number(data.get("price")) * 100, // Vem em reais, converter para centavos
       imageUrl:
         "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
       barberId: data.get("barberId") as string,
@@ -25,8 +25,14 @@ export async function createService(data: FormData) {
   });
 }
 
-export async function patchService(data: FormData, serviceId: string) {
-  await prisma.barberService.update({
+export async function patchService({
+  data,
+  serviceId,
+}: {
+  data: FormData;
+  serviceId: string;
+}) {
+  return await prisma.barberService.update({
     where: {
       id: serviceId,
     },
@@ -39,10 +45,12 @@ export async function patchService(data: FormData, serviceId: string) {
   });
 }
 
-export async function deleteService(data: { serviceId: string }) {
+export async function deleteService({ serviceId }: { serviceId: string }) {
   await prisma.barberService.delete({
     where: {
-      id: data.serviceId,
+      id: serviceId,
     },
   });
+
+  return { serviceId };
 }

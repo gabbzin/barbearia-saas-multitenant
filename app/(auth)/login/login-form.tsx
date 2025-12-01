@@ -2,7 +2,7 @@
 
 import InputForm from "@/app/_components/form/input-form";
 import GenericForm from "@/app/_components/form/generic-form";
-import { loginSchemaType, registerSchema } from "@/schemas/userSchema";
+import { loginSchema, loginSchemaType } from "@/schemas/userSchema";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation"; // Use router.push em Client Components
 import { GoogleButton } from "@/app/_components/google-button";
@@ -41,7 +41,7 @@ export default function LoginForm() {
       </CardHeader>
       <CardContent className="px-8">
         <GenericForm<loginSchemaType>
-          schema={registerSchema}
+          schema={loginSchema}
           onSubmit={handleLogin}
           submitText="Logar conta"
           buttons={<GoogleButton />}

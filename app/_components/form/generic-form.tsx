@@ -1,32 +1,38 @@
 "use client";
 
 import {
-  DefaultValues,
   FieldValues,
   FormProvider,
   useForm,
+  UseFormProps,
 } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import { ZodType } from "zod";
+import { cn } from "@/lib/utils";
 
-interface GenericFormProps<T extends FieldValues> {
+interface GenericFormProps<T extends FieldValues> extends UseFormProps<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema: ZodType<T, any, any>;
   onSubmit: (data: T) => Promise<void> | void;
   children: React.ReactNode;
   submitText: string;
-  defaultValues?: DefaultValues<T>;
   buttons?: React.ReactNode;
-  // props: React.FormHTMLAttributes<HTMLFormElement>;
+  className?: string;
 }
 
-export default function GenericForm<T extends FieldValues>(
-  props: GenericFormProps<T>,
-) {
+export default function GenericForm<T extends FieldValues>({
+  schema,
+  onSubmit,
+  children,
+  submitText,
+  buttons,
+  className,
+  ...hookProps
+}: GenericFormProps<T>) {
   const methods = useForm({
-    resolver: zodResolver(props.schema),
-    defaultValues: props?.defaultValues,
+    resolver: zodResolver(schema),
+    ...hookProps
   });
 
   const {
@@ -37,15 +43,15 @@ export default function GenericForm<T extends FieldValues>(
   return (
     <FormProvider {...methods}>
       <form
-        onSubmit={handleSubmit(props.onSubmit)}
-        className="flex flex-col gap-6"
+        onSubmit={handleSubmit(onSubmit)}
+        className={cn("flex flex-col gap-6", className)}
       >
-        {props.children}
+        {children}
         <Buttons>
           <Button variant={"default"} type="submit" disabled={isSubmitting}>
-            {methods.formState.isSubmitting ? "Enviando..." : props.submitText}
+            {methods.formState.isSubmitting ? "Enviando..." : submitText}
           </Button>
-          {props.buttons}
+          {buttons}
         </Buttons>
       </form>
     </FormProvider>
