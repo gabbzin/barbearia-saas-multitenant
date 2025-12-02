@@ -10,12 +10,20 @@ import { Banknote, Scissors, UserIcon } from "lucide-react";
 import { headers } from "next/headers";
 import Image from "next/image";
 import { TableService } from "./components/table-service";
+import { prisma } from "@/lib/prisma";
 
 const barberId = "c26c52ae-dc7d-4523-8607-6e4ff66d5568";
 
 const BarberDashboardPage = async () => {
   const session = await auth.api.getSession({ headers: await headers() });
   const faturamento = convertBRL(12500);
+
+  const fat = await prisma.booking.aggregate({
+    where: {
+      barberId: barberId,
+      status: "COMPLETED",
+    },
+  });
 
   // Adicionar a verificação de tipo de usuário depois
   // (session.user.role !== "BARBER")

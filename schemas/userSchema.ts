@@ -34,3 +34,16 @@ export const registerSchema = z.object({
 });
 
 export type registerSchemaType = z.infer<typeof registerSchema>;
+
+export const recoverPasswordSchema = z
+  .object({
+    senha: z
+      .string("Senha inválida")
+      .min(8, "A senha deve ter no mínimo 8 caracteres")
+      .regex(passwordRegex, passwordRegexPhrase),
+    confirmarSenha: z.string("Confirmação de senha inválida"),
+  })
+  .refine((data) => data.senha === data.confirmarSenha, {
+    message: "As senhas não coincidem",
+    path: ["confirmarSenha"],
+  });

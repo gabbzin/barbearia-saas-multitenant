@@ -28,6 +28,7 @@ export const GoogleButton = () => {
       className="w-full gap-2"
       onClick={handleGoogleLogin}
       disabled={isLoading}
+      
     >
       {isLoading ? (
         <span>Redirecionando...</span>

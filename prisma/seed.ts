@@ -1,6 +1,4 @@
-import { PrismaClient } from "@/generated/prisma";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 async function seedDatabase() {
   try {
@@ -115,10 +113,10 @@ async function seedDatabase() {
     }
 
     const barbershops = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < barberNames.length; i++) {
       const name = barberNames[i];
       const imageUrl = images[i];
-      const email = `${name.toLowerCase().replace(" ", ".")}@barber.com`;
+      const email = `${name.toLowerCase().replace(/ /g, ".")}@barber.com`;
 
       const user = await prisma.user.create({
         data: {
@@ -157,6 +155,53 @@ async function seedDatabase() {
 
       barbershops.push(barber);
     }
+
+    // Criar usuário cliente para os agendamentos
+    const clientUser = await prisma.user.create({
+      data: {
+        id: "client-user-1",
+        name: "João Silva",
+        email: "joao.silva@example.com",
+        emailVerified: true,
+        role: "USER",
+      },
+    });
+
+    // Criar agendamentos passados para o primeiro barbeiro
+    const firstBarber = barbershops[0];
+    const barberServices = await prisma.barberService.findMany({
+      where: { barberId: firstBarber.id },
+      take: 4,
+    });
+
+    // Datas passadas (últimos 30 dias)
+    const pastDates = [
+      new Date("2024-11-01T10:00:00Z"),
+      new Date("2024-11-05T14:00:00Z"),
+      new Date("2024-11-12T16:00:00Z"),
+      new Date("2024-11-18T11:00:00Z"),
+      new Date("2024-11-22T15:00:00Z"),
+      new Date("2024-11-28T09:00:00Z"),
+    ];
+
+    for (let i = 0; i < pastDates.length; i++) {
+      const service = barberServices[i % barberServices.length];
+
+      await prisma.booking.create({
+        data: {
+          date: pastDates[i],
+          status: "COMPLETED",
+          userId: clientUser.id,
+          barberId: firstBarber.id,
+          serviceId: service.id,
+          paidWithSubscription: false,
+        },
+      });
+    }
+
+    console.log("✅ Seed concluído com sucesso!");
+    console.log(`- ${barbershops.length} barbeiros criados`);
+    console.log(`- ${pastDates.length} agendamentos passados criados`);
 
     // Fechar a conexão com o banco de dados
     await prisma.$disconnect();

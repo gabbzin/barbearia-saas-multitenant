@@ -59,5 +59,5 @@ export default function GenericForm<T extends FieldValues>({
 }
 
 const Buttons = ({ children }: { children: React.ReactNode }) => {
-  return <div className="mt-4 flex flex-col gap-4 font-bold">{children}</div>;
+  return <div className="mt-4 flex flex-col gap-2 font-bold">{children}</div>;
 };

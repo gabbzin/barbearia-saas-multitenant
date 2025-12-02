@@ -183,19 +183,24 @@ model UserSubscription {
 // BOOKING MODEL
 // ========================================================
 
+enum BookingStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
 model Booking {
   id        String   @id @default(uuid())
   date      DateTime @db.Timestamptz
-  cancelled Boolean? @default(false)
 
+  status  BookingStatus @default(SCHEDULED)
   // Service
   serviceId String
   service   BarberService @relation(fields: [serviceId], references: [id])
 
-  // User
+  // User & Barber
   userId String
   user   User   @relation(fields: [userId], references: [id])
-
   barberId String
   barber   Barber @relation(fields: [barberId], references: [id])
 
@@ -208,13 +213,12 @@ model Booking {
   stripeChargeId String?
   stripeEventId  String? @unique
 
-  // Cancellation
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   cancelledAt DateTime? @db.Timestamptz
 
-  @@unique([barberId, date])
-  @@index([serviceId])
   @@index([userId])
-  @@index([barberId])
-  @@index([date])
-  @@index([userSubscriptionId])
+  @@index([barberId, date])
+  @@index([status])
 }

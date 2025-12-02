@@ -20,10 +20,16 @@ export default function LoginForm() {
 
   const handleLogin = async (data: loginSchemaType) => {
     try {
-      await authClient.signIn.email({
+      const user = await authClient.signIn.email({
         email: data.email,
         password: data.senha,
       });
+
+      if (user.error) {
+        throw new Error(user.error.message);
+      }
+
+      router.refresh();
       router.push("/");
     } catch (error) {
       toast.error(
@@ -35,12 +41,12 @@ export default function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md space-y-2">
       <CardHeader className="text-center text-3xl font-bold">
         Fazer login
       </CardHeader>
       <CardContent className="px-8">
-        <GenericForm<loginSchemaType>
+        <GenericForm
           schema={loginSchema}
           onSubmit={handleLogin}
           submitText="Logar conta"
@@ -52,16 +58,21 @@ export default function LoginForm() {
             type="email"
             placeholder="Digite seu email"
           />
-          <InputForm
-            name="senha"
-            label="Senha"
-            type="password"
-            placeholder="Digite sua senha"
-          />
+          <div className="relative">
+            <InputForm
+              name="senha"
+              label="Senha"
+              type="password"
+              placeholder="Digite sua senha"
+            />
+            <p className="absolute right-0 text-sm text-blue-500">
+              <Link href={"/recover-password"}>Esqueceu a senha?</Link>
+            </p>
+          </div>
         </GenericForm>
       </CardContent>
       <CardFooter className="flex flex-col">
-        <p>Ainda não possui conta? </p>
+        <p className="w-4/6 text-center">Ainda não possui conta? </p>
         <Link href={"/register"} className="text-blue-500">
           Crie uma agora.
         </Link>

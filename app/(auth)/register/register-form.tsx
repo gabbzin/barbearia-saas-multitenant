@@ -14,11 +14,15 @@ const RegisterForm = () => {
 
   const handleRegister = async (data: registerSchemaType) => {
     try {
-      await authClient.signUp.email({
+      const user = await authClient.signUp.email({
         name: data.nome,
         email: data.email,
         password: data.senha,
       });
+
+      if (user.error) {
+        throw new Error(user.error.message);
+      }
       router.push("/");
     } catch (error) {
       toast.error(
@@ -30,7 +34,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <Card className="w-full max-w-md ">
+    <Card className="w-full max-w-md">
       <CardHeader className="text-center text-3xl font-bold">
         Criar conta
       </CardHeader>
