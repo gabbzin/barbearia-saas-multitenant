@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { BarberService, Barber, User } from "@/generated/prisma";
+import { BarberService, Barber, User } from "@prisma/client";
 import { Button } from "./ui/button";
 import { Sheet, SheetTrigger } from "./ui/sheet";
 import { useState } from "react";

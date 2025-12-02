@@ -1,6 +1,6 @@
 "use client";
 
-import { Barber, BarberService, User } from "@/generated/prisma";
+import { Barber, BarberService, User } from "@prisma/client";
 import PagamentForm, { payMethods } from "./pagament-form";
 import { SpinLoader } from "./spinLoader";
 import { Button } from "./ui/button";

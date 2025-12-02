@@ -47,7 +47,7 @@ export const cancelBooking = actionClient
         id: bookingId,
       },
       data: {
-        cancelled: true,
+        status: "CANCELLED",
         cancelledAt: new Date(),
       },
     });

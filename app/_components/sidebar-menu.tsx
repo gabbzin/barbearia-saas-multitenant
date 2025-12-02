@@ -22,7 +22,7 @@ import { Separator } from "./ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Barber, User } from "@/generated/prisma";
+import { Barber, User } from "@prisma/client";
 import {
   Accordion,
   AccordionContent,
@@ -104,7 +104,12 @@ export const SidebarMenu = ({
                 </Link>
               </Button>
             ) : (
-              <Accordion key={route.name} type="single" collapsible className="-my-2">
+              <Accordion
+                key={route.name}
+                type="single"
+                collapsible
+                className="-my-2"
+              >
                 <AccordionItem value="barbers">
                   <AccordionTrigger className="px-3">
                     <div className="flex items-center gap-3">

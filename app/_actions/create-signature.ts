@@ -1,6 +1,6 @@
 "use server";
 
-import { SubscriptionStatus } from "@/generated/prisma";
+import { SubscriptionStatus } from "@prisma/client";
 import { actionClient } from "@/lib/actionClient";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe-client";

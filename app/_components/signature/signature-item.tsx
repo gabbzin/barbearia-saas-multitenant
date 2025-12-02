@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { Button } from "../ui/button";
-import type { SubscriptionPlan } from "@/generated/prisma";
+import type { SubscriptionPlan } from "@prisma/client";
 import { Badge } from "../ui/badge";
 import { useAction } from "next-safe-action/hooks";
 import { createSignature } from "@/app/_actions/create-signature";

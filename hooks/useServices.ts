@@ -8,7 +8,7 @@ import {
   patchService,
 } from "@/app/_actions/services/service-actions";
 
-import { BarberService } from "@/generated/prisma";
+import { BarberService } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

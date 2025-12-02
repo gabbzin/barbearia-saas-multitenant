@@ -47,7 +47,7 @@ export const createBooking = actionClient
     const existingBooking = await prisma.booking.findFirst({
       where: {
         date,
-        cancelled: false,
+        status: "SCHEDULED",
         serviceId,
       },
     });

@@ -1,4 +1,4 @@
-import { SubscriptionStatus } from "@/generated/prisma";
+import { SubscriptionStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import Stripe from "stripe";

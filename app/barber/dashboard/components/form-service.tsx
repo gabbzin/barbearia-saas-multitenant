@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/app/_components/ui/dialog";
-import { BarberService } from "@/generated/prisma";
+import { BarberService } from "@prisma/client";
 import { useServicesCRUD } from "@/hooks/useServices";
 import { serviceSchema, serviceSchemaType } from "@/schemas/serviceSchema";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";

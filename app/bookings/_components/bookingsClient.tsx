@@ -1,6 +1,6 @@
 import BookingItem from "@/app/_components/booking-item";
 import { PageContainer, PageSection } from "@/app/_components/ui/page";
-import { Barber, BarberService, Booking, User } from "@/generated/prisma";
+import { Barber, BarberService, Booking, User } from "@prisma/client";
 
 interface BookingsClientProps {
   bookings: (Booking & {
@@ -16,13 +16,15 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
   const now = new Date();
 
   const confirmedBookings = bookings.filter(
-    (booking) => booking.date > now && !booking.cancelled,
+    (booking) => booking.date > now && booking.status === "SCHEDULED",
   );
 
-  const cancelledBookings = bookings.filter((booking) => booking.cancelled);
+  const cancelledBookings = bookings.filter(
+    (booking) => booking.status === "CANCELLED",
+  );
 
   const finishedBookings = bookings.filter(
-    (booking) => booking.date <= now && !booking.cancelled,
+    (booking) => booking.date <= now && booking.status !== "CANCELLED",
   );
   return (
     <PageContainer>
