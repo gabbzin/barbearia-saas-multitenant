@@ -17,6 +17,7 @@ import { useState } from "react";
 import { getDateAvailableTimeSlots } from "../_actions/get-date-available-time-slots";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface AppointmentSheetProps {
   setSheetOpen: (open: boolean) => void;
@@ -28,6 +29,7 @@ interface AppointmentSheetProps {
 }
 
 const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
   const [payMethod, setPayMethod] = useState<payMethods>("cartao");
@@ -118,6 +120,8 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
         return;
       }
     }
+
+    router.push("/bookings"); // Redirect to bookings page after successful booking
 
     toast.success("Agendamento criado com sucesso!");
     setSelectedDate(undefined);

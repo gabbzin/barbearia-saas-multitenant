@@ -63,6 +63,7 @@ export const createBooking = actionClient
         userId: session!.user.id,
         serviceId: serviceId,
         date,
+        priceInCents: service.priceInCents,
       },
     });
 

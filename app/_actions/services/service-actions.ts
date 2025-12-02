@@ -39,7 +39,7 @@ export async function patchService({
     data: {
       name: data.get("name") as string,
       description: data.get("description") as string,
-      priceInCents: Number(data.get("priceInCents")),
+      priceInCents: Number(data.get("price")) * 100, // Vem em reais, converter para centavos
       // imageUrl: Adicionar depois que conectar o uploader
     },
   });

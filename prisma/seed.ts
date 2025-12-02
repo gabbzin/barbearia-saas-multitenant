@@ -195,6 +195,7 @@ async function seedDatabase() {
           barberId: firstBarber.id,
           serviceId: service.id,
           paidWithSubscription: false,
+          priceInCents: service.priceInCents,
         },
       });
     }

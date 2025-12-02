@@ -1,6 +1,11 @@
 {
   "name": "fsw-aparatus",
   "version": "0.1.0",
+  "pnpm": {
+    "overrides": {
+      "baseline-browser-mapping": "latest"
+    }
+  },
   "private": true,
   "scripts": {
     "dev": "next dev",

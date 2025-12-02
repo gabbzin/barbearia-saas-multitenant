@@ -189,17 +189,18 @@ enum BookingStatus {
 }
 
 model Booking {
-  id        String   @id @default(uuid())
-  date      DateTime @db.Timestamptz
+  id   String   @id @default(uuid())
+  date DateTime @db.Timestamptz
 
-  status  BookingStatus @default(SCHEDULED)
+  status       BookingStatus @default(SCHEDULED)
+  priceInCents Int
   // Service
-  serviceId String
-  service   BarberService @relation(fields: [serviceId], references: [id])
+  serviceId    String
+  service      BarberService @relation(fields: [serviceId], references: [id])
 
   // User & Barber
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
   barberId String
   barber   Barber @relation(fields: [barberId], references: [id])
 
