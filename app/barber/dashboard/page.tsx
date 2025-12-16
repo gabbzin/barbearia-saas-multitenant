@@ -11,6 +11,8 @@ import { headers } from "next/headers";
 import { TableService } from "./components/table-service";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { Button } from "@/app/_components/ui/button";
+import Link from "next/link";
 
 const barberId = "f33dbcbb-eda1-4cac-afe5-91aea909bd37";
 
@@ -136,6 +138,10 @@ const BarberDashboardPage = async () => {
             ) : (
               <p>Nenhum agendamento encontrado</p>
             )}
+
+            <Button variant={"outline"} asChild>
+              <Link href="/barber/schedule">Ver agenda completa</Link>
+            </Button>
           </CardContent>
         </Card>
       </PageContainer>
