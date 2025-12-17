@@ -1,4 +1,4 @@
-import { stripe } from "@/lib/stripe-client";
+import { stripeClient } from "@/lib/stripe-client";
 import { NextResponse } from "next/server";
 import { handleCheckoutCompleted } from "./handlers/handleCheckoutCompleted";
 import { handleSignatureCompleted } from "./handlers/handleSignatureCompleted";
@@ -16,7 +16,7 @@ export const POST = async (request: Request) => {
 
   const text = await request.text();
 
-  const event = stripe.webhooks.constructEvent(
+  const event = stripeClient.webhooks.constructEvent(
     text,
     signature,
     process.env.STRIPE_WEBHOOK_SECRET,

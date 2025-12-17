@@ -8,23 +8,13 @@ import {
 } from "./_components/ui/page";
 import Footer from "./_components/footer";
 import { Alert, AlertTitle } from "./_components/ui/alert";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import BarberItem from "./_components/barber-item";
+import { verifySession } from "@/utils/verifySession";
 
 const Home = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
-  const user = session?.user.id
-    ? await prisma.userSubscription.findUnique({
-        where: {
-          userId: session.user.id,
-        },
-        include: {
-          plan: true,
-        },
-      })
-    : null;
+  const user = await verifySession();
+  // const user = session?.user.id
 
   const recommendedBarbershops = await prisma.barber.findMany({
     include: {
@@ -55,12 +45,12 @@ const Home = async () => {
     <main>
       <Header />
       <div className="mx-auto px-12">
-        <Alert variant={session ? "success" : "warn"} className="mb-2">
+        <Alert variant={user ? "success" : "warn"} className="mb-2">
           <AlertTitle className="flex items-center gap-4">
-            {session?.user.name ? (
+            {user?.name ? (
               <>
                 <CheckCircleIcon />
-                <p>Logado com sucesso: Olá, + {session.user.name}!</p>
+                <p>Logado com sucesso: Olá, + {user.name}!</p>
               </>
             ) : (
               <>
@@ -70,7 +60,7 @@ const Home = async () => {
             )}
           </AlertTitle>
         </Alert>
-        <Alert
+        {/* <Alert
           variant={user?.status === "ACTIVE" ? "success" : "destructive"}
           className="mb-2"
         >
@@ -87,7 +77,7 @@ const Home = async () => {
               </>
             )}
           </AlertTitle>
-        </Alert>
+        </Alert> */}
         <Alert variant={"warn"} className="mb-2">
           <AlertTitle className="flex items-center gap-4">
             <TriangleAlertIcon />

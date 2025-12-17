@@ -4,6 +4,6 @@ if (process.env.STRIPE_SECRET_KEY === undefined) {
   throw new Error("Stripe secret key is not configured.");
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-07-30.basil",
+export const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2025-11-17.clover",
 });

@@ -41,6 +41,7 @@ model User {
   email         String   @unique
   emailVerified Boolean  @default(false)
   role          userRole @default(USER)
+  stripeCustomerId String? @unique
   passwordHash  String?
 
   image     String?
@@ -48,11 +49,12 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt
 
   // Relations
-  sessions          Session[]
-  accounts          Account[]
-  bookings          Booking[]
-  barberProfile     Barber?            @relation("BarberAccount")
-  userSubscriptions UserSubscription[]
+  sessions      Session[]
+  accounts      Account[]
+  bookings      Booking[]
+  barberProfile Barber?   @relation("BarberAccount")
+
+  subscription     Subscription?
 
   @@map("user")
 }
@@ -69,6 +71,7 @@ model Session {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("session")
 }
 
@@ -89,6 +92,7 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
   @@map("account")
 }
 
@@ -100,6 +104,7 @@ model Verification {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
 
+  @@index([identifier])
   @@map("verification")
 }
 
@@ -140,42 +145,37 @@ model BarberService {
 // SUBSCRIPTION MODELS
 // ========================================================
 
-model SubscriptionPlan {
-  id           String @id @default(uuid())
-  name         String
-  description  String
-  priceInCents Int
+model Subscription {
+  id                   String    @id
+  plan                 String
+  referenceId          String
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  status               String?   @default("incomplete")
+  periodStart          DateTime?
+  periodEnd            DateTime?
+  trialStart           DateTime?
+  trialEnd             DateTime?
+  cancelAtPeriodEnd    Boolean?  @default(false)
+  seats                Int?
+  userId               String    @unique
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userSubscriptions UserSubscription[]
+  @@index([userId])
+  @@map("subscription")
 }
 
-model UserSubscription {
+model SubscriptionPlan {
   id String @id @default(uuid())
-
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  planId String
-  plan   SubscriptionPlan @relation(fields: [planId], references: [id])
-
-  stripeSubscriptionId String  @unique
-  stripeEventId        String
-  stripeChargeId       String?
-
-  status SubscriptionStatus @default(ACTIVE)
-
-  currentPeriodStart DateTime
-  currentPeriodEnd   DateTime?
-
-  bookings Booking[]
+  name String
+  description String
+  priceInCents Int
+  stripePriceId String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([userId])
+  @@map("subscription_plan")
 }
 
 // ========================================================
@@ -206,8 +206,7 @@ model Booking {
 
   // Subscription (optional)
   userSubscriptionId   String?
-  userSubscription     UserSubscription? @relation(fields: [userSubscriptionId], references: [id])
-  paidWithSubscription Boolean           @default(false)
+  paidWithSubscription Boolean @default(false)
 
   // Payment
   stripeChargeId String?

@@ -6,7 +6,7 @@ import { PageContainer, PageSection } from "../_components/ui/page";
 import { Separator } from "../_components/ui/separator";
 
 export default async function SignaturePage() {
-  const signatures = await prisma.subscriptionPlan.findMany();
+  const plans = await prisma.subscriptionPlan.findMany();
 
   return (
     <>
@@ -17,8 +17,8 @@ export default async function SignaturePage() {
       <PageContainer>
         <HeaderTitle>Assinaturas</HeaderTitle>
         <PageSection>
-          {signatures.map((signature) => {
-            return <SignatureItem key={signature.id} signature={signature} />;
+          {plans.map((plan) => {
+            return <SignatureItem key={plan.id} signature={plan} />;
           })}
         </PageSection>
       </PageContainer>

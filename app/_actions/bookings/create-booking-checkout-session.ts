@@ -3,7 +3,7 @@
 import { actionClient } from "@/lib/actionClient";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe-client";
+import { stripeClient } from "@/lib/stripe-client";
 import { format } from "date-fns";
 import { returnValidationErrors } from "next-safe-action";
 import { headers } from "next/headers";
@@ -49,7 +49,7 @@ export const createBookingCheckoutSession = actionClient
       });
     }
 
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSession = await stripeClient.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/bookings`,

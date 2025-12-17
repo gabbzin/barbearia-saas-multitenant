@@ -14,5 +14,6 @@ export async function verifySession() {
     id: session.user.id,
     name: session.user.name,
     email: session.user.email,
+    role: session.user.role,
   };
 }

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripe-client";
+import { stripeClient } from "@/lib/stripe-client";
 import { revalidatePath } from "next/cache";
 import Stripe from "stripe";
 
@@ -31,7 +31,7 @@ export async function handleCheckoutCompleted(
       return { ok: false };
     }
 
-    const expandedSession = await stripe.checkout.sessions.retrieve(
+    const expandedSession = await stripeClient.checkout.sessions.retrieve(
       session.id,
       {
         expand: ["payment_intent"],

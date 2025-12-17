@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import type { SubscriptionPlan } from "@prisma/client";
 import { Badge } from "../ui/badge";
 import { useAction } from "next-safe-action/hooks";
-import { createSignature } from "@/app/_actions/create-signature";
+import { createSignature } from "@/app/_actions/signatures/create-signature";
 import { toast } from "sonner";
 
 type SignatureItemProps = {
@@ -22,8 +22,8 @@ const SignatureItem = ({ signature }: SignatureItemProps) => {
   const handleConfirm = async () => {
     const data = {
       signatureId: signature.id,
-      date: new Date(),
     };
+
     const result = await executeAsync(data);
 
     if (result.serverError || result.validationErrors) {
