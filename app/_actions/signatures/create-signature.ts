@@ -63,7 +63,6 @@ export const createSignature = actionClient
     } else {
       customerConfig = {
         customer_email: user.email,
-        customer_creation: "always",
       };
     }
 
@@ -75,7 +74,7 @@ export const createSignature = actionClient
         subscription_data: {
           metadata: {
             userId: user.id,
-            localPlanId: signature.id,
+            planId: signature.id,
           },
         },
         line_items: [

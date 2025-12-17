@@ -14,33 +14,28 @@ import { verifySession } from "@/utils/verifySession";
 
 const Home = async () => {
   const user = await verifySession();
-  // const user = session?.user.id
 
-  const recommendedBarbershops = await prisma.barber.findMany({
+  const userRound = await prisma.user.findUnique({
+    where: {
+      id: user?.id,
+    },
     include: {
-      user: true,
+      subscription: true,
     },
   });
 
-  const popularBarbershops = await prisma.barber.findMany({
+  const barbers = await prisma.barber.findMany({
     include: {
       user: true,
     },
   });
 
   // Ordenar no JavaScript após buscar os dados
-  recommendedBarbershops.sort((a, b) => {
+  barbers.sort((a, b) => {
     const nameA = a.user?.name ?? "";
     const nameB = b.user?.name ?? "";
     return nameA.localeCompare(nameB);
   });
-
-  popularBarbershops.sort((a, b) => {
-    const nameA = a.user?.name ?? "";
-    const nameB = b.user?.name ?? "";
-    return nameB.localeCompare(nameA);
-  });
-
   return (
     <main>
       <Header />
@@ -60,15 +55,15 @@ const Home = async () => {
             )}
           </AlertTitle>
         </Alert>
-        {/* <Alert
-          variant={user?.status === "ACTIVE" ? "success" : "destructive"}
+        <Alert
+          variant={userRound?.stripeCustomerId ? "success" : "destructive"}
           className="mb-2"
         >
           <AlertTitle className="flex items-center gap-4">
-            {user && user.status === "ACTIVE" ? (
+            {userRound?.stripeCustomerId ? (
               <>
                 <CheckCircleIcon />
-                <p>Você é assinante do plano {user.plan.name}</p>
+                <p>Você é assinante do plano {userRound?.subscription?.plan}</p>
               </>
             ) : (
               <>
@@ -77,7 +72,7 @@ const Home = async () => {
               </>
             )}
           </AlertTitle>
-        </Alert> */}
+        </Alert>
         <Alert variant={"warn"} className="mb-2">
           <AlertTitle className="flex items-center gap-4">
             <TriangleAlertIcon />
@@ -104,23 +99,7 @@ const Home = async () => {
         <PageSection>
           <PageSectionTitle>Barbeiros</PageSectionTitle>
           <PageSectionScroller>
-            {recommendedBarbershops.map((barber) => (
-              <BarberItem
-                key={barber.id}
-                barber={{
-                  id: barber.id,
-                  name: barber.user?.name ?? "Barbeiro",
-                  imageUrl: barber.imageUrl,
-                }}
-              />
-            ))}
-          </PageSectionScroller>
-        </PageSection>
-
-        <PageSection>
-          <PageSectionTitle>Recomendados</PageSectionTitle>
-          <PageSectionScroller>
-            {popularBarbershops.map((barber) => (
+            {barbers.map((barber) => (
               <BarberItem
                 key={barber.id}
                 barber={{
