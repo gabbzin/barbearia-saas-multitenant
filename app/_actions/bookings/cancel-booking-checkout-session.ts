@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { stripeClient } from "@/lib/stripe-client";
 import { returnValidationErrors } from "next-safe-action";
 import { headers } from "next/headers";
-import { success, z } from "zod";
+import { z } from "zod";
 
 const inputSchema = z.object({
   bookingId: z.uuid(),
@@ -44,7 +44,7 @@ export const cancelBookingCheckoutSession = actionClient
     }
 
     try {
-      const refund = await stripeClient.refunds.create({
+      await stripeClient.refunds.create({
         charge: booking.stripeChargeId,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
