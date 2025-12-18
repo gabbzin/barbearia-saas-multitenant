@@ -95,7 +95,7 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
         create: {
           id: subscriptionId,
           userId: userId,
-          plan: planId,
+          plan: planId || "",
           referenceId: subscription.id,
           stripeCustomerId: subscription.customer as string,
           stripeSubscriptionId: subscription.id,
@@ -110,6 +110,7 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
           periodEnd: periodEnd,
           stripeSubscriptionId: subscription.id,
           cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          ...(planId ? { plan: planId } : {}),
         },
       }),
 
