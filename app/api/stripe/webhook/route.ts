@@ -2,6 +2,7 @@ import { stripeClient } from "@/lib/stripe-client";
 import { NextResponse } from "next/server";
 import { handleCheckoutCompleted } from "./handlers/handleCheckoutCompleted";
 import { handleSignatureCompleted } from "./handlers/handleSignatureCompleted";
+import { handleSignatureDeleted } from "./handlers/handleSignatureDeleted";
 
 export const POST = async (request: Request) => {
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
@@ -24,12 +25,24 @@ export const POST = async (request: Request) => {
 
   // Validando os eventos
   switch (event.type) {
+    // Finalização do checkout
     case "checkout.session.completed": {
       await handleCheckoutCompleted(event);
       break;
     }
-    case "customer.subscription.created": {
+    // Assinatura criada ou atualizada
+    case "invoice.payment_succeeded":
+    case "customer.subscription.created":
+    case "customer.subscription.updated": {
       await handleSignatureCompleted(event);
+      break;
+    }
+    case "customer.subscription.deleted": {
+      await handleSignatureDeleted(event);
+      break;
+    }
+    case "charge.refunded": {
+      await handleRefund(event);
       break;
     }
   }

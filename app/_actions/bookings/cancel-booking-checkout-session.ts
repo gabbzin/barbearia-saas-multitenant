@@ -1,0 +1,58 @@
+"use server";
+
+import { actionClient } from "@/lib/actionClient";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { stripeClient } from "@/lib/stripe-client";
+import { returnValidationErrors } from "next-safe-action";
+import { headers } from "next/headers";
+import { success, z } from "zod";
+
+const inputSchema = z.object({
+  bookingId: z.uuid(),
+});
+
+export const cancelBookingCheckoutSession = actionClient
+  .inputSchema(inputSchema)
+  .action(async ({ parsedInput: { bookingId } }) => {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) {
+      return returnValidationErrors(inputSchema, {
+        _errors: ["Unauthorized"],
+      });
+    }
+
+    const booking = await prisma.booking.findUnique({
+      where: {
+        id: bookingId,
+      },
+    });
+
+    if (!booking || booking.stripeChargeId === null) {
+      return returnValidationErrors(inputSchema, {
+        _errors: ["Booking not found"],
+      });
+    }
+
+    if (booking.userId !== session!.user.id) {
+      return returnValidationErrors(inputSchema, {
+        _errors: ["Unauthorized"],
+      });
+    }
+
+    try {
+      const refund = await stripeClient.refunds.create({
+        charge: booking.stripeChargeId,
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      return returnValidationErrors(inputSchema, {
+        _errors: [err.message || "Erro ao processar reembolso"],
+      });
+    }
+
+    return { success: true };
+  });

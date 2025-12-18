@@ -36,13 +36,13 @@ enum userRole {
 // ========================================================
 
 model User {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  emailVerified Boolean  @default(false)
-  role          userRole @default(USER)
-  stripeCustomerId String? @unique
-  passwordHash  String?
+  id               String   @id @default(uuid())
+  name             String
+  email            String   @unique
+  emailVerified    Boolean  @default(false)
+  role             userRole @default(USER)
+  stripeCustomerId String?  @unique
+  passwordHash     String?
 
   image     String?
   createdAt DateTime @default(now())
@@ -54,7 +54,7 @@ model User {
   bookings      Booking[]
   barberProfile Barber?   @relation("BarberAccount")
 
-  subscription     Subscription?
+  subscription Subscription?
 
   @@map("user")
 }
@@ -150,7 +150,7 @@ model Subscription {
   plan                 String
   referenceId          String
   stripeCustomerId     String?
-  stripeSubscriptionId String?
+  stripeSubscriptionId String?   @unique
   status               String?   @default("incomplete")
   periodStart          DateTime?
   periodEnd            DateTime?
@@ -166,10 +166,10 @@ model Subscription {
 }
 
 model SubscriptionPlan {
-  id String @id @default(uuid())
-  name String
-  description String
-  priceInCents Int
+  id            String @id @default(uuid())
+  name          String
+  description   String
+  priceInCents  Int
   stripePriceId String @unique
 
   createdAt DateTime @default(now())
@@ -209,7 +209,7 @@ model Booking {
   paidWithSubscription Boolean @default(false)
 
   // Payment
-  stripeChargeId String?
+  stripeChargeId String? @unique
   stripeEventId  String? @unique
 
   // Timestamps
