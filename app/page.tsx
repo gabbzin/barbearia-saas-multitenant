@@ -1,6 +1,7 @@
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/services/barbers.service";
-import { isSubscriber, verifySession } from "@/services/user.service";
+import { verifySession } from "@/services/user.service";
+import { getCurrentSubscriptionAction } from "./_actions/signatures/get-current-subscription";
 import BarberItem from "./_components/barber-item";
 import Footer from "./_components/footer";
 import Header from "./_components/header";
@@ -16,7 +17,7 @@ const Home = async () => {
   const user = await verifySession();
 
   const barbers = await getBarbers();
-  const plan = await isSubscriber(user?.id);
+  const plan = await getCurrentSubscriptionAction();
 
   // Ordenar no JavaScript após buscar os dados
   barbers.sort((a, b) => {
@@ -43,9 +44,12 @@ const Home = async () => {
             )}
           </AlertTitle>
         </Alert>
-        <Alert variant={plan ? "success" : "destructive"} className="mb-2">
+        <Alert
+          variant={plan.isSubscriber ? "success" : "destructive"}
+          className="mb-2"
+        >
           <AlertTitle className="flex items-center gap-4">
-            {plan ? (
+            {plan.isSubscriber ? (
               <>
                 <CheckCircleIcon />
                 <p>Você é assinante do plano {plan.name}</p>

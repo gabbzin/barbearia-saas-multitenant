@@ -1,13 +1,12 @@
 "use server";
 
 import { format } from "date-fns";
-import { headers } from "next/headers";
 import { returnValidationErrors } from "next-safe-action";
 import z from "zod";
 import { actionClient } from "@/lib/actionClient";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { stripeClient } from "@/lib/stripe-client";
+import { verifySession } from "@/services/user.service";
 
 const inputSchema = z.object({
   serviceId: z.uuid(),
@@ -22,9 +21,9 @@ export const createBookingCheckoutSession = actionClient
     }),
   )
   .action(async ({ parsedInput: { serviceId, date } }) => {
-    const session = await auth.api.getSession({ headers: await headers() });
+    const session = await verifySession();
 
-    if (!session || !session.user) {
+    if (!session) {
       returnValidationErrors(inputSchema, {
         _errors: ["Não autorizado."],
       });
@@ -50,6 +49,7 @@ export const createBookingCheckoutSession = actionClient
     }
 
     const checkoutSession = await stripeClient.checkout.sessions.create({
+      customer_email: session.email,
       payment_method_types: ["card"],
       mode: "payment",
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/bookings`,
@@ -57,7 +57,7 @@ export const createBookingCheckoutSession = actionClient
       metadata: {
         serviceId: serviceId,
         barberId: service.barber.id,
-        userId: session.user.id,
+        userId: session.id,
         date: date.toISOString(),
       },
       line_items: [

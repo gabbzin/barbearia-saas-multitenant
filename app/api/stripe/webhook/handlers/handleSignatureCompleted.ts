@@ -34,7 +34,7 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
       }
 
       if (!subscriptionId) {
-        if ("subscription" in invoice && invoice["subscription"]) {
+        if ("subscription" in invoice && invoice.subscription) {
           subscriptionId = invoice.subscription as string;
         } else {
           return {

@@ -26,9 +26,14 @@ interface AppointmentSheetProps {
       user: User;
     };
   };
+  isSubscriber?: boolean;
 }
 
-const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
+const AppointmentSheet = ({
+  setSheetOpen,
+  service,
+  isSubscriber,
+}: AppointmentSheetProps) => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
@@ -53,6 +58,7 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
       queryFn: async () => {
         const result = await getDateAvailableTimeSlots({
           barberId: service.barberId,
+          // biome-ignore lint/style/noNonNullAssertion: <Sempre vai ter valor aqui>
           date: selectedDate!,
         });
 
@@ -87,6 +93,7 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
   const handleConfirm = async () => {
     if (!selectedDate || !selectedTime) return;
 
+    // biome-ignore lint/suspicious/noImplicitAnyLet: <Não precisa, por enquanto>
     let result;
 
     const timeSplitted = selectedTime.split(":");
@@ -97,7 +104,7 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
 
     date.setHours(Number(hours), Number(minutes), 0, 0);
 
-    if (payMethod === "cartao") {
+    if (payMethod === "cartao" && !isSubscriber) {
       result = await executeCheckoutAsync({
         serviceId: service.id,
         date,
@@ -164,7 +171,7 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
                     variant={selectedTime === time ? "default" : "secondary"}
                     size={"sm"}
                     onClick={() => setSelectedTime(time)}
-                    disabled={isPastTimeSlot(time, selectedDate!)}
+                    disabled={isPastTimeSlot(time, selectedDate)}
                   >
                     {time}
                   </Button>
@@ -213,7 +220,7 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
                 )}
 
                 <div className="flex items-center justify-between text-muted-foreground text-sm">
-                  <p>Barbearia</p>
+                  <p>Barbeiro</p>
                   <p>{service.barber.user.name}</p>
                 </div>
               </div>

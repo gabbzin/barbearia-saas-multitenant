@@ -37,7 +37,7 @@ const BookingItem = ({ booking, status }: BookingItemProps) => {
           <Badge
             variant={
               status === "confirmed"
-                ? "default"
+                ? "success"
                 : status === "cancelled"
                   ? "destructive"
                   : "secondary"

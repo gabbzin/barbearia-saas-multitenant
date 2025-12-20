@@ -3,6 +3,7 @@
 import type { Barber, BarberService, User } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
+import { useGetSubscription } from "@/queries/get-subscription-user";
 import { convertBRL } from "@/utils/convertBRL";
 import AppointmentSheet from "./appointment-sheet";
 import { Button } from "./ui/button";
@@ -20,6 +21,8 @@ export function ServiceItem({ service }: ServiceItemProps) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const priceInReais = convertBRL(service.priceInCents);
+
+  const { data } = useGetSubscription();
 
   return (
     <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
@@ -55,7 +58,11 @@ export function ServiceItem({ service }: ServiceItemProps) {
           </div>
         </div>
       </div>
-      <AppointmentSheet setSheetOpen={setSheetOpen} service={service} />
+      <AppointmentSheet
+        setSheetOpen={setSheetOpen}
+        service={service}
+        isSubscriber={data?.isSubscriber}
+      />
     </Sheet>
   );
 }

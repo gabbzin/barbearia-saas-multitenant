@@ -5,6 +5,11 @@ import { cache } from "react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+const PLAN = {
+  isSubscriber: false,
+  name: null,
+};
+
 export const verifySession = cache(async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -27,15 +32,20 @@ type SubscriptionInfo = {
   name: string | null;
 };
 
+export const getCurrentSubscription = cache(async () => {
+  const session = await verifySession();
+  
+  if (!session) {
+    return PLAN;
+  }
+
+  return isSubscriber(session.id);
+});
+
 export const isSubscriber = cache(
   async (userId: string | undefined): Promise<SubscriptionInfo> => {
-    const plan = {
-      isSubscriber: false,
-      name: null,
-    };
-
     if (!userId) {
-      return plan;
+      return PLAN;
     }
     const userRound = await prisma.user.findUnique({
       where: {
@@ -48,6 +58,6 @@ export const isSubscriber = cache(
 
     return userRound?.subscription
       ? { isSubscriber: true, name: userRound.subscription.plan }
-      : plan;
+      : PLAN;
   },
 );
