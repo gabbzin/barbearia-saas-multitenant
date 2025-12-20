@@ -1,14 +1,10 @@
 import Image from "next/image";
-import { prisma } from "@/lib/prisma";
+import { getBarbers } from "@/services/barbers.service";
 import { SidebarMenu } from "./sidebar-menu";
 import { AnimatedThemeToggler } from "./ui/animated-theme-toggler";
 
 const Header = async () => {
-  const barbers = await prisma.barber.findMany({
-    include: {
-      user: true,
-    },
-  }); // Ajustar para pegar de user, as características do barbeiro estão em user
+  const barbers = await getBarbers();
 
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between border-b-2 bg-background px-5 py-6">
@@ -39,7 +35,7 @@ const Header = async () => {
           </Link>
         </Button> */}
         <AnimatedThemeToggler />
-        <SidebarMenu barbers={barbers} />
+        <SidebarMenu barbers={barbers} isSubscriber={true} />
       </div>
     </header>
   );

@@ -6,7 +6,7 @@ import z from "zod";
 import { actionClient } from "@/lib/actionClient";
 import { prisma } from "@/lib/prisma";
 import { stripeClient } from "@/lib/stripe-client";
-import { verifySession } from "@/utils/verifySession";
+import { verifySession } from "@/services/user.service";
 
 const inputSchema = z.object({
   signatureId: z.uuid(),

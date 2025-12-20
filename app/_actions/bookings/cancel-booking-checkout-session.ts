@@ -37,7 +37,7 @@ export const cancelBookingCheckoutSession = actionClient
       });
     }
 
-    if (booking.userId !== session!.user.id) {
+    if (booking.userId !== session.user.id) {
       return returnValidationErrors(inputSchema, {
         _errors: ["Unauthorized"],
       });
@@ -47,7 +47,7 @@ export const cancelBookingCheckoutSession = actionClient
       await stripeClient.refunds.create({
         charge: booking.stripeChargeId,
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: <Erro não tem tipagem explicita>
     } catch (err: any) {
       return returnValidationErrors(inputSchema, {
         _errors: [err.message || "Erro ao processar reembolso"],

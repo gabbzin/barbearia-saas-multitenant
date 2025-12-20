@@ -1,11 +1,10 @@
 "use server";
 
-import { headers } from "next/headers";
 import { returnValidationErrors } from "next-safe-action";
 import { z } from "zod";
 import { actionClient } from "@/lib/actionClient";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { verifySession } from "@/services/user.service";
 
 const inputSchema = z.object({
   serviceId: z.uuid(),
@@ -15,10 +14,9 @@ const inputSchema = z.object({
 export const createBooking = actionClient
   .inputSchema(inputSchema)
   .action(async ({ parsedInput: { serviceId, date } }) => {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-    if (!session?.user) {
+    const user = await verifySession();
+
+    if (!user) {
       return returnValidationErrors(inputSchema, {
         _errors: [
           "Você não tem autorização para realizar agendamentos. Faça login.",
@@ -60,7 +58,7 @@ export const createBooking = actionClient
     const booking = await prisma.booking.create({
       data: {
         barberId: service.barberId,
-        userId: session!.user.id,
+        userId: user.id,
         serviceId: serviceId,
         date,
         priceInCents: service.priceInCents,

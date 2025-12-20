@@ -17,6 +17,7 @@ interface CancelAlertDialogProps {
   title: string;
   description?: string;
   cancelButtonText?: string;
+  children?: React.ReactNode;
 }
 
 export default function CancelAlertDialog({
@@ -25,13 +26,18 @@ export default function CancelAlertDialog({
   title,
   description,
   cancelButtonText,
+  children,
 }: CancelAlertDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="flex-1 rounded-full">
-          {title}
-        </Button>
+        {children ? (
+          children
+        ) : (
+          <Button variant="destructive" className="flex-1 rounded-full">
+            {title}
+          </Button>
+        )}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

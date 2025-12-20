@@ -38,11 +38,12 @@ const ROUTES = [
   { name: "Assinatura", path: "/signature", icon: CreditCard },
 ];
 
-export const SidebarMenu = ({
-  barbers,
-}: {
+interface SidebarMenuProps {
   barbers: (Barber & { user: User | null })[];
-}) => {
+  isSubscriber: boolean;
+}
+
+export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
   const { data: session } = authClient.useSession();
   const { push } = useRouter();
 
@@ -138,24 +139,36 @@ export const SidebarMenu = ({
 
         <Separator className="mt-4" />
 
-        {session && (
-          <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 rounded-full px-5 py-3"
-            onClick={handleLogout}
-          >
-            <LogOut className="size-4" />
-            <span className="font-medium text-sm">Sair da conta</span>
-          </Button>
-        )}
+        <div className="flex flex-col">
+          {session && (
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3 rounded-full px-5 py-3"
+              onClick={handleLogout}
+            >
+              <LogOut className="size-4" />
+              <span className="font-medium text-sm">Sair da conta</span>
+            </Button>
+          )}
 
-        <CancelAlertDialog
-          handleCancel={() => {}}
-          isLoading={false}
-          title="Cancelar Assinatura"
-          description="Tem certeza que deseja cancelar sua assinatura? Esta ação não pode ser desfeita."
-          cancelButtonText="Não, manter assinatura"
-        />
+          {isSubscriber && (
+            <CancelAlertDialog
+              handleCancel={() => {}}
+              isLoading={false}
+              title="Cancelar Assinatura"
+              description="Tem certeza que deseja cancelar sua assinatura? Esta ação não pode ser desfeita."
+              cancelButtonText="Não, manter assinatura"
+            >
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-3 rounded-full px-5 py-3"
+              >
+                <LogOut className="size-4" />
+                <span className="font-medium text-sm">Cancelar Assinatura</span>
+              </Button>
+            </CancelAlertDialog>
+          )}
+        </div>
       </SheetContent>
     </Sheet>
   );
