@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { stripeClient } from "@/lib/stripe-client";
 import { handleCheckoutCompleted } from "./handlers/handleCheckoutCompleted";
+import { handleRefund } from "./handlers/handleRefund";
 import { handleSignatureCompleted } from "./handlers/handleSignatureCompleted";
 import { handleSignatureDeleted } from "./handlers/handleSignatureDeleted";
 
@@ -30,11 +31,13 @@ export const POST = async (request: Request) => {
       await handleCheckoutCompleted(event);
       break;
     }
-    // Assinatura criada ou atualizada
-    case "invoice.payment_succeeded":
-    case "customer.subscription.created":
-    case "customer.subscription.updated": {
+    // Assinatura criada
+    case "customer.subscription.created": {
       await handleSignatureCompleted(event);
+      break;
+    }
+    case "customer.subscription.updated": {
+      // await handleSignatureUpdated(event);
       break;
     }
     case "customer.subscription.deleted": {

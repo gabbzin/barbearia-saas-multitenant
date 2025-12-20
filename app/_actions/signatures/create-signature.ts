@@ -30,7 +30,7 @@ export const createSignature = actionClient
     const hasActiveSubscription = await prisma.subscription.findFirst({
       where: {
         userId: user.id,
-        status: SubscriptionStatus.ACTIVE.toLowerCase(),
+        status: SubscriptionStatus.ACTIVE,
       },
     });
 
@@ -40,7 +40,7 @@ export const createSignature = actionClient
       });
     }
 
-    const signature = await prisma.subscriptionPlan.findUnique({
+    const signature = await prisma.plan.findUnique({
       where: {
         id: signatureId,
       },
@@ -79,7 +79,9 @@ export const createSignature = actionClient
         },
         line_items: [
           {
-            price: signature.stripePriceId,
+            price: signature.stripePriceId
+              ? signature.stripePriceId
+              : undefined,
             quantity: 1,
           },
         ],

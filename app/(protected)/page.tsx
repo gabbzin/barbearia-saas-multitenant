@@ -1,17 +1,17 @@
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/services/barbers.service";
 import { verifySession } from "@/services/user.service";
-import { getCurrentSubscriptionAction } from "./_actions/signatures/get-current-subscription";
-import BarberItem from "./_components/barber-item";
-import Footer from "./_components/footer";
-import Header from "./_components/header";
-import { Alert, AlertTitle } from "./_components/ui/alert";
+import { getCurrentSubscriptionAction } from "../_actions/signatures/get-current-subscription";
+import BarberItem from "../_components/barber-item";
+import Footer from "../_components/footer";
+import Header from "../_components/header";
+import { Alert, AlertTitle } from "../_components/ui/alert";
 import {
   PageContainer,
   PageSection,
   PageSectionScroller,
   PageSectionTitle,
-} from "./_components/ui/page";
+} from "../_components/ui/page";
 
 const Home = async () => {
   const user = await verifySession();
@@ -44,15 +44,12 @@ const Home = async () => {
             )}
           </AlertTitle>
         </Alert>
-        <Alert
-          variant={plan.isSubscriber ? "success" : "destructive"}
-          className="mb-2"
-        >
+        <Alert variant={plan ? "success" : "destructive"} className="mb-2">
           <AlertTitle className="flex items-center gap-4">
-            {plan.isSubscriber ? (
+            {plan ? (
               <>
                 <CheckCircleIcon />
-                <p>Você é assinante do plano {plan.name}</p>
+                <p>Você está incluso no {plan.name}!</p>
               </>
             ) : (
               <>
@@ -66,7 +63,7 @@ const Home = async () => {
           <AlertTitle className="flex items-center gap-4">
             <TriangleAlertIcon />
             <p>
-              O sistema está em fase alpha, para realizar agendamentos é
+              O sistema está em fase beta, para realizar agendamentos é
               necessário estar logado.
             </p>
           </AlertTitle>

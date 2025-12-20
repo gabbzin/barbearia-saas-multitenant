@@ -22,17 +22,24 @@ export const auth = betterAuth({
       role: {
         type: "string",
       },
+      stripeCustomerId: {
+        type: "string",
+      },
     },
   },
 
   plugins: [
     stripe({
       stripeClient,
-      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET as string,
       createCustomerOnSignUp: true,
       subscription: {
         enabled: true,
         plans: [
+          {
+            name: "FREE",
+            priceId: "",
+          },
           {
             name: "Corte ilimitado",
             priceId: "price_1Sf3aPLZmTtv3cllAd2ewhDQ",

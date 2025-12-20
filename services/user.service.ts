@@ -6,7 +6,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const PLAN = {
-  isSubscriber: false,
+  isSubscriberPlanNotFree: false,
   name: null,
 };
 
@@ -28,13 +28,13 @@ export const verifySession = cache(async () => {
 });
 
 type SubscriptionInfo = {
-  isSubscriber: boolean;
+  isSubscriberPlanNotFree: boolean;
   name: string | null;
 };
 
 export const getCurrentSubscription = cache(async () => {
   const session = await verifySession();
-  
+
   if (!session) {
     return PLAN;
   }
@@ -51,13 +51,24 @@ export const isSubscriber = cache(
       where: {
         id: userId,
       },
-      include: {
-        subscription: true,
+      select: {
+        subscription: {
+          select: {
+            plan: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
     return userRound?.subscription
-      ? { isSubscriber: true, name: userRound.subscription.plan }
+      ? {
+          isSubscriberPlanNotFree: userRound.subscription.plan.name !== "FREE",
+          name: userRound.subscription.plan.name,
+        }
       : PLAN;
   },
 );
