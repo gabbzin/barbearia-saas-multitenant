@@ -36,15 +36,21 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
       },
     );
 
-    const latestInvoice = subscription.latest_invoice as Stripe.Invoice;
+    let periodStart: Date;
+    let periodEnd: Date | null = null;
 
-    const periodStart = latestInvoice.lines.data[0].period?.start
-      ? new Date(latestInvoice.lines.data[0].period.start * 1000)
-      : new Date(subscription.start_date * 1000);
-
-    const periodEnd = latestInvoice.lines.data[0].period?.end
-      ? new Date(latestInvoice.lines.data[0].period.end * 1000)
-      : null;
+    if (
+      subscription.latest_invoice &&
+      typeof subscription.latest_invoice === "object" &&
+      "lines" in subscription.latest_invoice &&
+      subscription.latest_invoice.lines.data.length > 0
+    ) {
+      const line = subscription.latest_invoice.lines.data[0];
+      periodStart = new Date(line.period.start * 1000);
+      periodEnd = new Date(line.period.end * 1000);
+    } else {
+      periodStart = new Date(subscription.start_date * 1000);
+    }
 
     // Validação dos metadados da assinatura
     if (!userId && subscription.metadata?.userId) {
@@ -64,24 +70,46 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
       return { ok: false, error: "Plan ID missing" };
     }
 
+    const mappedStatus =
+      subscription.status === "active" || subscription.status === "trialing"
+        ? "ACTIVE"
+        : subscription.status === "canceled"
+          ? "CANCELLED"
+          : "INCOMPLETE";
+
+    const stripeCustomerId = subscription.customer as string;
+
     await prisma.$transaction([
-      prisma.subscription.update({
+      prisma.subscription.upsert({
         where: { userId },
-        data: {
-          status: "ACTIVE",
-          planId: planId,
-          periodStart: periodStart,
-          periodEnd: periodEnd,
+        update: {
+          status: mappedStatus,
+          planId,
+          periodStart,
+          periodEnd,
           stripeSubscriptionId: subscription.id,
           cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          stripeCustomerId,
+        },
+        create: {
+          status: mappedStatus,
+          userId,
+          planId: planId,
+          periodStart,
+          periodEnd,
+          stripeSubscriptionId: subscription.id,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          stripeCustomerId,
         },
       }),
 
       prisma.user.update({
         where: { id: userId },
-        data: { stripeCustomerId: subscription.customer as string },
+        data: { stripeCustomerId },
       }),
     ]);
+    revalidatePath("/dashboard");
+    return { ok: true };
   } catch (error) {
     console.error(
       "Erro ao processar evento de finalização de checkout:",
@@ -92,7 +120,4 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
       error: "Erro ao processar evento de finalização de checkout",
     };
   }
-
-  revalidatePath("/dashboard");
-  return { ok: true };
 }

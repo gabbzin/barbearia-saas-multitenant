@@ -6,7 +6,13 @@ import { PageContainer, PageSection } from "../_components/ui/page";
 import { Separator } from "../_components/ui/separator";
 
 export default async function SignaturePage() {
-  const plans = await prisma.subscriptionPlan.findMany();
+  const plans = await prisma.plan.findMany({
+    where: {
+      NOT: {
+        name: "FREE",
+      },
+    },
+  });
 
   return (
     <>
@@ -18,7 +24,7 @@ export default async function SignaturePage() {
         <HeaderTitle>Assinaturas</HeaderTitle>
         <PageSection>
           {plans.map(plan => {
-            return <SignatureItem key={plan.id} signature={plan} />;
+            return <SignatureItem key={plan.id} plan={plan} />;
           })}
         </PageSection>
       </PageContainer>

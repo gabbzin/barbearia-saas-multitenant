@@ -1,6 +1,5 @@
 "use server";
 
-import { SubscriptionStatus } from "@prisma/client";
 import { returnValidationErrors } from "next-safe-action";
 import z from "zod";
 import { actionClient } from "@/lib/actionClient";
@@ -9,12 +8,12 @@ import { stripeClient } from "@/lib/stripe-client";
 import { verifySession } from "@/services/user.service";
 
 const inputSchema = z.object({
-  signatureId: z.uuid(),
+  planId: z.uuid().or(z.string()),
 });
 
 export const createSignature = actionClient
   .inputSchema(inputSchema)
-  .action(async ({ parsedInput: { signatureId } }) => {
+  .action(async ({ parsedInput: { planId } }) => {
     if (!process.env.STRIPE_SECRET_KEY) {
       throw new Error("Stripe secret key is not configured.");
     }
@@ -30,7 +29,7 @@ export const createSignature = actionClient
     const hasActiveSubscription = await prisma.subscription.findFirst({
       where: {
         userId: user.id,
-        status: SubscriptionStatus.ACTIVE,
+        planId: planId,
       },
     });
 
@@ -40,13 +39,13 @@ export const createSignature = actionClient
       });
     }
 
-    const signature = await prisma.plan.findUnique({
+    const plan = await prisma.plan.findUnique({
       where: {
-        id: signatureId,
+        id: planId,
       },
     });
 
-    if (!signature) {
+    if (!plan) {
       return returnValidationErrors(inputSchema, {
         _errors: ["Assinatura não encontrada."],
       });
@@ -74,21 +73,19 @@ export const createSignature = actionClient
         subscription_data: {
           metadata: {
             userId: user.id,
-            planId: signature.id,
+            planId: plan.id,
           },
         },
         line_items: [
           {
-            price: signature.stripePriceId
-              ? signature.stripePriceId
-              : undefined,
+            price: plan.stripePriceId ? plan.stripePriceId : undefined,
             quantity: 1,
           },
         ],
 
         metadata: {
           userId: user.id,
-          planId: signature.id,
+          planId: plan.id,
         },
 
         success_url: `${process.env.NEXT_PUBLIC_BASE_URL}`, // Criar a página de sucesso

@@ -34,7 +34,7 @@ const Home = async () => {
             {user?.name ? (
               <>
                 <CheckCircleIcon />
-                <p>Logado com sucesso: Olá, + {user.name}!</p>
+                <p>Logado com sucesso: Olá, {user.name}!</p>
               </>
             ) : (
               <>
@@ -44,9 +44,12 @@ const Home = async () => {
             )}
           </AlertTitle>
         </Alert>
-        <Alert variant={plan ? "success" : "destructive"} className="mb-2">
+        <Alert
+          variant={plan.hasPlan ? "success" : "destructive"}
+          className="mb-2"
+        >
           <AlertTitle className="flex items-center gap-4">
-            {plan ? (
+            {plan.hasPlan ? (
               <>
                 <CheckCircleIcon />
                 <p>Você está incluso no {plan.name}!</p>

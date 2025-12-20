@@ -88,34 +88,38 @@ async function seedDatabase() {
     ];
 
     // Criar planos de assinatura
-    const subscriptionPlans = [
+    const Plans = [
       {
+        id: "plano-1",
         name: "Corte ilimitado",
         description: "Cortes de cabelo ilimitados por mês",
         priceInCents: 8000,
         stripePriceId: "price_1Sf3aPLZmTtv3cllAd2ewhDQ", // R$ 80
       },
       {
+        id: "plano-2",
         name: "Barba ilimitada",
         description: "Serviços de barba ilimitados por mês",
         priceInCents: 7000,
         stripePriceId: "price_1SfJCWLZmTtv3cllEvJ1kLV8", // R$ 70
       },
       {
+        id: "plano-3",
         name: "Corte e barba ilimitados",
         description: "Cortes e barba ilimitados por mês",
         priceInCents: 15000,
         stripePriceId: "price_1SfJCmLZmTtv3cllXAzpWq1a", // R$ 150
       },
       {
+        id: "plano-4",
         name: "FREE",
         description: "Plano gratuito com serviços limitados",
         priceInCents: 0,
         stripePriceId: null, // Plano gratuito sem cobrança
-      }
+      },
     ];
 
-    for (const plan of subscriptionPlans) {
+    for (const plan of Plans) {
       await prisma.plan.create({
         data: plan,
       });

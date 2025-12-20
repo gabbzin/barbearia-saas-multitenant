@@ -1,4 +1,4 @@
-import { SubscriptionStatusType } from "@prisma/client";
+import { SubscriptionStatus } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { verifySession } from "@/services/user.service";
 
@@ -23,7 +23,7 @@ export default async function ProtectedLayout({
       create: {
         userId: session.id,
         planId: plans.id,
-        status: SubscriptionStatusType.ACTIVE,
+        status: SubscriptionStatus.ACTIVE,
         periodStart: new Date(),
         // Plano gratuito sem data de término
         periodEnd: null,

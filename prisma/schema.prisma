@@ -23,6 +23,7 @@ enum SubscriptionStatus {
   ACTIVE
   CANCELLED
   EXPIRED
+  INCOMPLETE
 }
 
 enum userRole {
@@ -41,7 +42,7 @@ model User {
   email            String   @unique
   emailVerified    Boolean  @default(false)
   role             userRole @default(USER)
-  stripeCustomerId String?  @unique
+  stripeCustomerId String?
   passwordHash     String?
 
   image     String?
@@ -145,35 +146,28 @@ model BarberService {
 // SUBSCRIPTION & PLAN MODELS
 // ========================================================
 
-enum SubscriptionStatusType {
-  ACTIVE
-  CANCELLED
-  EXPIRED
-  INCOMPLETE
-}
-
 model Subscription {
-  id                   String    @id @default(uuid())
-  plan                 Plan      @relation(fields: [planId], references: [id])
-  planId               String
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
-  status               SubscriptionStatusType?   @default(INCOMPLETE)
+  id                   String              @id @default(uuid())
+  plan                 Plan?               @relation(fields: [planId], references: [id])
+  planId               String?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?             @unique
+  status               SubscriptionStatus? @default(INCOMPLETE)
   periodStart          DateTime?
   periodEnd            DateTime?
   trialStart           DateTime?
   trialEnd             DateTime?
-  cancelAtPeriodEnd    Boolean?  @default(false)
+  cancelAtPeriodEnd    Boolean?            @default(false)
   seats                Int?
-  userId               String    @unique
-  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId               String              @unique
+  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("subscription")
 }
 
 model Plan {
-  id            String  @id @default(uuid())
+  id            String  @id
   name          String
   description   String
   priceInCents  Int

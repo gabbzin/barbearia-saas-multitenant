@@ -6,10 +6,10 @@ export async function handleSignatureDeleted(event: Stripe.Event) {
 
   await prisma.subscription.update({
     where: {
-      stripeSubscriptionId: subscription.id,
+      id: subscription.id,
     },
     data: {
-      status: "canceled",
+      status: "CANCELLED",
       cancelAtPeriodEnd: false,
     },
   });

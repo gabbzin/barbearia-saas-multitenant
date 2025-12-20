@@ -5,11 +5,6 @@ import { cache } from "react";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const PLAN = {
-  isSubscriberPlanNotFree: false,
-  name: null,
-};
-
 export const verifySession = cache(async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -28,8 +23,13 @@ export const verifySession = cache(async () => {
 });
 
 type SubscriptionInfo = {
-  isSubscriberPlanNotFree: boolean;
+  hasPlan: boolean;
   name: string | null;
+};
+
+const PLAN: SubscriptionInfo = {
+  hasPlan: false,
+  name: null,
 };
 
 export const getCurrentSubscription = cache(async () => {
@@ -47,27 +47,25 @@ export const isSubscriber = cache(
     if (!userId) {
       return PLAN;
     }
-    const userRound = await prisma.user.findUnique({
+    const sub = await prisma.subscription.findUnique({
       where: {
-        id: userId,
+        userId,
       },
       select: {
-        subscription: {
+        plan: {
           select: {
-            plan: {
-              select: {
-                name: true,
-              },
-            },
+            name: true,
           },
         },
       },
     });
 
-    return userRound?.subscription
+    console.log(sub);
+
+    return sub?.plan
       ? {
-          isSubscriberPlanNotFree: userRound.subscription.plan.name !== "FREE",
-          name: userRound.subscription.plan.name,
+          hasPlan: sub.plan.name !== "FREE",
+          name: sub.plan.name,
         }
       : PLAN;
   },
