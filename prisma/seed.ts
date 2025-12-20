@@ -107,10 +107,16 @@ async function seedDatabase() {
         priceInCents: 15000,
         stripePriceId: "price_1SfJCmLZmTtv3cllXAzpWq1a", // R$ 150
       },
+      {
+        name: "FREE",
+        description: "Plano gratuito com serviços limitados",
+        priceInCents: 0,
+        stripePriceId: null, // Plano gratuito sem cobrança
+      }
     ];
 
     for (const plan of subscriptionPlans) {
-      await prisma.subscriptionPlan.create({
+      await prisma.plan.create({
         data: plan,
       });
     }

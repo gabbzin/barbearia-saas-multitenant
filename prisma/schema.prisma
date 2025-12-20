@@ -142,16 +142,23 @@ model BarberService {
 }
 
 // ========================================================
-// SUBSCRIPTION MODELS
+// SUBSCRIPTION & PLAN MODELS
 // ========================================================
 
+enum SubscriptionStatusType {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  INCOMPLETE
+}
+
 model Subscription {
-  id                   String    @id
-  plan                 String
-  referenceId          String
-  stripeCustomerId     String?
+  id                   String    @id @default(uuid())
+  plan                 Plan      @relation(fields: [planId], references: [id])
+  planId               String
+  stripeCustomerId     String?   @unique
   stripeSubscriptionId String?   @unique
-  status               String?   @default("incomplete")
+  status               SubscriptionStatusType?   @default(INCOMPLETE)
   periodStart          DateTime?
   periodEnd            DateTime?
   trialStart           DateTime?
@@ -165,17 +172,17 @@ model Subscription {
   @@map("subscription")
 }
 
-model SubscriptionPlan {
-  id            String @id @default(uuid())
+model Plan {
+  id            String  @id @default(uuid())
   name          String
   description   String
   priceInCents  Int
-  stripePriceId String @unique
+  stripePriceId String? @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("subscription_plan")
+  subscriptions Subscription[]
 }
 
 // ========================================================
