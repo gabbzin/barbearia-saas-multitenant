@@ -1,6 +1,6 @@
-import { createAuthClient } from "better-auth/react";
-import { auth } from "./auth";
 import { stripeClient } from "@better-auth/stripe/client";
+import { createAuthClient } from "better-auth/react";
+import type { auth } from "./auth";
 
 export const authClient = createAuthClient({
   plugins: [

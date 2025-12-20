@@ -1,7 +1,7 @@
 "use client";
 
-import { getBookings } from "@/app/_actions/bookings/get-bookings";
 import { useQuery } from "@tanstack/react-query";
+import { getBookings } from "@/app/_actions/bookings/get-bookings";
 
 export function useBookings(barberId: string) {
   return useQuery({

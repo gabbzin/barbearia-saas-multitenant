@@ -1,9 +1,9 @@
 export const SpinLoader = () => {
   return (
-    <div className="w-4 h-4 animate-spin rounded-full border-4 border-solid border-current border-t-transparent">
+    <div className="h-4 w-4 animate-spin rounded-full border-4 border-current border-t-transparent border-solid">
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-2 h-2 rounded-full bg-current" />
+        <div className="h-2 w-2 rounded-full bg-current" />
       </div>
     </div>
-  )
-}
+  );
+};

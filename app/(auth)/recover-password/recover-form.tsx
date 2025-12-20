@@ -1,19 +1,18 @@
 "use client";
 
-import InputForm from "@/app/_components/form/input-form";
-import GenericForm from "@/app/_components/form/generic-form";
-import { loginSchema } from "@/schemas/userSchema";
-import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
 import Link from "next/link";
+import GenericForm from "@/app/_components/form/generic-form";
+import InputForm from "@/app/_components/form/input-form";
 import { Button } from "@/app/_components/ui/button";
+import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
+import { loginSchema } from "@/schemas/userSchema";
 import { PasswordStrength } from "./passwordStrength";
-import { auth } from "@/lib/auth";
 
 export default function RecoverPassword() {
   // const handleRecover = async () => {
   //   try {
   //     const res = await auth.api.changePassword({
-        
+
   //     })
   //   }
   // }
@@ -21,7 +20,7 @@ export default function RecoverPassword() {
   return (
     <>
       <Card className="w-full max-w-md space-y-2">
-        <CardHeader className="text-center text-3xl font-bold">
+        <CardHeader className="text-center font-bold text-3xl">
           Recuperar senha
         </CardHeader>
         <CardContent className="px-8">
@@ -47,7 +46,7 @@ export default function RecoverPassword() {
               type="password"
               placeholder="Digite sua nova senha"
             />
-          <PasswordStrength fieldName="senha" />
+            <PasswordStrength fieldName="senha" />
           </GenericForm>
         </CardContent>
       </Card>

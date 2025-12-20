@@ -1,11 +1,11 @@
 "use server";
 
-import { actionClient } from "@/lib/actionClient";
-// import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { endOfDay, format, startOfDay } from "date-fns";
 // import { returnValidationErrors } from "next-safe-action";
 import z from "zod";
+import { actionClient } from "@/lib/actionClient";
+// import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 const inputSchema = z.object({
   barberId: z.uuid(),
@@ -59,10 +59,10 @@ export const getDateAvailableTimeSlots = actionClient
       },
     });
 
-    const occupiedSlots = bookings.map((b) => format(b.date, "HH:mm"));
+    const occupiedSlots = bookings.map(b => format(b.date, "HH:mm"));
 
     const availableSlots = TIME_SLOTS.filter(
-      (slot) => !occupiedSlots.includes(slot),
+      slot => !occupiedSlots.includes(slot),
     );
 
     return availableSlots;

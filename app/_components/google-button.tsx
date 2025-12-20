@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 // import { Button } from "./ui/button";
 import { authClient } from "@/lib/auth-client";
-import { useState } from "react";
 import { RainbowButton } from "./ui/rainbow-button";
 
 export const GoogleButton = () => {
@@ -28,7 +28,6 @@ export const GoogleButton = () => {
       className="w-full gap-2"
       onClick={handleGoogleLogin}
       disabled={isLoading}
-      
     >
       {isLoading ? (
         <span>Redirecionando...</span>

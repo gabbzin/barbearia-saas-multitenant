@@ -1,15 +1,12 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, Mic, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/app/_components/ui/button";
 import { Input } from "@/app/_components/ui/input";
-import {
-  AssistantMessage,
-  UserMessage,
-} from "./_components/chat-message";
+import { AssistantMessage, UserMessage } from "./_components/chat-message";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -42,7 +39,7 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="bg-background flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
       <div className="flex items-center justify-between px-5 pt-6 pb-0">
         <Button
           variant="ghost"
@@ -52,7 +49,7 @@ export default function ChatPage() {
         >
           <ChevronLeft className="size-6" />
         </Button>
-        <p className="text-foreground font-['Merriweather'] text-xl tracking-[-1px] italic">
+        <p className="font-['Merriweather'] text-foreground text-xl italic tracking-[-1px]">
           Aparatus
         </p>
         <div className="size-6" />
@@ -61,11 +58,11 @@ export default function ChatPage() {
       <div className="flex-1 overflow-y-auto pb-32">
         <AssistantMessage content="Olá! Sou o Aparatus, seu assistente pessoal.&#10;&#10;Estou aqui para te auxiliar a agendar seu corte ou barba, encontrar as barbearias disponíveis perto de você e responder às suas dúvidas." />
 
-        {messages.map((message) => {
+        {messages.map(message => {
           const messageText =
             message.parts
-              .filter((part) => part.type === "text")
-              .map((part) => (part.type === "text" ? part.text : ""))
+              .filter(part => part.type === "text")
+              .map(part => (part.type === "text" ? part.text : ""))
               .join("") || "";
 
           return message.role === "user" ? (
@@ -78,20 +75,20 @@ export default function ChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="bg-border fixed right-0 bottom-0 left-0 p-5">
+      <div className="fixed right-0 bottom-0 left-0 bg-border p-5">
         <form onSubmit={handleSubmit} className="flex gap-2">
           <Input
             value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+            onChange={e => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Digite sua mensagem"
-            className="bg-background flex-1 rounded-full px-4 py-3 text-sm"
+            className="flex-1 rounded-full bg-background px-4 py-3 text-sm"
             disabled={status === "streaming"}
           />
           <Button
             type="button"
             size="icon"
-            className="bg-primary size-[42px] shrink-0 rounded-full p-2.5"
+            className="size-[42px] shrink-0 rounded-full bg-primary p-2.5"
             disabled
           >
             <Mic className="size-5" />
@@ -99,7 +96,7 @@ export default function ChatPage() {
           <Button
             type="submit"
             size="icon"
-            className="bg-primary size-[42px] shrink-0 rounded-full p-2.5"
+            className="size-[42px] shrink-0 rounded-full bg-primary p-2.5"
             disabled={status === "streaming" || !inputValue.trim()}
           >
             <Send className="size-5" />

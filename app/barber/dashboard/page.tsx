@@ -1,18 +1,18 @@
+import { Banknote, Scissors, UserIcon } from "lucide-react";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import CardInfo from "@/app/_components/barber/card-info";
 import Header from "@/app/_components/header";
 import { Avatar, AvatarImage } from "@/app/_components/ui/avatar";
+import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { PageContainer } from "@/app/_components/ui/page";
 import { Separator } from "@/app/_components/ui/separator";
 import { auth } from "@/lib/auth";
-import { convertBRL } from "@/utils/convertBRL";
-import { Banknote, Scissors, UserIcon } from "lucide-react";
-import { headers } from "next/headers";
-import { TableService } from "./components/table-service";
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
-import { Button } from "@/app/_components/ui/button";
-import Link from "next/link";
+import { convertBRL } from "@/utils/convertBRL";
+import { TableService } from "./components/table-service";
 
 const barberId = "f33dbcbb-eda1-4cac-afe5-91aea909bd37";
 
@@ -82,10 +82,10 @@ const BarberDashboardPage = async () => {
     <div>
       <Header />
       <PageContainer>
-        <h2 className="text-2xl font-bold lg:text-3xl">
+        <h2 className="font-bold text-2xl lg:text-3xl">
           Olá {session?.user.name ?? "Usuario"}
         </h2>
-        <h3 className="text-lg font-bold lg:text-2xl">Resumo de hoje</h3>
+        <h3 className="font-bold text-lg lg:text-2xl">Resumo de hoje</h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <CardInfo
             Icon={Scissors}
@@ -109,8 +109,8 @@ const BarberDashboardPage = async () => {
       </PageContainer>
       <Separator />
       <PageContainer>
-        <h3 className="text-lg font-bold lg:text-2xl">Próximo atendimento</h3>
-        <Card className="border-primary border-2">
+        <h3 className="font-bold text-lg lg:text-2xl">Próximo atendimento</h3>
+        <Card className="border-2 border-primary">
           <CardContent className="flex flex-col gap-3">
             {nextBooking ? (
               <>
@@ -147,7 +147,7 @@ const BarberDashboardPage = async () => {
       </PageContainer>
       <Separator />
       <PageContainer>
-        <h3 className="text-lg font-bold lg:text-2xl">
+        <h3 className="font-bold text-lg lg:text-2xl">
           Seus serviços cadastrados
         </h3>
         <TableService barberId={barberId} />

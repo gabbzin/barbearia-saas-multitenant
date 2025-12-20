@@ -1,34 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
+import { useState } from "react";
 import { toast } from "sonner";
 import { cancelBooking } from "@/app/_actions/bookings/cancel-booking";
+import CancelAlertDialog from "./cancel-alert-dialog";
 import { PhoneItem } from "./phone-item";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
 } from "./ui/sheet";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
 
 interface CancelBookingProps {
   open: boolean;
@@ -129,7 +119,7 @@ export function CancelBooking({
                   ? "destructive"
                   : "secondary"
             }
-            className="w-fit text-xs font-semibold tracking-tight uppercase"
+            className="w-fit font-semibold text-xs uppercase tracking-tight"
           >
             {status === "confirmed"
               ? "Confirmado"
@@ -142,17 +132,17 @@ export function CancelBooking({
           <Card className="flex flex-col gap-3 p-3">
             <div className="flex items-center justify-between">
               <h3 className="font-bold">{booking.service.name}</h3>
-              <p className="text-sm font-bold">{formattedPrice}</p>
+              <p className="font-bold text-sm">{formattedPrice}</p>
             </div>
-            <div className="text-muted-foreground flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-muted-foreground text-sm">
               <p>Data</p>
               <p className="text-right">{formattedDate}</p>
             </div>
-            <div className="text-muted-foreground flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-muted-foreground text-sm">
               <p>Horário</p>
               <p className="text-right">{formattedTime}</p>
             </div>
-            <div className="text-muted-foreground flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-muted-foreground text-sm">
               <p>Barbearia</p>
               <p className="text-right">{booking.barber.name}</p>
             </div>
@@ -161,7 +151,7 @@ export function CancelBooking({
           {/* Telefones */}
           <div className="flex flex-col gap-3">
             {booking.barber.phone.map((phone, index) => (
-              <PhoneItem key={index} phone={phone} />
+              <PhoneItem key={String(index)} phone={phone} />
             ))}
           </div>
         </div>
@@ -176,32 +166,13 @@ export function CancelBooking({
             Voltar
           </Button>
           {status === "confirmed" && booking.date > new Date() && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive" className="flex-1 rounded-full">
-                  Cancelar Reserva
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Cancelar reserva</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Tem certeza que deseja cancelar esta reserva? Esta ação não
-                    pode ser desfeita.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Não, manter reserva</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleCancelBooking}
-                    disabled={isLoading}
-                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  >
-                    {isLoading ? "Cancelando..." : "Sim, cancelar"}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <CancelAlertDialog
+              handleCancel={handleCancelBooking}
+              isLoading={isLoading}
+              title="Cancelar Reserva"
+              description="Tem certeza que deseja cancelar esta reserva? Esta ação não pode ser desfeita."
+              cancelButtonText="Não, manter reserva"
+            />
           )}
         </div>
       </SheetContent>

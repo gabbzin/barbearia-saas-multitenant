@@ -1,23 +1,23 @@
 "use client";
 
-import { Barber, BarberService, User } from "@prisma/client";
-import PagamentForm, { payMethods } from "./pagament-form";
+import type { Barber, BarberService, User } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { ptBR } from "date-fns/locale";
+import { useRouter } from "next/navigation";
+import { useAction } from "next-safe-action/hooks";
+import { useState } from "react";
+import { toast } from "sonner";
+import { isPastTimeSlot } from "@/utils/isPastTimeSlot";
+import { createBooking } from "../_actions/bookings/create-booking";
+import { createBookingCheckoutSession } from "../_actions/bookings/create-booking-checkout-session";
+import { getDateAvailableTimeSlots } from "../_actions/get-date-available-time-slots";
+import PagamentForm, { type payMethods } from "./pagament-form";
 import { SpinLoader } from "./spinLoader";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Separator } from "./ui/separator";
 import { SheetContent, SheetHeader, SheetTitle } from "./ui/sheet";
 import { Spinner } from "./ui/spinner";
-import { ptBR } from "date-fns/locale";
-import { isPastTimeSlot } from "@/utils/isPastTimeSlot";
-import { useAction } from "next-safe-action/hooks";
-import { createBookingCheckoutSession } from "../_actions/bookings/create-booking-checkout-session";
-import { createBooking } from "../_actions/bookings/create-booking";
-import { useState } from "react";
-import { getDateAvailableTimeSlots } from "../_actions/get-date-available-time-slots";
-import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 interface AppointmentSheetProps {
   setSheetOpen: (open: boolean) => void;
@@ -133,7 +133,7 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
     <SheetContent className="w-[370px] overflow-y-auto p-0">
       <div className="flex h-full flex-col gap-6">
         <SheetHeader className="px-5 pt-6">
-          <SheetTitle className="text-lg font-bold">Fazer Reserva</SheetTitle>
+          <SheetTitle className="font-bold text-lg">Fazer Reserva</SheetTitle>
         </SheetHeader>
 
         <div className="flex flex-col gap-4 px-5">
@@ -158,7 +158,7 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
                     <Spinner />
                   </div>
                 )}
-                {availableTimeSlots?.map((time) => (
+                {availableTimeSlots?.map(time => (
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "secondary"}
@@ -184,35 +184,35 @@ const AppointmentSheet = ({ setSheetOpen, service }: AppointmentSheetProps) => {
             <Separator />
 
             <div className="flex flex-col gap-3 px-5">
-              <div className="border-border bg-card flex w-full flex-col gap-3 rounded-[10px] border border-solid p-3">
+              <div className="flex w-full flex-col gap-3 rounded-[10px] border border-border border-solid bg-card p-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-card-foreground text-base font-bold">
+                  <p className="font-bold text-base text-card-foreground">
                     {service.name}
                   </p>
-                  <p className="text-card-foreground text-sm font-bold">
+                  <p className="font-bold text-card-foreground text-sm">
                     R${priceInReaisInteger},00
                   </p>
                 </div>
 
-                <div className="text-muted-foreground flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-muted-foreground text-sm">
                   <p>Método de pagamento</p>
                   <p className="capitalize">
                     {payMethod === "cartao" ? "Cartão" : payMethod}
                   </p>
                 </div>
-                <div className="text-muted-foreground flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-muted-foreground text-sm">
                   <p>Data</p>
                   <p>{formattedDate}</p>
                 </div>
 
                 {selectedTime && (
-                  <div className="text-muted-foreground flex items-center justify-between text-sm">
+                  <div className="flex items-center justify-between text-muted-foreground text-sm">
                     <p>Horário</p>
                     <p>{selectedTime}</p>
                   </div>
                 )}
 
-                <div className="text-muted-foreground flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-muted-foreground text-sm">
                   <p>Barbearia</p>
                   <p>{service.barber.user.name}</p>
                 </div>

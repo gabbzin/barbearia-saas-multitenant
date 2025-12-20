@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import Stripe from "stripe";
+import type Stripe from "stripe";
+import { prisma } from "@/lib/prisma";
 
 export async function handleRefund(event: Stripe.Event) {
   const refund = event.data.object as Stripe.Refund;

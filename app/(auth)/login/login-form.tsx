@@ -1,10 +1,10 @@
 "use client";
 
-import InputForm from "@/app/_components/form/input-form";
-import GenericForm from "@/app/_components/form/generic-form";
-import { loginSchema, loginSchemaType } from "@/schemas/userSchema";
-import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
 import { useRouter } from "next/navigation"; // Use router.push em Client Components
+import { toast } from "sonner";
+import GenericForm from "@/app/_components/form/generic-form";
+import InputForm from "@/app/_components/form/input-form";
 import { GoogleButton } from "@/app/_components/google-button";
 import {
   Card,
@@ -12,8 +12,8 @@ import {
   CardFooter,
   CardHeader,
 } from "@/app/_components/ui/card";
-import { toast } from "sonner";
-import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
+import { loginSchema, type loginSchemaType } from "@/schemas/userSchema";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -42,7 +42,7 @@ export default function LoginForm() {
 
   return (
     <Card className="w-full max-w-md space-y-2">
-      <CardHeader className="text-center text-3xl font-bold">
+      <CardHeader className="text-center font-bold text-3xl">
         Fazer login
       </CardHeader>
       <CardContent className="px-8">
@@ -65,7 +65,7 @@ export default function LoginForm() {
               type="password"
               placeholder="Digite sua senha"
             />
-            <p className="absolute right-0 text-sm text-blue-500">
+            <p className="absolute right-0 text-blue-500 text-sm">
               <Link href={"/recover-password"}>Esqueceu a senha?</Link>
             </p>
           </div>

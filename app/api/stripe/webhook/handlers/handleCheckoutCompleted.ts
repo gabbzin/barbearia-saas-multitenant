@@ -1,7 +1,7 @@
+import { revalidatePath } from "next/cache";
+import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { stripeClient } from "@/lib/stripe-client";
-import { revalidatePath } from "next/cache";
-import Stripe from "stripe";
 
 // Lógica para lidar com a finalização do checkout SUCESSO
 export async function handleCheckoutCompleted(

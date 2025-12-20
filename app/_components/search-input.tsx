@@ -8,7 +8,7 @@ const SearchInput = () => {
       <Input
         placeholder="Pesquise serviços ou barbearias"
         type="text"
-        className="border-border rounded-full"
+        className="rounded-full border-border"
       />
       <Button variant={"default"} size={"icon"} className="rounded-full">
         <SearchIcon />

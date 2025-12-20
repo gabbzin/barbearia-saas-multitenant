@@ -1,13 +1,13 @@
-import { prisma } from "@/lib/prisma";
+import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import Footer from "@/app/_components/footer";
+import { PhoneItem } from "@/app/_components/phone-item";
 import { ServiceItem } from "@/app/_components/service-item";
 import { Button } from "@/app/_components/ui/button";
 import { Separator } from "@/app/_components/ui/separator";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
-import { PhoneItem } from "@/app/_components/phone-item";
-import Footer from "@/app/_components/footer";
+import { prisma } from "@/lib/prisma";
 
 const BarberPage = async (props: PageProps<"/barber/[id]">) => {
   const { id } = await props.params;
@@ -54,7 +54,7 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
       </div>
 
       {/* Container Principal */}
-      <div className="bg-background relative -mt-6 flex flex-col gap-6 rounded-t-3xl">
+      <div className="relative -mt-6 flex flex-col gap-6 rounded-t-3xl bg-background">
         {/* Informações da Barbearia */}
         <div className="px-5 pt-6">
           <div className="mb-1 flex items-center gap-2">
@@ -66,7 +66,7 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
                 className="object-cover"
               />
             </div>
-            <h1 className="text-foreground text-xl font-bold">
+            <h1 className="font-bold text-foreground text-xl">
               {barber.user?.name}
             </h1>
           </div>
@@ -89,11 +89,11 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
 
         {/* Serviços */}
         <div className="space-y-3 px-5">
-          <h2 className="text-foreground text-xs font-bold uppercase">
+          <h2 className="font-bold text-foreground text-xs uppercase">
             Serviços
           </h2>
           <div className="space-y-3">
-            {barber.services.map((service) => (
+            {barber.services.map(service => (
               <ServiceItem
                 key={service.id}
                 service={{
@@ -109,7 +109,7 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
 
         {/* Contato */}
         <div className="space-y-3 px-5">
-          <h2 className="text-foreground text-xs font-bold uppercase">
+          <h2 className="font-bold text-foreground text-xs uppercase">
             Contato
           </h2>
           <div className="space-y-3">

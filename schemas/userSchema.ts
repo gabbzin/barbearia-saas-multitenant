@@ -43,7 +43,7 @@ export const recoverPasswordSchema = z
       .regex(passwordRegex, passwordRegexPhrase),
     confirmarSenha: z.string("Confirmação de senha inválida"),
   })
-  .refine((data) => data.senha === data.confirmarSenha, {
+  .refine(data => data.senha === data.confirmarSenha, {
     message: "As senhas não coincidem",
     path: ["confirmarSenha"],
   });

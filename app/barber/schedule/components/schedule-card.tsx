@@ -1,11 +1,11 @@
 "use client";
 
+import { format } from "date-fns";
 import { confirmBooking } from "@/app/_actions/bookings/confirm-booking";
 import { Avatar, AvatarImage } from "@/app/_components/ui/avatar";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { useBookings } from "@/hooks/useBookings";
-import { format } from "date-fns";
 
 export function ScheduleCard({ barberId }: { barberId: string }) {
   const { data: bookings } = useBookings(barberId);
@@ -13,7 +13,7 @@ export function ScheduleCard({ barberId }: { barberId: string }) {
   return (
     <div>
       {bookings && bookings.length > 0 ? (
-        bookings.map((booking) => (
+        bookings.map(booking => (
           <Card key={booking.id} className="mb-4">
             <CardContent>
               <div className="flex items-center gap-4 font-semibold">

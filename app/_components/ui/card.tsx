@@ -1,27 +1,24 @@
-import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
+import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const cardVariants = cva(
-  "flex flex-col rounded-xl border py-5 shadow-sm",
-  {
-    variants: {
-      variant: {
-        default: "bg-card text-card-foreground border-border",
-        green:
-          "bg-green-500/10 text-green-700 border-green-500/20 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20",
-        blue: "bg-blue-500/10 text-blue-700 border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20",
-        yellow:
-          "bg-yellow-500/10 text-yellow-700 border-yellow-500/20 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20",
-        red: "bg-red-500/10 text-red-700 border-red-500/20 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
+const cardVariants = cva("flex flex-col rounded-xl border py-5 shadow-sm", {
+  variants: {
+    variant: {
+      default: "bg-card text-card-foreground border-border",
+      green:
+        "bg-green-500/10 text-green-700 border-green-500/20 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20",
+      blue: "bg-blue-500/10 text-blue-700 border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20",
+      yellow:
+        "bg-yellow-500/10 text-yellow-700 border-yellow-500/20 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20",
+      red: "bg-red-500/10 text-red-700 border-red-500/20 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
 export interface CardProps
   extends React.ComponentProps<"div">,
@@ -54,7 +51,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-title"
-      className={cn("leading-none font-semibold", className)}
+      className={cn("font-semibold leading-none", className)}
       {...props}
     />
   );

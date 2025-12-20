@@ -1,5 +1,5 @@
-import { convertToModelMessages, streamText } from "ai";
 import { google } from "@ai-sdk/google";
+import { convertToModelMessages, streamText } from "ai";
 
 export const POST = async (request: Request) => {
   const { messages } = await request.json();

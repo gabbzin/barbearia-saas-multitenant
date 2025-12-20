@@ -5,5 +5,5 @@ export default function HeaderTitle({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <h1 className={`text-xl font-bold ${className}`}>{children}</h1>;
+  return <h1 className={`font-bold text-xl ${className}`}>{children}</h1>;
 }

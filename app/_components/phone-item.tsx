@@ -1,8 +1,8 @@
 "use client";
 
 import { Smartphone } from "lucide-react";
-import { Button } from "./ui/button";
 import { toast } from "sonner";
+import { Button } from "./ui/button";
 
 interface PhoneItemProps {
   phone: string;

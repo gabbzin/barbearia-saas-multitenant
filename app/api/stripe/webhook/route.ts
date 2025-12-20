@@ -1,5 +1,5 @@
-import { stripeClient } from "@/lib/stripe-client";
 import { NextResponse } from "next/server";
+import { stripeClient } from "@/lib/stripe-client";
 import { handleCheckoutCompleted } from "./handlers/handleCheckoutCompleted";
 import { handleSignatureCompleted } from "./handlers/handleSignatureCompleted";
 import { handleSignatureDeleted } from "./handlers/handleSignatureDeleted";

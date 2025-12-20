@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import type { BarberService } from "@prisma/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   createService,
   deleteService,
   getServicesByBarberId,
   patchService,
 } from "@/app/_actions/services/service-actions";
-
-import { BarberService } from "@prisma/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 export function useServicesCRUD(barberId: string) {
   const queryClient = useQueryClient();
@@ -26,7 +25,7 @@ export function useServicesCRUD(barberId: string) {
 
   const createMutation = useMutation({
     mutationFn: (data: FormData) => createService(data),
-    onSuccess: (newService) => {
+    onSuccess: newService => {
       toast.success("Serviço criado com sucesso!");
       updateCache((oldData: BarberService[] | undefined) => {
         return oldData ? [...oldData, newService] : [newService];
@@ -42,7 +41,7 @@ export function useServicesCRUD(barberId: string) {
       toast.success("Serviço atualizado com sucesso!");
       updateCache((oldData: BarberService[] | undefined) => {
         return oldData
-          ? oldData.map((service) =>
+          ? oldData.map(service =>
               service.id === updatedService.id ? updatedService : service,
             )
           : [updatedService];
@@ -56,7 +55,7 @@ export function useServicesCRUD(barberId: string) {
       toast.success("Serviço deletado com sucesso!");
       updateCache((oldData: BarberService[] | undefined) => {
         return oldData
-          ? oldData.filter((service) => service.id !== serviceId)
+          ? oldData.filter(service => service.id !== serviceId)
           : [];
       });
     },

@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Check, X } from "lucide-react";
 import { useFormContext } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 export function PasswordStrength({ fieldName }: { fieldName: string }) {
   const { watch } = useFormContext();
@@ -17,9 +17,9 @@ export function PasswordStrength({ fieldName }: { fieldName: string }) {
   ];
 
   return (
-    <div className="bg-background rounded-md border p-4">
+    <div className="rounded-md border bg-background p-4">
       <p>Sua senha deve conter:</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+      <div className="grid grid-cols-1 gap-1 md:grid-cols-2">
         {checks.map((check, index) => (
           <div
             key={index}

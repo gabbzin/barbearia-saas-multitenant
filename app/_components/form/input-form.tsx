@@ -1,8 +1,8 @@
 import {
-  Control,
+  type Control,
   Controller,
-  FieldValues,
-  Path,
+  type FieldValues,
+  type Path,
   useFormContext,
 } from "react-hook-form";
 import { Input } from "../ui/input";
@@ -71,7 +71,7 @@ const InputForm = <T extends FieldValues>({
                 disabled={disabled}
                 {...field}
                 value={inputValue}
-                onChange={(e) => {
+                onChange={e => {
                   if (mask === "currency") {
                     const rawValue = e.target.value.replace(/\D/g, "");
                     const numberValue = Number(rawValue) / 100;
@@ -81,7 +81,7 @@ const InputForm = <T extends FieldValues>({
                   }
                 }}
               />
-              <p className="text-sm text-red-500">
+              <p className="text-red-500 text-sm">
                 {fieldState.error?.message}
               </p>
             </>

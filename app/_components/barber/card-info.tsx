@@ -1,10 +1,10 @@
+import type { LucideIcon } from "lucide-react";
 import {
   Card,
+  CardContent,
   CardHeader,
   CardTitle,
-  CardContent,
 } from "@/app/_components/ui/card";
-import { LucideIcon } from "lucide-react";
 
 type CardInfoProps = {
   Icon?: LucideIcon;
@@ -28,7 +28,7 @@ export default function CardInfo({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-2xl font-bold">{value}</p>
+        <p className="font-bold text-2xl">{value}</p>
       </CardContent>
     </Card>
   );

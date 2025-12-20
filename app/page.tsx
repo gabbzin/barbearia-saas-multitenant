@@ -1,16 +1,16 @@
-import Header from "./_components/header";
+import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import { verifySession } from "@/utils/verifySession";
+import BarberItem from "./_components/barber-item";
+import Footer from "./_components/footer";
+import Header from "./_components/header";
+import { Alert, AlertTitle } from "./_components/ui/alert";
 import {
   PageContainer,
   PageSection,
   PageSectionScroller,
   PageSectionTitle,
 } from "./_components/ui/page";
-import Footer from "./_components/footer";
-import { Alert, AlertTitle } from "./_components/ui/alert";
-import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
-import BarberItem from "./_components/barber-item";
-import { verifySession } from "@/utils/verifySession";
 
 const Home = async () => {
   const user = await verifySession();
@@ -99,7 +99,7 @@ const Home = async () => {
         <PageSection>
           <PageSectionTitle>Barbeiros</PageSectionTitle>
           <PageSectionScroller>
-            {barbers.map((barber) => (
+            {barbers.map(barber => (
               <BarberItem
                 key={barber.id}
                 barber={{

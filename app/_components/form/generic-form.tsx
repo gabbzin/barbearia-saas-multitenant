@@ -1,15 +1,15 @@
 "use client";
 
-import {
-  FieldValues,
-  FormProvider,
-  useForm,
-  UseFormProps,
-} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "../ui/button";
-import { ZodType } from "zod";
+import {
+  type FieldValues,
+  FormProvider,
+  type UseFormProps,
+  useForm,
+} from "react-hook-form";
+import type { ZodType } from "zod";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 interface GenericFormProps<T extends FieldValues> extends UseFormProps<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,7 +32,7 @@ export default function GenericForm<T extends FieldValues>({
 }: GenericFormProps<T>) {
   const methods = useForm({
     resolver: zodResolver(schema),
-    ...hookProps
+    ...hookProps,
   });
 
   const {

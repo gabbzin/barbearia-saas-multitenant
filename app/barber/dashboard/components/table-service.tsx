@@ -1,19 +1,19 @@
 "use client";
 
-import {
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Table,
-} from "@/app/_components/ui/table";
-import { convertBRL } from "@/utils/convertBRL";
 import { Trash2Icon } from "lucide-react";
 import { Button } from "@/app/_components/ui/button";
-import { useServicesCRUD } from "@/hooks/useServices";
-import { FormService } from "./form-service";
 import { Spinner } from "@/app/_components/ui/spinner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/app/_components/ui/table";
+import { useServicesCRUD } from "@/hooks/useServices";
+import { convertBRL } from "@/utils/convertBRL";
+import { FormService } from "./form-service";
 
 export function TableService({ barberId }: { barberId: string }) {
   const { services, isLoading, deleteService } = useServicesCRUD(barberId);
@@ -36,7 +36,7 @@ export function TableService({ barberId }: { barberId: string }) {
               </TableRow>
             </TableHeader>
             <TableBody className="">
-              {services?.map((service) => (
+              {services?.map(service => (
                 <TableRow key={service.id} className="w-full">
                   <TableCell>{service.name}</TableCell>
                   <TableCell>{convertBRL(service.priceInCents)}</TableCell>

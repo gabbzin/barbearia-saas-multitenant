@@ -1,13 +1,13 @@
 "use client";
 
-import InputForm from "@/app/_components/form/input-form";
-import GenericForm from "@/app/_components/form/generic-form";
-import { registerSchema, registerSchemaType } from "@/schemas/userSchema";
-import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation"; // Use router.push em Client Components
+import { toast } from "sonner";
+import GenericForm from "@/app/_components/form/generic-form";
+import InputForm from "@/app/_components/form/input-form";
 import { GoogleButton } from "@/app/_components/google-button";
 import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
-import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
+import { registerSchema, type registerSchemaType } from "@/schemas/userSchema";
 
 const RegisterForm = () => {
   const router = useRouter();
@@ -35,7 +35,7 @@ const RegisterForm = () => {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="text-center text-3xl font-bold">
+      <CardHeader className="text-center font-bold text-3xl">
         Criar conta
       </CardHeader>
       <CardContent className="px-8">

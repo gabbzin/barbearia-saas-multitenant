@@ -1,3 +1,7 @@
+import type { BarberService } from "@prisma/client";
+import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import { PencilIcon, PlusIcon } from "lucide-react";
+import { useState } from "react";
 import GenericForm from "@/app/_components/form/generic-form";
 import InputForm from "@/app/_components/form/input-form";
 import { Button } from "@/app/_components/ui/button";
@@ -7,12 +11,8 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/app/_components/ui/dialog";
-import { BarberService } from "@prisma/client";
 import { useServicesCRUD } from "@/hooks/useServices";
-import { serviceSchema, serviceSchemaType } from "@/schemas/serviceSchema";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
-import { PencilIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { serviceSchema, type serviceSchemaType } from "@/schemas/serviceSchema";
 
 interface FormServiceProps {
   barberId: string;
@@ -71,7 +71,7 @@ export function FormService({ barberId, service }: FormServiceProps) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
+          <DialogTitle className="font-bold text-xl">
             {isEditing ? "Editar Serviço" : "Adicionar Serviço"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm">

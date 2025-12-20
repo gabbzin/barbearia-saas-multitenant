@@ -1,6 +1,6 @@
+import type { Barber, BarberService, Booking, User } from "@prisma/client";
 import BookingItem from "@/app/_components/booking-item";
 import { PageContainer, PageSection } from "@/app/_components/ui/page";
-import { Barber, BarberService, Booking, User } from "@prisma/client";
 
 interface BookingsClientProps {
   bookings: (Booking & {
@@ -16,21 +16,21 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
   const now = new Date();
 
   const confirmedBookings = bookings.filter(
-    (booking) => booking.date > now && booking.status === "SCHEDULED",
+    booking => booking.date > now && booking.status === "SCHEDULED",
   );
 
   const cancelledBookings = bookings.filter(
-    (booking) => booking.status === "CANCELLED",
+    booking => booking.status === "CANCELLED",
   );
 
   const finishedBookings = bookings.filter(
-    (booking) => booking.date <= now && booking.status !== "CANCELLED",
+    booking => booking.date <= now && booking.status !== "CANCELLED",
   );
   return (
     <PageContainer>
-      <h1 className="text-xl font-bold">Agendamentos</h1>
+      <h1 className="font-bold text-xl">Agendamentos</h1>
       <PageSection>
-        <h2 className="text-muted-foreground text-xs font-bold uppercase">
+        <h2 className="font-bold text-muted-foreground text-xs uppercase">
           Confirmados
         </h2>
         {confirmedBookings.length === 0 ? (
@@ -38,7 +38,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
             Você não tem agendamentos confirmados.
           </p>
         ) : (
-          confirmedBookings.map((booking) => (
+          confirmedBookings.map(booking => (
             <BookingItem
               key={booking.id}
               booking={{
@@ -60,7 +60,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
         )}
       </PageSection>
       <PageSection>
-        <h2 className="text-muted-foreground text-xs font-bold uppercase">
+        <h2 className="font-bold text-muted-foreground text-xs uppercase">
           Cancelados
         </h2>
         {cancelledBookings.length === 0 ? (
@@ -68,7 +68,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
             Você não tem agendamentos cancelados.
           </p>
         ) : (
-          cancelledBookings.map((booking) => (
+          cancelledBookings.map(booking => (
             <BookingItem
               key={booking.id}
               booking={{
@@ -90,7 +90,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
         )}
       </PageSection>
       <PageSection>
-        <h2 className="text-muted-foreground text-xs font-bold uppercase">
+        <h2 className="font-bold text-muted-foreground text-xs uppercase">
           Finalizados
         </h2>
         {finishedBookings.length === 0 ? (
@@ -98,7 +98,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
             Você não tem agendamentos finalizados.
           </p>
         ) : (
-          finishedBookings.map((booking) => (
+          finishedBookings.map(booking => (
             <BookingItem
               key={booking.id}
               booking={{

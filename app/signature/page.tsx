@@ -17,7 +17,7 @@ export default async function SignaturePage() {
       <PageContainer>
         <HeaderTitle>Assinaturas</HeaderTitle>
         <PageSection>
-          {plans.map((plan) => {
+          {plans.map(plan => {
             return <SignatureItem key={plan.id} signature={plan} />;
           })}
         </PageSection>

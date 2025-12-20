@@ -1,6 +1,28 @@
 "use client";
 
+import type { Barber, User } from "@prisma/client";
+import {
+  Calendar,
+  CreditCard,
+  Home,
+  LogIn,
+  LogOut,
+  MenuIcon,
+  Scissors,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import CancelAlertDialog from "./cancel-alert-dialog";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./ui/accordion";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -8,27 +30,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { Button } from "./ui/button";
-import {
-  MenuIcon,
-  Home,
-  Calendar,
-  LogOut,
-  LogIn,
-  CreditCard,
-  Scissors,
-} from "lucide-react";
-import { Separator } from "./ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Barber, User } from "@prisma/client";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "./ui/accordion";
 
 const ROUTES = [
   { name: "Início", path: "/", icon: Home },
@@ -59,7 +60,7 @@ export const SidebarMenu = ({
 
       <SheetContent side="right" className="w-[90vw] max-w-[370px] gap-6 p-0">
         <SheetHeader className="px-5 py-2 text-left">
-          <SheetTitle className="text-lg font-bold">Menu</SheetTitle>
+          <SheetTitle className="font-bold text-lg">Menu</SheetTitle>
         </SheetHeader>
 
         <Separator />
@@ -73,7 +74,7 @@ export const SidebarMenu = ({
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col leading-tight">
-              <p className="text-base font-semibold">{session.user.name}</p>
+              <p className="font-semibold text-base">{session.user.name}</p>
               <p className="text-muted-foreground text-xs">
                 {session.user.email}
               </p>
@@ -81,7 +82,7 @@ export const SidebarMenu = ({
           </div>
         ) : (
           <div className="flex items-center justify-between px-5 pb-3">
-            <p className="text-base font-semibold">Olá. Faça seu login!</p>
+            <p className="font-semibold text-base">Olá. Faça seu login!</p>
             <Button onClick={() => push("/login")} size="sm" className="gap-2">
               Login <LogIn className="size-4" />
             </Button>
@@ -90,7 +91,7 @@ export const SidebarMenu = ({
 
         {/* ROTAS */}
         <div className="flex w-full flex-col px-2">
-          {ROUTES.map((route) =>
+          {ROUTES.map(route =>
             route.name !== "Barbeiros" ? (
               <Button
                 key={route.name}
@@ -100,7 +101,7 @@ export const SidebarMenu = ({
               >
                 <Link href={route.path}>
                   <route.icon className="size-4" />
-                  <span className="text-sm font-medium">{route.name}</span>
+                  <span className="font-medium text-sm">{route.name}</span>
                 </Link>
               </Button>
             ) : (
@@ -119,7 +120,7 @@ export const SidebarMenu = ({
                   </AccordionTrigger>
 
                   <AccordionContent className="flex flex-col">
-                    {barbers.map((barber) => (
+                    {barbers.map(barber => (
                       <Link
                         key={barber.id}
                         href={`/barber/${barber.id}`}
@@ -144,9 +145,17 @@ export const SidebarMenu = ({
             onClick={handleLogout}
           >
             <LogOut className="size-4" />
-            <span className="text-sm font-medium">Sair da conta</span>
+            <span className="font-medium text-sm">Sair da conta</span>
           </Button>
         )}
+
+        <CancelAlertDialog
+          handleCancel={() => {}}
+          isLoading={false}
+          title="Cancelar Assinatura"
+          description="Tem certeza que deseja cancelar sua assinatura? Esta ação não pode ser desfeita."
+          cancelButtonText="Não, manter assinatura"
+        />
       </SheetContent>
     </Sheet>
   );

@@ -23,7 +23,7 @@ const BarberItem = ({ barber }: BarberItemProps) => {
         className="rounded-xl object-cover"
       />
       <div className="absolute right-0 bottom-0 left-0 z-20 p-4">
-        <h3 className="text-background text-lg font-bold">{barber.name}</h3>
+        <h3 className="font-bold text-background text-lg">{barber.name}</h3>
       </div>
     </Link>
   );

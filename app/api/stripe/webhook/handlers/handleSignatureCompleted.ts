@@ -1,7 +1,7 @@
+import { revalidatePath } from "next/cache";
+import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { stripeClient } from "@/lib/stripe-client";
-import { revalidatePath } from "next/cache";
-import Stripe from "stripe";
 
 // Lógica para lidar com a finalização da assinatura
 export async function handleSignatureCompleted(event: Stripe.Event) {
@@ -27,7 +27,7 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
     } else if (event.type === "invoice.payment_succeeded") {
       const invoice = event.data.object as Stripe.Invoice;
 
-      const lineItem = invoice.lines.data.find((item) => item.subscription);
+      const lineItem = invoice.lines.data.find(item => item.subscription);
 
       if (lineItem && typeof lineItem.subscription === "string") {
         subscriptionId = lineItem.subscription;

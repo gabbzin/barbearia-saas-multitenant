@@ -8,7 +8,7 @@ export default function BarberSchedulePage() {
       <Header />
       <main>
         <PageContainer>
-          <h1 className="mb-4 text-xl font-bold">Agenda Completa</h1>
+          <h1 className="mb-4 font-bold text-xl">Agenda Completa</h1>
           <ScheduleCard barberId={"f33dbcbb-eda1-4cac-afe5-91aea909bd37"} />
         </PageContainer>
       </main>

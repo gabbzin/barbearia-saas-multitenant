@@ -1,7 +1,7 @@
+import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
-import { stripe } from "@better-auth/stripe";
 import { stripeClient } from "./stripe-client";
 
 export const auth = betterAuth({

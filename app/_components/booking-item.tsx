@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { CancelBooking } from "./cancel-booking";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Card } from "./ui/card";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import { CancelBooking } from "./cancel-booking";
 
 interface BookingItemProps {
   booking: {
@@ -55,7 +55,7 @@ const BookingItem = ({ booking, status }: BookingItemProps) => {
               <Avatar>
                 <AvatarImage src={booking.barber.imageUrl} />
               </Avatar>
-              <p className="text-xs font-bold">{booking.barber.name}</p>
+              <p className="font-bold text-xs">{booking.barber.name}</p>
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@ const BookingItem = ({ booking, status }: BookingItemProps) => {
           <p className="text-xs capitalize">
             {booking.date.toLocaleDateString("pt-BR", { month: "long" })}
           </p>
-          <p className="text-xl font-semibold capitalize">
+          <p className="font-semibold text-xl capitalize">
             {booking.date.toLocaleDateString("pt-BR", { day: "2-digit" })}
           </p>
           <p className="text-xs capitalize">
