@@ -46,8 +46,10 @@ export function FormService({ barberId, service }: FormServiceProps) {
         { onSuccess: () => setIsOpen(false) },
       );
     } else {
-      formData.append("barberId", barberId);
-      createMutation.mutate(formData, { onSuccess: () => setIsOpen(false) });
+      createMutation.mutate(
+        { barberId, data: formData },
+        { onSuccess: () => setIsOpen(false) },
+      );
     }
   };
 

@@ -59,13 +59,10 @@ export const isSubscriber = cache(
         plan: {
           select: {
             name: true,
-
           },
         },
       },
     });
-
-    console.log(sub);
 
     return sub?.plan
       ? {
@@ -74,5 +71,5 @@ export const isSubscriber = cache(
           validUntil: sub.periodEnd?.toISOString() || null,
         }
       : PLAN;
-  },
+  }
 );

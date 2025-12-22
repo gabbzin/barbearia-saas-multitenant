@@ -1,5 +1,4 @@
 import { Banknote, Scissors, UserIcon } from "lucide-react";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CardInfo from "@/app/_components/barber/card-info";
@@ -9,19 +8,19 @@ import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import { PageContainer } from "@/app/_components/ui/page";
 import { Separator } from "@/app/_components/ui/separator";
-import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { verifySession } from "@/services/user.service";
 import { convertBRL } from "@/utils/convertBRL";
 import { TableService } from "./components/table-service";
 
-const barberId = "f33dbcbb-eda1-4cac-afe5-91aea909bd37";
-
 const BarberDashboardPage = async () => {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await verifySession();
 
-  if (session?.user.role !== "BARBER") {
+  if (session?.role !== "BARBER") {
     notFound();
   }
+
+  const barberId = session.id;
 
   const today = new Date();
 
@@ -83,7 +82,7 @@ const BarberDashboardPage = async () => {
       <Header />
       <PageContainer>
         <h2 className="font-bold text-2xl lg:text-3xl">
-          Olá {session?.user.name ?? "Usuario"}
+          Olá {session.name ?? "Usuario"}
         </h2>
         <h3 className="font-bold text-lg lg:text-2xl">Resumo de hoje</h3>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">

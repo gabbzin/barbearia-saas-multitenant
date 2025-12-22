@@ -24,7 +24,8 @@ export function useServicesCRUD(barberId: string) {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: FormData) => createService(data),
+    mutationFn: ({ data, barberId }: { data: FormData; barberId: string }) =>
+      createService(data, barberId),
     onSuccess: newService => {
       toast.success("Serviço criado com sucesso!");
       updateCache((oldData: BarberService[] | undefined) => {

@@ -9,6 +9,7 @@ import {
   LogOut,
   MenuIcon,
   Scissors,
+  X,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -90,6 +91,8 @@ export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
           </div>
         )}
 
+        <Separator className="p-0.5" />
+
         {/* ROTAS */}
         <div className="flex w-full flex-col px-2">
           {ROUTES.map(route =>
@@ -106,14 +109,9 @@ export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
                 </Link>
               </Button>
             ) : (
-              <Accordion
-                key={route.name}
-                type="single"
-                collapsible
-                className="-my-2"
-              >
+              <Accordion key={route.name} type="single" collapsible>
                 <AccordionItem value="barbers">
-                  <AccordionTrigger className="px-3">
+                  <AccordionTrigger className="cursor-pointer px-3 py-2 hover:bg-accent hover:text-accent-foreground hover:no-underline dark:hover:bg-accent/50">
                     <div className="flex items-center gap-3">
                       <route.icon className="size-4" />
                       Barbeiros
@@ -125,7 +123,7 @@ export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
                       <Link
                         key={barber.id}
                         href={`/barber/${barber.id}`}
-                        className="px-10 py-2 text-sm hover:underline"
+                        className="px-10 py-2 text-sm hover:bg-accent hover:text-accent-foreground hover:underline dark:hover:bg-accent/50"
                       >
                         {barber.user?.name}
                       </Link>
@@ -137,20 +135,9 @@ export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
           )}
         </div>
 
-        <Separator className="mt-4" />
+        <Separator className="p-0.5" />
 
-        <div className="flex flex-col">
-          {session && (
-            <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 rounded-full px-5 py-3"
-              onClick={handleLogout}
-            >
-              <LogOut className="size-4" />
-              <span className="font-medium text-sm">Sair da conta</span>
-            </Button>
-          )}
-
+        <div className="flex flex-col px-2">
           {isSubscriber && (
             <CancelAlertDialog
               handleCancel={() => {}}
@@ -161,12 +148,23 @@ export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
             >
               <Button
                 variant="ghost"
-                className="w-full justify-start gap-3 rounded-full px-5 py-3"
+                className="w-full justify-start gap-3 rounded-full px-5 py-3 hover:bg-destructive/75 hover:text-white"
               >
-                <LogOut className="size-4" />
+                <X className="size-4" />
                 <span className="font-medium text-sm">Cancelar Assinatura</span>
               </Button>
             </CancelAlertDialog>
+          )}
+
+          {session && (
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3 rounded-full px-5 py-3"
+              onClick={handleLogout}
+            >
+              <LogOut className="size-4" />
+              <span className="font-medium text-sm">Sair da conta</span>
+            </Button>
           )}
         </div>
       </SheetContent>

@@ -1,11 +1,6 @@
 {
   "name": "fsw-aparatus",
   "version": "0.1.0",
-  "pnpm": {
-    "overrides": {
-      "baseline-browser-mapping": "latest"
-    }
-  },
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,9 +10,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@ai-sdk/google": "2.0.28",
-    "@ai-sdk/openai": "2.0.62",
-    "@ai-sdk/react": "2.0.87",
     "@better-auth/stripe": "^1.4.7",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^6.19.0",
@@ -35,7 +27,6 @@
     "@tanstack/react-query": "^5.90.7",
     "@uploadthing/react": "^7.3.3",
     "@vercel/speed-insights": "^1.2.0",
-    "ai": "5.0.87",
     "better-auth": "1.4.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

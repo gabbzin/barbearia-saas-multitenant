@@ -54,7 +54,7 @@ const Home = async () => {
               <>
                 <CheckCircleIcon />
                 <p>
-                  Você está incluso no {plan.name}!
+                  Você está incluso no plano: {plan.name}
                   <br />
                   Válido até{" "}
                   {format(

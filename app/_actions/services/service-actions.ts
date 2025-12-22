@@ -12,7 +12,7 @@ export async function getServicesByBarberId(data: { barberId: string }) {
   });
 }
 
-export async function createService(data: FormData) {
+export async function createService(data: FormData, barberId: string) {
   return await prisma.barberService.create({
     data: {
       name: data.get("name") as string,
@@ -20,7 +20,7 @@ export async function createService(data: FormData) {
       priceInCents: Number(data.get("price")) * 100, // Vem em reais, converter para centavos
       imageUrl:
         "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
-      barberId: data.get("barberId") as string,
+      barberId: barberId,
     },
   });
 }

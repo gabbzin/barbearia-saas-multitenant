@@ -41,15 +41,13 @@ export function TableService({ barberId }: { barberId: string }) {
                   <TableCell>{service.name}</TableCell>
                   <TableCell>{convertBRL(service.priceInCents)}</TableCell>
                   <TableCell className="flex gap-2">
-                    <>
-                      <FormService barberId={barberId} service={service} />
-                      <Button
-                        variant={"destructive"}
-                        onClick={() => deleteService(service.id)}
-                      >
-                        <Trash2Icon />
-                      </Button>
-                    </>
+                    <FormService barberId={barberId} service={service} />
+                    <Button
+                      variant={"destructive"}
+                      onClick={() => deleteService(service.id)}
+                    >
+                      <Trash2Icon />
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
