@@ -8,7 +8,8 @@ import { stripeClient } from "@/lib/stripe-client";
 import { verifySession } from "@/services/user.service";
 
 const inputSchema = z.object({
-  planId: z.uuid().or(z.string()),
+  // planId: z.uuid(),
+  planId: z.string(),
 });
 
 export const createSignature = actionClient
@@ -51,19 +52,9 @@ export const createSignature = actionClient
       });
     }
 
-    let customerConfig = {};
-
-    const userRecord = await prisma.user.findUnique({
-      where: { id: user.id },
-    });
-
-    if (userRecord?.stripeCustomerId) {
-      customerConfig = { customer: userRecord.stripeCustomerId };
-    } else {
-      customerConfig = {
-        customer_email: user.email,
-      };
-    }
+    const customerConfig = {
+      customer: user.stripeCustomerId,
+    };
 
     try {
       const checkoutSession = await stripeClient.checkout.sessions.create({
@@ -100,7 +91,9 @@ export const createSignature = actionClient
     } catch (error) {
       console.error("Erro ao criar sessão de checkout:", error);
       return returnValidationErrors(inputSchema, {
-        _errors: ["Erro ao criar sessão de checkout."],
+        _errors: [`Erro ao criar sessão de checkout. ${error}`],
       });
     }
   });
+
+//  You may only specify one of these parameters: customer, customer_email

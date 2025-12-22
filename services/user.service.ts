@@ -19,6 +19,7 @@ export const verifySession = cache(async () => {
     name: session.user.name,
     email: session.user.email,
     role: session.user.role,
+    stripeCustomerId: session.user.stripeCustomerId,
   };
 });
 

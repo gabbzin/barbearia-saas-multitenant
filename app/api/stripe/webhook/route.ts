@@ -2,8 +2,9 @@ import { NextResponse } from "next/server";
 import { stripeClient } from "@/lib/stripe-client";
 import { handleCheckoutCompleted } from "./handlers/handleCheckoutCompleted";
 import { handleRefund } from "./handlers/handleRefund";
-import { handleSignatureCompleted } from "./handlers/handleSignatureCompleted";
-import { handleSignatureDeleted } from "./handlers/handleSignatureDeleted";
+import { handleSignatureDeleted } from "./handlers/handleSubscriptionDeleted";
+import { handleSubscriptionUpdated } from "./handlers/handleSubscriptionUpdated";
+import { handleInvoicePaid } from "./handlers/handleInvoicePaid";
 
 export const POST = async (request: Request) => {
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
@@ -31,21 +32,23 @@ export const POST = async (request: Request) => {
       await handleCheckoutCompleted(event);
       break;
     }
-    // Assinatura criada
-    case "customer.subscription.created": {
-      await handleSignatureCompleted(event);
-      break;
-    }
-    case "customer.subscription.updated": {
-      // await handleSignatureUpdated(event);
-      break;
-    }
-    case "customer.subscription.deleted": {
-      await handleSignatureDeleted(event);
-      break;
-    }
+    // Reembolso realizado
     case "charge.refunded": {
       await handleRefund(event);
+      break;
+    }
+    // Assinatura atualizada
+    case "customer.subscription.updated": {
+      await handleSubscriptionUpdated(event);
+      break;
+    }
+    case "invoice.paid": {
+      await handleInvoicePaid(event);
+      break;
+    }
+    // Cancelar assinatura
+    case "customer.subscription.deleted": {
+      await handleSignatureDeleted(event);
       break;
     }
   }
