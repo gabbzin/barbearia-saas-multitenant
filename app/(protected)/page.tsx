@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/services/barbers.service";
 import { verifySession } from "@/services/user.service";
@@ -52,7 +53,15 @@ const Home = async () => {
             {plan.hasPlan ? (
               <>
                 <CheckCircleIcon />
-                <p>Você está incluso no {plan.name}!</p>
+                <p>
+                  Você está incluso no {plan.name}!
+                  <br />
+                  Válido até{" "}
+                  {format(
+                    new Date(plan.validUntil ? plan.validUntil : ""),
+                    "dd/MM/yyyy",
+                  )}
+                </p>
               </>
             ) : (
               <>

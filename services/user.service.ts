@@ -26,11 +26,13 @@ export const verifySession = cache(async () => {
 type SubscriptionInfo = {
   hasPlan: boolean;
   name: string | null;
+  validUntil?: string | null;
 };
 
 const PLAN: SubscriptionInfo = {
   hasPlan: false,
   name: null,
+  validUntil: null,
 };
 
 export const getCurrentSubscription = cache(async () => {
@@ -53,9 +55,11 @@ export const isSubscriber = cache(
         userId,
       },
       select: {
+        periodEnd: true,
         plan: {
           select: {
             name: true,
+
           },
         },
       },
@@ -67,6 +71,7 @@ export const isSubscriber = cache(
       ? {
           hasPlan: sub.plan.name !== "FREE",
           name: sub.plan.name,
+          validUntil: sub.periodEnd?.toISOString() || null,
         }
       : PLAN;
   },
