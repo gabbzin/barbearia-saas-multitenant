@@ -29,8 +29,8 @@ export async function handleInvoicePaid(event: Stripe.Event) {
       return;
     }
 
-    const periodStart = new Date(invoice.period_start * 1000);
-    const periodEnd = new Date(invoice.period_end * 1000);
+    const periodStart = new Date(invoice.lines.data[0].period.start * 1000);
+    const periodEnd = new Date(invoice.lines.data[0].period.end * 1000);
 
     // Atualizar a assinatura no banco de dados
     await prisma.subscription.update({
