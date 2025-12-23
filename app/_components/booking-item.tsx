@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { CancelBooking } from "./cancel-booking";
-import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Card } from "./ui/card";
+import { Avatar, Avata./ui/shadcnui/cardfrom "./ui/shadcnui/avatar";
 
 interface BookingItemProps {
   booking: {

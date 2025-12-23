@@ -2,6 +2,12 @@ import { prisma } from "@/lib/prisma";
 import Header from "../_components/header";
 import HeaderTitle from "../_components/me/HeaderTitle";
 import SignatureItem from "../_components/signature/signature-item";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselNext,
+  CarouselPrevious,
+} from "../_components/ui/carousel";
 import { PageContainer, PageSection } from "../_components/ui/page";
 import { Separator } from "../_components/ui/separator";
 
@@ -23,9 +29,15 @@ export default async function SignaturePage() {
       <PageContainer>
         <HeaderTitle>Assinaturas</HeaderTitle>
         <PageSection>
-          {plans.map(plan => {
-            return <SignatureItem key={plan.id} plan={plan} />;
-          })}
+          <Carousel>
+            <CarouselContent>
+              {plans.map(plan => {
+                return <SignatureItem key={plan.id} plan={plan} />;
+              })}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </PageSection>
       </PageContainer>
     </>
