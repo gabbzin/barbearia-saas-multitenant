@@ -113,9 +113,9 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
             Contato
           </h2>
           <div className="space-y-3">
-            {barber.phone.map((phone, index) => (
+            {barber.phone.map(phone => (
               <div
-                key={index}
+                key={phone}
                 className="flex w-full flex-col items-center justify-between"
               >
                 <PhoneItem phone={phone} />

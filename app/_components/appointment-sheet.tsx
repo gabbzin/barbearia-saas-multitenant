@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
+import type { SubscriptionInfo } from "@/services/user.service";
 import { isPastTimeSlot } from "@/utils/isPastTimeSlot";
 import { createBooking } from "../_actions/bookings/create-booking";
 import { createBookingCheckoutSession } from "../_actions/bookings/create-booking-checkout-session";
@@ -26,13 +27,13 @@ interface AppointmentSheetProps {
       user: User;
     };
   };
-  isSubscriber?: boolean;
+  plan?: SubscriptionInfo;
 }
 
 const AppointmentSheet = ({
   setSheetOpen,
   service,
-  isSubscriber,
+  plan,
 }: AppointmentSheetProps) => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -104,7 +105,7 @@ const AppointmentSheet = ({
 
     date.setHours(Number(hours), Number(minutes), 0, 0);
 
-    if (payMethod === "cartao" && !isSubscriber) {
+    if (payMethod === "cartao" && !plan?.hasPlan) {
       result = await executeCheckoutAsync({
         serviceId: service.id,
         date,
@@ -135,6 +136,22 @@ const AppointmentSheet = ({
     setSelectedTime(undefined);
     setSheetOpen(false);
   };
+
+  let priceFree = priceInReaisInteger;
+  // Isolar lógica em outro lugar depois
+  if (
+    service.name.toLowerCase() === "corte de cabelo" &&
+    (plan?.name?.toLowerCase() === "corte ilimitado" ||
+      plan?.name?.toLowerCase() === "corte e barba ilimitados")
+  ) {
+    priceFree = 0;
+  } else if (
+    service.name.toLowerCase() === "barba" &&
+    (plan?.name?.toLowerCase() === "barba ilimitada" ||
+      plan?.name?.toLowerCase() === "corte e barba ilimitados")
+  ) {
+    priceFree = 0;
+  }
 
   return (
     <SheetContent className="w-[370px] overflow-y-auto p-0">
@@ -197,7 +214,7 @@ const AppointmentSheet = ({
                     {service.name}
                   </p>
                   <p className="font-bold text-card-foreground text-sm">
-                    R${priceInReaisInteger},00
+                    R${priceFree},00
                   </p>
                 </div>
 

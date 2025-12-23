@@ -125,6 +125,8 @@ model Barber {
   bookings Booking[]
 
   @@index([userId])
+  disponibilityDefaults DisponibilityDefault[]
+  exceptionDates ExceptionDate[]
 }
 
 model BarberService {
@@ -221,4 +223,39 @@ model Booking {
   @@index([userId])
   @@index([barberId, date])
   @@index([status])
+}
+
+enum DiaSemana {
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+}
+
+model DisponibilityDefault {
+  id      String  @id @default(uuid())
+  barberId String 
+  barber   Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  dia_semana DiaSemana
+  startTime  String
+  endTime    String
+
+  @@unique([barberId, dia_semana])
+}
+
+model ExceptionDate {
+  id       String   @id @default(uuid())
+  barberId String
+  barber   Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  date      String
+  isClosed  Boolean  @default(true)
+  startTime String
+  endTime   String
+
+  @@index([barberId])
 }

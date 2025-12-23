@@ -23,7 +23,7 @@ export const verifySession = cache(async () => {
   };
 });
 
-type SubscriptionInfo = {
+export type SubscriptionInfo = {
   hasPlan: boolean;
   name: string | null;
   validUntil?: string | null;

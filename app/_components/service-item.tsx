@@ -61,7 +61,7 @@ export function ServiceItem({ service }: ServiceItemProps) {
       <AppointmentSheet
         setSheetOpen={setSheetOpen}
         service={service}
-        isSubscriber={data?.hasPlan}
+        plan={data}
       />
     </Sheet>
   );

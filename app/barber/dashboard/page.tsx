@@ -1,8 +1,9 @@
-import { Banknote, Scissors, UserIcon } from "lucide-react";
+import { AlertCircle, Banknote, Scissors, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CardInfo from "@/app/_components/barber/card-info";
 import Header from "@/app/_components/header";
+import { Alert, AlertTitle } from "@/app/_components/ui/alert";
 import { Avatar, AvatarImage } from "@/app/_components/ui/avatar";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
@@ -11,6 +12,7 @@ import { Separator } from "@/app/_components/ui/separator";
 import { prisma } from "@/lib/prisma";
 import { verifySession } from "@/services/user.service";
 import { convertBRL } from "@/utils/convertBRL";
+import FormTimesServices from "./components/form-times-services";
 import { TableService } from "./components/table-service";
 
 const BarberDashboardPage = async () => {
@@ -30,56 +32,93 @@ const BarberDashboardPage = async () => {
   const endOfDayDate = new Date(today);
   endOfDayDate.setUTCHours(23, 59, 59, 999);
 
-  const nextBooking = await prisma.booking.findFirst({
-    where: {
-      barberId: barberId,
-      date: {
-        gte: startOfDayDate,
+  const requests = Promise.allSettled([
+    // Próximo agendamento
+    prisma.booking.findFirst({
+      where: {
+        barberId: barberId,
+        date: {
+          gte: startOfDayDate,
+        },
+        status: "SCHEDULED",
       },
-      status: "SCHEDULED",
-    },
-    include: {
-      service: true,
-      user: true,
-    },
-    orderBy: {
-      date: "asc",
-    },
-  });
+      include: {
+        service: true,
+        user: true,
+      },
+      orderBy: {
+        date: "asc",
+      },
+    }),
 
-  const faturamento = await prisma.booking.aggregate({
-    _sum: {
-      priceInCents: true,
-    },
-    _count: {
-      id: true,
-    },
-    where: {
-      barberId: barberId,
-      date: {
-        gte: startOfDayDate,
-        lte: endOfDayDate,
+    // Faturamento e atendimentos realizados hoje
+    prisma.booking.aggregate({
+      _sum: {
+        priceInCents: true,
       },
-      status: "COMPLETED",
-    },
-  });
+      _count: {
+        id: true,
+      },
+      where: {
+        barberId: barberId,
+        date: {
+          gte: startOfDayDate,
+          lte: endOfDayDate,
+        },
+        status: "COMPLETED",
+      },
+    }),
 
-  const atendimentos = await prisma.booking.count({
-    where: {
-      barberId: barberId,
-      date: {
-        gte: startOfDayDate,
+    // Agendamentos para hoje
+    prisma.booking.count({
+      where: {
+        barberId: barberId,
+        date: {
+          gte: startOfDayDate,
+        },
+        status: "SCHEDULED",
       },
-      status: "SCHEDULED",
-    },
-  });
+    }),
+
+    // Verifica se o barbeiro tem horários padrão configurados
+    prisma.disponibilityDefault.findFirst({
+      where: {
+        barberId: barberId,
+      },
+    }),
+  ]);
+
+  const [nextBookingResult, faturamentoResult, bookingsResult, horariosResult] =
+    await requests;
+
+  const nextBooking =
+    nextBookingResult.status === "fulfilled" ? nextBookingResult.value : null;
+
+  const faturamento =
+    faturamentoResult.status === "fulfilled"
+      ? faturamentoResult.value
+      : { _sum: { priceInCents: 0 }, _count: { id: 0 } };
+
+  const atendimentos =
+    bookingsResult.status === "fulfilled" ? bookingsResult.value : 0;
+
+  const horarios =
+    horariosResult.status === "fulfilled" ? horariosResult.value : false;
 
   const faturamentoHoje = convertBRL(faturamento._sum.priceInCents ?? 0);
-  const atendimentosRealizados = faturamento._count.id;
+  const atendimentosRealizados = faturamento._count.id ?? 0;
 
   return (
     <div>
       <Header />
+      <Alert>
+        <AlertTitle>
+          <AlertCircle />
+          {horarios
+            ? " Seus horários padrão estão configurados."
+            : " Você ainda não configurou seus horários padrão. Por favor, configure-os nas configurações abaixo."}
+        </AlertTitle>
+      </Alert>
       <PageContainer>
         <h2 className="font-bold text-2xl lg:text-3xl">
           Olá {session.name ?? "Usuario"}
@@ -150,6 +189,10 @@ const BarberDashboardPage = async () => {
           Seus serviços cadastrados
         </h3>
         <TableService barberId={barberId} />
+      </PageContainer>
+      <PageContainer>
+        <h3 className="font-bold text-lg lg:text-2xl">Configurações</h3>
+        <FormTimesServices />
       </PageContainer>
     </div>
   );
