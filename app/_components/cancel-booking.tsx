@@ -8,10 +8,10 @@ import { toast } from "sonner";
 import { cancelBooking } from "@/app/_actions/bookings/cancel-booking";
 import CancelAlertDialog from "./cancel-alert-dialog";
 import { PhoneItem } from "./phone-item";
+import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import { Avatar, Avata./ui/shadcnui/cardfrom "./ui/shadcnui/avatar";
 import {
   Sheet,
   SheetContent,

@@ -2,12 +2,9 @@
 
 import { format } from "date-fns";
 import { confirmBooking } from "@/app/_actions/bookings/confirm-booking";
+import { Avatar, AvatarImage } from "@/app/_components/ui/avatar";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
-import { Avatar, AvatarImage } from
-@/app/_components
-/ui/acdhinsu / cardadcnui / avatar;
-";
 
 import { useBookings } from "@/hooks/useBookings";
 

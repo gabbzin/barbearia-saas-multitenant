@@ -3,22 +3,31 @@ import type { Plan } from "@prisma/client";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
 import { createSignature } from "@/app/_actions/signatures/create-signature";
+import { convertBRL } from "@/utils/convertBRL";
+import { convertCapitalize } from "@/utils/convertCapitalize";
 import { AuroraText } from "../ui/aurora-text";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { CarouselItem } from "../ui/carousel";
+import { Separator } from "../ui/separator";
+import { ShimmerButton } from "../ui/shimmer-button";
 
 type SignatureItemProps = {
   plan: Plan;
-  key: string;
+  myPlanName?: string | null;
 };
 
-const SignatureItem = ({ plan, key }: SignatureItemProps) => {
+const SignatureItem = ({ plan, myPlanName }: SignatureItemProps) => {
   const { executeAsync, isPending } = useAction(createSignature);
 
-  const priceInReais = (plan.priceInCents / 100).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
+  const priceInReais = convertBRL(plan.priceInCents);
 
   const handleConfirm = async () => {
     const data = {
@@ -42,64 +51,58 @@ const SignatureItem = ({ plan, key }: SignatureItemProps) => {
   };
 
   return (
-    <CarouselItem key={key}>
-      <Card>
+    <CarouselItem>
+      {myPlanName?.toLowerCase() === plan.name.toLowerCase() ? (
+        <div className="absolute m-auto max-w-64 rounded bg-foreground px-2 py-1 font-semibold text-background">
+          Plano atual
+        </div>
+      ) : (
+        ""
+      )}
+      <Card className="z-10 border-2 shadow-lg dark:border-white">
         <CardHeader className="">
-          <CardTitle className="text-center">
-            <AuroraText>{plan.name}</AuroraText>
+          <CardTitle className="text-center font-bold text-3xl">
+            <AuroraText className="font-geist">
+              {convertCapitalize(plan.name)}
+            </AuroraText>
+            <CardDescription>
+              <p className="whitespace-pre font-bold text-card-foreground text-md leading-[1.4]">
+                <span className="text-2xl text-green-500">{priceInReais}</span>
+                /mês
+              </p>
+            </CardDescription>
           </CardTitle>
         </CardHeader>
-        <CardContent></CardContent>
+
+        <Separator className="my-6 dark:bg-white" />
+
+        <CardContent className="mt-2">
+          <h3 className="font-bold text-lg">Beneficios </h3>
+          <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
+            <li>1º Beneficio</li>
+            <li>2º Beneficio</li>
+            <li>3º Beneficio</li>
+            <li>4º Beneficio</li>
+            <li>5º Beneficio</li>
+          </ul>
+        </CardContent>
+
+        <Separator className="my-6 dark:bg-white" />
+
+        <CardFooter className="mt-2 flex items-end justify-between">
+          <Button className="w-full" asChild>
+            <ShimmerButton
+              onClick={handleConfirm}
+              disabled={isPending}
+              className="dark:bg-white dark:text-white"
+            >
+              Assine aqui
+            </ShimmerButton>
+          </Button>
+        </CardFooter>
       </Card>
     </CarouselItem>
   );
 };
 
 export default SignatureItem;
-
-{
-  /* <div className="flex flex-col gap-4 rounded-2xl border border-border border-solid bg-card p-3">
-        <div className="flex items-center justify-center gap-3">
-          <div className="relative size-[110px] shrink-0 overflow-hidden rounded-[10px]">
-            <Image
-              src={
-                "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png"
-              }
-              alt={"Assinatura 1"}
-              fill
-              className="object-cover"
-            />
-          </div>
-
-          <div className="flex grow basis-0 flex-row items-center self-stretch">
-            <div className="relative flex h-full min-h-0 min-w-0 grow basis-0 flex-col items-start justify-between">
-              <div className="flex w-full flex-col items-start gap-1 text-sm leading-[1.4]">
-                <p className="w-full font-bold text-card-foreground">
-                  {plan.name}
-                </p>
-                <p className="w-full font-normal text-muted-foreground">
-                  {plan.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex w-full items-center justify-between">
-          <p className="whitespace-pre font-bold text-card-foreground text-md leading-[1.4]">
-            <Badge
-              variant="outline"
-              className="m-0 bg-green-600 p-2 text-white"
-            >
-              {priceInReais}
-            </Badge>
-          </p>
-          <Button
-            className="rounded-full px-4 py-2"
-            onClick={handleConfirm}
-            disabled={isPending}
-          >
-            Assinar
-          </Button>
-        </div>
-      </div> */
-}

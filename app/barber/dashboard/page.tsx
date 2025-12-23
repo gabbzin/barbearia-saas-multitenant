@@ -3,13 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import CardInfo from "@/app/_components/barber/card-info";
 import Header from "@/app/_components/header";
-import { Button } from "@/app/_components/ui/button";
-import { Card, CardContent } from "@/app/_components/ui/card";
-import { PageContainer } from
-"@/ap@/app/_components/ui/shadcnui/card
-
 import { Alert, AlertTitle } from "@/app/_components/ui/alert";
 import { Avatar, AvatarImage } from "@/app/_components/ui/avatar";
+import { Button } from "@/app/_components/ui/button";
+import { Card, CardContent } from "@/app/_components/ui/card";
+import { PageContainer } from "@/app/_components/ui/page";
 import { Separator } from "@/app/_components/ui/separator";
 import { prisma } from "@/lib/prisma";
 import { verifySession } from "@/services/user.service";
