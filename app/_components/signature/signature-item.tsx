@@ -51,16 +51,16 @@ const SignatureItem = ({ plan, myPlanName }: SignatureItemProps) => {
   };
 
   return (
-    <CarouselItem>
+    <CarouselItem className="relative md:basis-1/2 lg:basis-1/3">
       {myPlanName?.toLowerCase() === plan.name.toLowerCase() ? (
-        <div className="absolute m-auto max-w-64 rounded bg-foreground px-2 py-1 font-semibold text-background">
+        <div className="absolute m-auto rounded bg-foreground px-2 font-semibold text-background">
           Plano atual
         </div>
       ) : (
         ""
       )}
       <Card className="z-10 border-2 shadow-lg dark:border-white">
-        <CardHeader className="">
+        <CardHeader className="mt-5">
           <CardTitle className="text-center font-bold text-3xl">
             <AuroraText className="font-geist">
               {convertCapitalize(plan.name)}
@@ -74,7 +74,7 @@ const SignatureItem = ({ plan, myPlanName }: SignatureItemProps) => {
           </CardTitle>
         </CardHeader>
 
-        <Separator className="my-6 dark:bg-white" />
+        <Separator className="my-6" />
 
         <CardContent className="mt-2">
           <h3 className="font-bold text-lg">Beneficios </h3>
@@ -87,7 +87,7 @@ const SignatureItem = ({ plan, myPlanName }: SignatureItemProps) => {
           </ul>
         </CardContent>
 
-        <Separator className="my-6 dark:bg-white" />
+        <Separator className="my-6" />
 
         <CardFooter className="mt-2 flex items-end justify-between">
           <Button className="w-full" asChild>

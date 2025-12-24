@@ -28,7 +28,7 @@ export default async function SignaturePage() {
         <HeaderTitle>Assinaturas</HeaderTitle>
         <PageSection>
           <div className="p-2">
-            <Carousel>
+            <Carousel className="w-full">
               <CarouselContent>
                 {plans.map(plan => {
                   return (
