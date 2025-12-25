@@ -98,6 +98,7 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
                 key={service.id}
                 service={{
                   ...service,
+                  // biome-ignore lint/style/noNonNullAssertion: <User tem que existir aqui>
                   barber: { ...barber, user: barber.user! },
                 }}
               />

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 interface GenericFormProps<T extends FieldValues> extends UseFormProps<T> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: <Confia>
   schema: ZodType<T, any, any>;
   onSubmit: (data: T) => Promise<void> | void;
   children: React.ReactNode;
