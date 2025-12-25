@@ -2,17 +2,17 @@ import { format } from "date-fns";
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/features/barber/services/barbers.repository";
 import { verifySession } from "@/features/user/repository/user.repository";
-import { getCurrentSubscriptionAction } from "../_actions/signatures/get-current-subscription";
-import BarberItem from "../_components/barber-item";
-import Footer from "../_components/footer";
-import Header from "../_components/header";
-import { Alert, AlertTitle } from "../_components/ui/alert";
+import BarberItem from "@/shared/components/barber-item";
+import Footer from "@/shared/components/footer";
+import Header from "@/shared/components/header";
+import { Alert, AlertTitle } from "@/shared/components/ui/alert";
 import {
   PageContainer,
   PageSection,
   PageSectionScroller,
   PageSectionTitle,
-} from "../_components/ui/page";
+} from "@/shared/components/ui/page";
+import { getCurrentSubscriptionAction } from "../../features/signature/actions/get-current-subscription";
 
 const Home = async () => {
   const user = await verifySession();

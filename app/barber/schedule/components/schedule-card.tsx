@@ -1,8 +1,8 @@
 "use client";
 
 import { format } from "date-fns";
+import { confirmBooking } from "@/features/booking/actions/confirm-booking";
 import { useBookings } from "@/features/booking/hooks/useBookings";
-import { confirmBooking } from "@/shared/actions/bookings/confirm-booking";
 import { Avatar, AvatarImage } from "@/shared/components/ui/avatar";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent } from "@/shared/components/ui/card";

@@ -2,7 +2,7 @@
 import type { Plan } from "@prisma/client";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
-import { createSignature } from "@/shared/actions/signatures/create-signature";
+import { createSignature } from "@/features/signature/actions/create-signature";
 import { convertBRL } from "@/utils/convertBRL";
 import { convertCapitalize } from "@/utils/convertCapitalize";
 import { AuroraText } from "../ui/aurora-text";

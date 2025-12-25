@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getCurrentSubscriptionAction } from "@/app/_actions/signatures/get-current-subscription";
+import { getCurrentSubscriptionAction } from "@/features/signature/actions/get-current-subscription";
 
 export const useGetSubscription = () =>
   useQuery({
