@@ -1,17 +1,16 @@
 import { AlertCircle, Banknote, Scissors, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import CardInfo from "@/app/_components/barber/card-info";
-import Header from "@/app/_components/header";
-import { Alert, AlertTitle } from "@/app/_components/ui/alert";
-import { Avatar, AvatarImage } from "@/app/_components/ui/avatar";
-import { Button } from "@/app/_components/ui/button";
-import { Card, CardContent } from "@/app/_components/ui/card";
-import { PageContainer } from "@/app/_components/ui/page";
-import { Separator } from "@/app/_components/ui/separator";
-import { prisma } from "@/lib/prisma";
-import { verifySession } from "@/services/user.service";
-import { convertBRL } from "@/utils/convertBRL";
+import { verifySession } from "@/features/user/repository/user.repository";
+import CardInfo from "@/shared/components/barber/card-info";
+import Header from "@/shared/components/header";
+import { Alert, AlertTitle } from "@/shared/components/ui/alert";
+import { Avatar, AvatarImage } from "@/shared/components/ui/avatar";
+import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent } from "@/shared/components/ui/card";
+import { PageContainer } from "@/shared/components/ui/page";
+import { Separator } from "@/shared/components/ui/separator";
+import { getBarberDashboardInfos } from "./actions/getInfos";
 import FormTimesServices from "./components/form-times-services";
 import { TableService } from "./components/table-service";
 
@@ -24,99 +23,17 @@ const BarberDashboardPage = async () => {
 
   const barberId = session.id;
 
-  const today = new Date();
-
-  const startOfDayDate = new Date(today);
-  startOfDayDate.setUTCHours(0, 0, 0, 0);
-
-  const endOfDayDate = new Date(today);
-  endOfDayDate.setUTCHours(23, 59, 59, 999);
-
-  const requests = Promise.allSettled([
-    // Próximo agendamento
-    prisma.booking.findFirst({
-      where: {
-        barberId: barberId,
-        date: {
-          gte: startOfDayDate,
-        },
-        status: "SCHEDULED",
-      },
-      include: {
-        service: true,
-        user: true,
-      },
-      orderBy: {
-        date: "asc",
-      },
-    }),
-
-    // Faturamento e atendimentos realizados hoje
-    prisma.booking.aggregate({
-      _sum: {
-        priceInCents: true,
-      },
-      _count: {
-        id: true,
-      },
-      where: {
-        barberId: barberId,
-        date: {
-          gte: startOfDayDate,
-          lte: endOfDayDate,
-        },
-        status: "COMPLETED",
-      },
-    }),
-
-    // Agendamentos para hoje
-    prisma.booking.count({
-      where: {
-        barberId: barberId,
-        date: {
-          gte: startOfDayDate,
-        },
-        status: "SCHEDULED",
-      },
-    }),
-
-    // Verifica se o barbeiro tem horários padrão configurados
-    prisma.disponibilityDefault.findFirst({
-      where: {
-        barberId: barberId,
-      },
-    }),
-  ]);
-
-  const [nextBookingResult, faturamentoResult, bookingsResult, horariosResult] =
-    await requests;
-
-  const nextBooking =
-    nextBookingResult.status === "fulfilled" ? nextBookingResult.value : null;
-
-  const faturamento =
-    faturamentoResult.status === "fulfilled"
-      ? faturamentoResult.value
-      : { _sum: { priceInCents: 0 }, _count: { id: 0 } };
-
-  const atendimentos =
-    bookingsResult.status === "fulfilled" ? bookingsResult.value : 0;
-
-  const horarios =
-    horariosResult.status === "fulfilled" ? horariosResult.value : false;
-
-  const faturamentoHoje = convertBRL(faturamento._sum.priceInCents ?? 0);
-  const atendimentosRealizados = faturamento._count.id ?? 0;
+  const info = await getBarberDashboardInfos({ barberId });
 
   return (
     <div>
       <Header />
       <Alert>
-        <AlertTitle>
+        <AlertTitle className="flex items-center gap-2">
           <AlertCircle />
-          {horarios
+          {/* {horarios
             ? " Seus horários padrão estão configurados."
-            : " Você ainda não configurou seus horários padrão. Por favor, configure-os nas configurações abaixo."}
+            : " Você ainda não configurou seus horários padrão. Por favor, configure-os nas configurações abaixo."} */}
         </AlertTitle>
       </Alert>
       <PageContainer>
@@ -128,19 +45,19 @@ const BarberDashboardPage = async () => {
           <CardInfo
             Icon={Scissors}
             title="Atendimentos realizados"
-            value={atendimentosRealizados}
+            value={info.data?.servicesPerformed}
             variant="blue"
           />
           <CardInfo
             Icon={UserIcon}
             title="Atendimentos agendados"
-            value={atendimentos}
+            value={info.data?.totalSchedules}
             variant="red"
           />
           <CardInfo
             Icon={Banknote}
             title="Faturamento"
-            value={faturamentoHoje}
+            value={info.data?.todayBilling}
             variant="green"
           />
         </div>
@@ -150,26 +67,26 @@ const BarberDashboardPage = async () => {
         <h3 className="font-bold text-lg lg:text-2xl">Próximo atendimento</h3>
         <Card className="border-2 border-primary">
           <CardContent className="flex flex-col gap-3">
-            {nextBooking ? (
+            {info.data?.nextBooking ? (
               <>
                 <div className="flex items-center gap-4 font-semibold">
                   <Avatar>
                     <AvatarImage
                       src={"https://github.com/shadcn.png"}
-                      alt={nextBooking.user.name ?? "User Avatar"}
+                      alt={info.data?.nextBooking.user.name ?? "User Avatar"}
                       className="object-cover"
                     />
                   </Avatar>
-                  <p>{nextBooking.user.name}</p>
+                  <p>{info.data?.nextBooking.user.name}</p>
                 </div>
                 <div className="space-y-1">
                   <p>
                     <span className="font-bold">Serviço: </span>
-                    {nextBooking.service.name}
+                    {info.data?.nextBooking.service.name}
                   </p>
                   <p>
                     <span className="font-bold">Horário: </span>
-                    {nextBooking.date.toTimeString().substring(0, 5)}
+                    {info.data?.nextBooking.date.toTimeString().substring(0, 5)}
                   </p>
                 </div>
               </>
@@ -192,7 +109,7 @@ const BarberDashboardPage = async () => {
       </PageContainer>
       <PageContainer>
         <h3 className="font-bold text-lg lg:text-2xl">Configurações</h3>
-        <FormTimesServices />
+        <FormTimesServices barberId={barberId} />
       </PageContainer>
     </div>
   );

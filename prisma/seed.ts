@@ -216,6 +216,7 @@ async function seedDatabase() {
     console.log("✅ Seed concluído com sucesso!");
     console.log(`- ${barbershops.length} barbeiros criados`);
     console.log(`- ${pastDates.length} agendamentos passados criados`);
+    console.log(`- ${Plans.length} planos criados`);
 
     // Fechar a conexão com o banco de dados
     await prisma.$disconnect();

@@ -1,10 +1,15 @@
 "use client";
 
 import { PlusIcon } from "lucide-react";
-import CheckboxForm from "@/app/_components/form/checkbox-form";
-import GenericForm from "@/app/_components/form/generic-form";
-import InputForm from "@/app/_components/form/input-form";
-import { Button } from "@/app/_components/ui/button";
+import {
+  type TimesSchemaData,
+  timesSchema,
+} from "@/features/booking/schema/timesSchema";
+import { useSettingsBarber } from "@/features/setting/useSettingsBarber";
+import CheckboxForm from "@/shared/components/form/checkbox-form";
+import GenericForm from "@/shared/components/form/generic-form";
+import InputForm from "@/shared/components/form/input-form";
+import { Button } from "@/shared/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,23 +17,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/app/_components/ui/dialog";
-import { timesSchema } from "@/schemas/timesSchema";
+} from "@/shared/components/ui/dialog";
 
 const daysOptions = [
-  { label: "Domingo", value: "0" },
-  { label: "Segunda-feira", value: "1" },
-  { label: "Terça-feira", value: "2" },
-  { label: "Quarta-feira", value: "3" },
-  { label: "Quinta-feira", value: "4" },
-  { label: "Sexta-feira", value: "5" },
-  { label: "Sábado", value: "6" },
+  { label: "Domingo", value: false, index: 0 },
+  { label: "Segunda-feira", value: false, index: 1 },
+  { label: "Terça-feira", value: false, index: 2 },
+  { label: "Quarta-feira", value: false, index: 3 },
+  { label: "Quinta-feira", value: false, index: 4 },
+  { label: "Sexta-feira", value: false, index: 5 },
+  { label: "Sábado", value: false, index: 6 },
 ];
 
-export default function FormTimesServices() {
-  // biome-ignore lint/suspicious/noExplicitAny: <test>
-  const handleSubmit = (data: any) => {
-    console.log(data);
+export default function FormTimesServices({ barberId }: { barberId: string }) {
+  const { saveSettings } = useSettingsBarber(barberId);
+
+  const handleSubmit = async (data: TimesSchemaData) => {
+    try {
+      await saveSettings(data);
+    } catch (e) {
+      console.error("Erro ao salvar", e);
+    }
   };
 
   return (
@@ -56,13 +65,9 @@ export default function FormTimesServices() {
         >
           <h3 className="font-semibold text-lg">Dias da Semana</h3>
           <div className="grid grid-cols-2 gap-3">
-            {daysOptions.map(({ label, value }) => {
+            {daysOptions.map(({ label, index }) => {
               return (
-                <CheckboxForm
-                  key={label}
-                  label={label}
-                  name={`dia_semana_${value}`}
-                />
+                <CheckboxForm key={label} label={label} name={`${index}`} />
               );
             })}
           </div>

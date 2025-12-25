@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
-import { getBarbers } from "@/services/barbers.service";
-import { verifySession } from "@/services/user.service";
+import { getBarbers } from "@/features/barber/services/barbers.repository";
+import { verifySession } from "@/features/user/repository/user.repository";
 import { getCurrentSubscriptionAction } from "../_actions/signatures/get-current-subscription";
 import BarberItem from "../_components/barber-item";
 import Footer from "../_components/footer";

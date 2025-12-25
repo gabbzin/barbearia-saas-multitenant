@@ -2,17 +2,20 @@ import type { BarberService } from "@prisma/client";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import { PencilIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
-import GenericForm from "@/app/_components/form/generic-form";
-import InputForm from "@/app/_components/form/input-form";
-import { Button } from "@/app/_components/ui/button";
+import { useServicesCRUD } from "@/features/service/hooks/useServices";
+import {
+  serviceSchema,
+  type serviceSchemaType,
+} from "@/features/service/schema/serviceSchema";
+import GenericForm from "@/shared/components/form/generic-form";
+import InputForm from "@/shared/components/form/input-form";
+import { Button } from "@/shared/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTrigger,
-} from "@/app/_components/ui/dialog";
-import { useServicesCRUD } from "@/hooks/useServices";
-import { serviceSchema, type serviceSchemaType } from "@/schemas/serviceSchema";
+} from "@/shared/components/ui/dialog";
 
 interface FormServiceProps {
   barberId: string;

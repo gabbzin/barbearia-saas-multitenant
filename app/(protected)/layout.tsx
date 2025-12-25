@@ -1,6 +1,6 @@
 import { SubscriptionStatus } from "@prisma/client";
+import { verifySession } from "@/features/user/repository/user.repository";
 import { prisma } from "@/lib/prisma";
-import { verifySession } from "@/services/user.service";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;

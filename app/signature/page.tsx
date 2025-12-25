@@ -1,11 +1,11 @@
+import { getCurrentSubscription } from "@/features/user/repository/user.repository";
 import { prisma } from "@/lib/prisma";
-import { getCurrentSubscription } from "@/services/user.service";
-import Header from "../_components/header";
-import HeaderTitle from "../_components/me/HeaderTitle";
-import SignatureItem from "../_components/signature/signature-item";
-import { Carousel, CarouselContent } from "../_components/ui/carousel";
-import { PageContainer, PageSection } from "../_components/ui/page";
-import { Separator } from "../_components/ui/separator";
+import Header from "@/shared/components/header";
+import HeaderTitle from "@/shared/components/me/HeaderTitle";
+import SignatureItem from "@/shared/components/signature/signature-item";
+import { Carousel, CarouselContent } from "@/shared/components/ui/carousel";
+import { PageContainer, PageSection } from "@/shared/components/ui/page";
+import { Separator } from "@/shared/components/ui/separator";
 
 export default async function SignaturePage() {
   const plans = await prisma.plan.findMany({

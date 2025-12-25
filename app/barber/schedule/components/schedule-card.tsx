@@ -1,12 +1,11 @@
 "use client";
 
 import { format } from "date-fns";
-import { confirmBooking } from "@/app/_actions/bookings/confirm-booking";
-import { Avatar, AvatarImage } from "@/app/_components/ui/avatar";
-import { Button } from "@/app/_components/ui/button";
-import { Card, CardContent } from "@/app/_components/ui/card";
-
-import { useBookings } from "@/hooks/useBookings";
+import { useBookings } from "@/features/booking/hooks/useBookings";
+import { confirmBooking } from "@/shared/actions/bookings/confirm-booking";
+import { Avatar, AvatarImage } from "@/shared/components/ui/avatar";
+import { Button } from "@/shared/components/ui/button";
+import { Card, CardContent } from "@/shared/components/ui/card";
 
 export function ScheduleCard({ barberId }: { barberId: string }) {
   const { data: bookings } = useBookings(barberId);

@@ -3,10 +3,10 @@
 import { format } from "date-fns";
 import { returnValidationErrors } from "next-safe-action";
 import z from "zod";
+import { verifySession } from "@/features/user/repository/user.repository";
 import { actionClient } from "@/lib/actionClient";
 import { prisma } from "@/lib/prisma";
 import { stripeClient } from "@/lib/stripe-client";
-import { verifySession } from "@/services/user.service";
 
 const inputSchema = z.object({
   serviceId: z.uuid(),

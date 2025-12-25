@@ -2,12 +2,15 @@
 
 import { useRouter } from "next/navigation"; // Use router.push em Client Components
 import { toast } from "sonner";
-import GenericForm from "@/app/_components/form/generic-form";
-import InputForm from "@/app/_components/form/input-form";
-import { GoogleButton } from "@/app/_components/google-button";
-import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
+import {
+  registerSchema,
+  type registerSchemaType,
+} from "@/features/user/schema/userSchema";
 import { authClient } from "@/lib/auth-client";
-import { registerSchema, type registerSchemaType } from "@/schemas/userSchema";
+import GenericForm from "@/shared/components/form/generic-form";
+import InputForm from "@/shared/components/form/input-form";
+import { GoogleButton } from "@/shared/components/google-button";
+import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 
 const RegisterForm = () => {
   const router = useRouter();

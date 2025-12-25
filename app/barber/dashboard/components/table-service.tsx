@@ -1,8 +1,9 @@
 "use client";
 
 import { Trash2Icon } from "lucide-react";
-import { Button } from "@/app/_components/ui/button";
-import { Spinner } from "@/app/_components/ui/spinner";
+import { useServicesCRUD } from "@/features/service/hooks/useServices";
+import { Button } from "@/shared/components/ui/button";
+import { Spinner } from "@/shared/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -10,8 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/app/_components/ui/table";
-import { useServicesCRUD } from "@/hooks/useServices";
+} from "@/shared/components/ui/table";
 import { convertBRL } from "@/utils/convertBRL";
 import { FormService } from "./form-service";
 

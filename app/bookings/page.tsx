@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import Footer from "@/app/_components/footer";
-import Header from "@/app/_components/header";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Footer from "@/shared/components/footer";
+import Header from "@/shared/components/header";
 import BookingsClient from "./_components/bookingsClient";
 
 const BookingsPage = async () => {

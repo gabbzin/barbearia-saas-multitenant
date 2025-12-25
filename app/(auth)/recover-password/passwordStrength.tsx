@@ -22,7 +22,7 @@ export function PasswordStrength({ fieldName }: { fieldName: string }) {
       <div className="grid grid-cols-1 gap-1 md:grid-cols-2">
         {checks.map((check, index) => (
           <div
-            key={index}
+            key={`${index}-${check.label}`}
             className={cn(
               "flex items-center gap-2 text-xs transition-colors duration-200",
               check.pass

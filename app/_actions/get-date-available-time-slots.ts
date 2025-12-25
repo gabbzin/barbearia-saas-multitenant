@@ -12,27 +12,19 @@ const inputSchema = z.object({
   date: z.date(),
 });
 
-const TIME_SLOTS = [
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "13:00",
-  "13:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-  "18:00",
-];
+const timeToMinutes = (time: string) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
+// Função para converter minutos de volta para "HH:mm"
+const minutesToTime = (minutes: number) => {
+  const h = Math.floor(minutes / 60)
+    .toString()
+    .padStart(2, "0");
+  const m = (minutes % 60).toString().padStart(2, "0");
+  return `${h}:${m}`;
+};
 
 export const getDateAvailableTimeSlots = actionClient
   .inputSchema(inputSchema)
@@ -56,14 +48,44 @@ export const getDateAvailableTimeSlots = actionClient
           gte: startOfDay(date),
           lte: endOfDay(date),
         },
+        status: { not: "CANCELLED" },
+      },
+      select: {
+        date: true,
       },
     });
 
+    const availability = await prisma.disponibility.findFirst({
+      where: {
+        barberId,
+      },
+    });
+
+    const day = date.getDay(); // 0 (Domingo) a 6 (Sábado)
+
+    if (!availability?.daysOfWeek.includes(day)) {
+      return [];
+    }
+
+    if (!availability) {
+      return [];
+    }
     const occupiedSlots = bookings.map(b => format(b.date, "HH:mm"));
+    console.log("occupiedSlots", occupiedSlots);
 
-    const availableSlots = TIME_SLOTS.filter(
-      slot => !occupiedSlots.includes(slot),
-    );
+    const start = timeToMinutes(availability.startTime);
+    const end = timeToMinutes(availability.endTime);
+    const interval = 30;
 
-    return availableSlots;
+    const dynamicSlots: string[] = [];
+
+    for (let time = start; time + interval <= end; time += interval) {
+      const timeString = minutesToTime(time);
+      console.log("timeString", timeString);
+      if (!occupiedSlots.includes(timeString)) {
+        dynamicSlots.push(timeString);
+      }
+    }
+
+    return dynamicSlots;
   });

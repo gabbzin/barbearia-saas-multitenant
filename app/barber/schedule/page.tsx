@@ -1,5 +1,5 @@
-import Header from "@/app/_components/header";
-import { PageContainer } from "@/app/_components/ui/page";
+import Header from "@/shared/components/header";
+import { PageContainer } from "@/shared/components/ui/page";
 import { ScheduleCard } from "./components/schedule-card";
 
 export default function BarberSchedulePage() {

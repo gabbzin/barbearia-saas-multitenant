@@ -2,12 +2,12 @@ import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Footer from "@/app/_components/footer";
-import { PhoneItem } from "@/app/_components/phone-item";
-import { ServiceItem } from "@/app/_components/service-item";
-import { Button } from "@/app/_components/ui/button";
-import { Separator } from "@/app/_components/ui/separator";
 import { prisma } from "@/lib/prisma";
+import Footer from "@/shared/components/footer";
+import { PhoneItem } from "@/shared/components/phone-item";
+import { ServiceItem } from "@/shared/components/service-item";
+import { Button } from "@/shared/components/ui/button";
+import { Separator } from "@/shared/components/ui/separator";
 
 const BarberPage = async (props: PageProps<"/barber/[id]">) => {
   const { id } = await props.params;
