@@ -1,13 +1,17 @@
 "use client";
 
-import type { ICalendar } from "datebook";
+import { type CalendarOptions, ICalendar } from "datebook";
 
-export default function wrapper(iCalendar: ICalendar) {
+export default function AddEventCalendar(eventConfig: CalendarOptions) {
+  const iCalendar = new ICalendar(eventConfig);
+
   // 1. Renderiza a string no padrão RFC 5545 (ICS)
   const icsContent = iCalendar.render();
 
   // 2. Cria um Blob (Binary Large Object) para o arquivo
-  const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+  const blob = new Blob([icsContent], {
+    type: "text/calendar;charset=utf-8",
+  });
 
   // 3. Cria uma URL temporária para esse Blob
   const url = window.URL.createObjectURL(blob);

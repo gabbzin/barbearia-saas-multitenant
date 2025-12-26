@@ -1,3 +1,4 @@
+import type React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +16,7 @@ interface CancelAlertDialogProps {
   handleCancel: () => void;
   isLoading: boolean;
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   cancelButtonText?: string;
   children?: React.ReactNode;
 }

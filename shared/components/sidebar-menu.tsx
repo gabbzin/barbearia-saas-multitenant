@@ -143,7 +143,15 @@ export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
               handleCancel={() => {}}
               isLoading={false}
               title="Cancelar Assinatura"
-              description="Tem certeza que deseja cancelar sua assinatura? Esta ação não pode ser desfeita."
+              description={
+                <span>
+                  Tem certeza que deseja cancelar sua assinatura? Esta ação não
+                  pode ser desfeita.
+                  <br />
+                  Observação: Sua assinatura permanecerá ativa até o final do
+                  período pago.
+                </span>
+              }
               cancelButtonText="Não, manter assinatura"
             >
               <Button

@@ -3,7 +3,7 @@
 import type { Prisma } from "@prisma/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { type CalendarOptions, ICalendar } from "datebook";
+import { type CalendarOptions, GoogleCalendar } from "datebook";
 import {
   CalendarFoldIcon,
   ClockIcon,
@@ -19,7 +19,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
-import wrapper from "../functions/download-ics";
+import AddEventCalendar from "../functions/download-ics";
 
 interface NextBookingProps {
   nextBooking: Prisma.BookingGetPayload<{
@@ -54,16 +54,26 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
 
   // Atualizar para usar dados reais do nextBooking
   const eventConfig: CalendarOptions = {
-    title: "Agendamento de Serviço",
+    title: `${nextBooking?.service.name} com ${nextBooking?.service?.barber?.user?.name}`,
     start: nextBooking?.date,
     end: nextBooking?.date,
-    description: "Detalhes do agendamento",
-    location: "Local do Serviço",
+    description: `Agendamento de serviço na barbearia com ${nextBooking?.service?.barber?.user?.name}.`,
+    location: "Barbearia XYZ",
   };
 
   const handleButtonClick = () => {
-    const iCalendar = new ICalendar(eventConfig);
-    wrapper(iCalendar);
+    const userAgent = navigator.userAgent;
+
+    const isMobile = /iPhone|iPad|iPod|Android|Mobi/i.test(userAgent);
+
+    if (isMobile) {
+      AddEventCalendar(eventConfig);
+      return;
+    }
+
+    const googleCalendar = new GoogleCalendar(eventConfig);
+    const url = googleCalendar.render();
+    window.open(url, "_blank");
   };
 
   return (
