@@ -1,6 +1,8 @@
 import { format } from "date-fns";
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/features/barber/services/barbers.repository";
+import { getNextBooking } from "@/features/booking/actions/get-bookings";
+import { NextBooking } from "@/features/booking/components/next-booking";
 import { verifySession } from "@/features/user/repository/user.repository";
 import BarberItem from "@/shared/components/barber-item";
 import Footer from "@/shared/components/footer";
@@ -19,6 +21,7 @@ const Home = async () => {
 
   const barbers = await getBarbers();
   const plan = await getCurrentSubscriptionAction();
+  const nextBooking = await getNextBooking(user?.id ?? "");
 
   // Ordenar no JavaScript após buscar os dados
   barbers.sort((a, b) => {
@@ -27,7 +30,7 @@ const Home = async () => {
     return nameA.localeCompare(nameB);
   });
   return (
-    <main>
+    <main className="flex min-h-screen flex-col justify-around">
       <Header />
       <div className="mx-auto px-12">
         <Alert variant={user ? "success" : "warn"} className="mb-2">
@@ -91,7 +94,8 @@ const Home = async () => {
         /> */}
 
         <PageSection>
-          <PageSectionTitle>Agendamentos</PageSectionTitle>
+          <PageSectionTitle>Próximo agendamento</PageSectionTitle>
+          <NextBooking nextBooking={nextBooking} />
         </PageSection>
 
         <PageSection>

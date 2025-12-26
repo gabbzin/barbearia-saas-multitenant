@@ -5,7 +5,7 @@ import {
   type TimesSchemaData,
   timesSchema,
 } from "@/features/booking/schema/timesSchema";
-import { useSettingsBarber } from "@/features/setting/useSettingsBarber";
+import { useSettingsBarber } from "@/features/barber/settings/useSettingsBarber";
 import CheckboxForm from "@/shared/components/form/checkbox-form";
 import GenericForm from "@/shared/components/form/generic-form";
 import InputForm from "@/shared/components/form/input-form";

@@ -17,3 +17,29 @@ export async function getBookings(barberId: string) {
     },
   });
 }
+
+export async function getNextBooking(userId: string) {
+  return await prisma.booking.findFirst({
+    where: {
+      userId: userId,
+      status: "SCHEDULED",
+      date: {
+        gt: new Date(),
+      },
+    },
+    include: {
+      service: {
+        include: {
+          barber: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      date: "asc",
+    },
+  });
+}
