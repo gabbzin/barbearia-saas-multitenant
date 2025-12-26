@@ -213,10 +213,28 @@ async function seedDatabase() {
       });
     }
 
+    const startTime = "09:00";
+    const endTime = "21:00";
+
+    // Criar disponibilidade para os barbeiros
+    for (const barber of barbershops) {
+      await prisma.disponibility.create({
+        data: {
+          barberId: barber.id,
+          daysOfWeek: [1, 2, 3, 4, 5], // Segunda-feira a sexta-feira
+          startTime: startTime,
+          endTime: endTime,
+        },
+      });
+    }
+
     console.log("✅ Seed concluído com sucesso!");
     console.log(`- ${barbershops.length} barbeiros criados`);
     console.log(`- ${pastDates.length} agendamentos passados criados`);
     console.log(`- ${Plans.length} planos criados`);
+    console.log(
+      `- Configurações de disponibilidade criadas para cada barbeiro iniciando as ${startTime} até ${endTime} de segunda a sexta.`,
+    );
 
     // Fechar a conexão com o banco de dados
     await prisma.$disconnect();
