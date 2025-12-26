@@ -1,7 +1,7 @@
 "use client";
 
 import type { Prisma } from "@prisma/client";
-import { type CalendarOptions, GoogleCalendar } from "datebook";
+import { type CalendarOptions, ICalendar } from "datebook";
 import {
   CalendarFoldIcon,
   ClockIcon,
@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { Separator } from "@/shared/components/ui/separator";
+import wrapper from "../functions/download-ics";
 
 interface NextBookingProps {
   nextBooking: Prisma.BookingGetPayload<{
@@ -47,8 +48,8 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
   };
 
   const handleButtonClick = () => {
-    const googleCalendar = new GoogleCalendar(eventConfig);
-    window.location.href = googleCalendar.render();
+    const iCalendar = new ICalendar(eventConfig);
+    wrapper(iCalendar);
   };
 
   return (

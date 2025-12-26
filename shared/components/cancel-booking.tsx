@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
-import { cancelBooking } from "@/features/booking/actions/cancel-booking";
+import { cancelBooking } from "@/features/booking/functions/cancel-booking";
 import CancelAlertDialog from "./cancel-alert-dialog";
 import { PhoneItem } from "./phone-item";
 import { Avatar, AvatarImage } from "./ui/avatar";

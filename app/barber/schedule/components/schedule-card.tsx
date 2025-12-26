@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { confirmBooking } from "@/features/booking/actions/confirm-booking";
+import { confirmBooking } from "@/features/booking/functions/confirm-booking";
 import { useBookings } from "@/features/booking/hooks/useBookings";
 import { Avatar, AvatarImage } from "@/shared/components/ui/avatar";
 import { Button } from "@/shared/components/ui/button";

@@ -1,8 +1,8 @@
 import { format } from "date-fns";
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/features/barber/services/barbers.repository";
-import { getNextBooking } from "@/features/booking/actions/get-bookings";
 import { NextBooking } from "@/features/booking/components/next-booking";
+import { getNextBooking } from "@/features/booking/functions/get-bookings";
 import { verifySession } from "@/features/user/repository/user.repository";
 import BarberItem from "@/shared/components/barber-item";
 import Footer from "@/shared/components/footer";
