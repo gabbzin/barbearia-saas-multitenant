@@ -1,6 +1,8 @@
 "use client";
 
 import type { Prisma } from "@prisma/client";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { type CalendarOptions, ICalendar } from "datebook";
 import {
   CalendarFoldIcon,
@@ -36,13 +38,25 @@ interface NextBookingProps {
 }
 
 export function NextBooking({ nextBooking }: NextBookingProps) {
-  const start = new Date();
+  if (!nextBooking) {
+    return (
+      <Card>
+        <CardHeader>Sem próximo agendamento</CardHeader>
+      </Card>
+    );
+  }
+
+  const day = format(nextBooking?.date, "dd");
+  const month = format(nextBooking?.date, "MMM", {
+    locale: ptBR,
+  }).toUpperCase();
+  const time = format(nextBooking?.date, "HH:mm");
 
   // Atualizar para usar dados reais do nextBooking
   const eventConfig: CalendarOptions = {
     title: "Agendamento de Serviço",
-    start: start,
-    end: start,
+    start: nextBooking?.date,
+    end: nextBooking?.date,
     description: "Detalhes do agendamento",
     location: "Local do Serviço",
   };
@@ -55,7 +69,7 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Nome do Serviço</CardTitle>
+        <CardTitle>{nextBooking?.service.name}</CardTitle>
       </CardHeader>
 
       <CardContent>
@@ -64,9 +78,9 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
           {/* Data e Hora */}
           <div className="flex h-full flex-col items-start border-r pr-4">
             <p className="text-center font-semibold text-xl capitalize leading-none">
-              <span className="font-bold">26</span>
+              <span className="font-bold">{day}</span>
               <br />
-              <span>DEZ</span>
+              <span>{month}</span>
             </p>
           </div>
 
@@ -74,11 +88,11 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
           <div>
             <div className="flex items-center gap-2">
               <ScissorsIcon size={12} />
-              <p>Nome do Barbeiro</p>
+              <p>{nextBooking?.service?.barber?.user?.name}</p>
             </div>
             <div className="flex items-center gap-2">
               <ClockIcon size={12} />
-              <p>Horário</p>
+              <p>{time}</p>
             </div>
           </div>
 

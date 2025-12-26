@@ -44,6 +44,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
               booking={{
                 id: booking.id,
                 date: booking.date,
+                stripeChargeId: booking.stripeChargeId,
                 service: {
                   name: booking.service.name,
                   priceInCents: booking.service.priceInCents,
@@ -104,6 +105,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
               booking={{
                 id: booking.id,
                 date: booking.date,
+                stripeChargeId: booking.stripeChargeId,
                 service: {
                   name: booking.service.name,
                   priceInCents: booking.service.priceInCents,

@@ -6,6 +6,7 @@ import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
 import { cancelBooking } from "@/features/booking/functions/cancel-booking";
+import { cancelBookingCheckoutSession } from "@/features/booking/functions/cancel-booking-checkout-session";
 import CancelAlertDialog from "./cancel-alert-dialog";
 import { PhoneItem } from "./phone-item";
 import { Avatar, AvatarImage } from "./ui/avatar";
@@ -26,6 +27,7 @@ interface CancelBookingProps {
   booking: {
     id: string;
     date: Date;
+    stripeChargeId?: string | null;
     service: {
       name: string;
       priceInCents: number;
@@ -60,8 +62,29 @@ export function CancelBooking({
     },
   });
 
+  const { execute: executeCancelBookingCheckout } = useAction(
+    cancelBookingCheckoutSession,
+    {
+      onSuccess: () => {
+        toast.success("Reserva cancelada com sucesso! E foi reembolsada.");
+        onOpenChange(false);
+        router.refresh();
+      },
+      onError: () => {
+        toast.error("Erro ao cancelar reserva.");
+        setIsLoading(false);
+      },
+    },
+  );
+
   const handleCancelBooking = () => {
     setIsLoading(true);
+
+    if (booking.stripeChargeId) {
+      executeCancelBookingCheckout({ bookingId: booking.id });
+      return;
+    }
+
     executeCancelBooking({ bookingId: booking.id });
   };
 

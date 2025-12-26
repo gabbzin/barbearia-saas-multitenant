@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { stripeClient } from "@/lib/stripe-client";
 import { handleCheckoutCompleted } from "./handlers/handleCheckoutCompleted";
+import { handleInvoicePaid } from "./handlers/handleInvoicePaid";
 import { handleRefund } from "./handlers/handleRefund";
 import { handleSignatureDeleted } from "./handlers/handleSubscriptionDeleted";
 import { handleSubscriptionUpdated } from "./handlers/handleSubscriptionUpdated";
-import { handleInvoicePaid } from "./handlers/handleInvoicePaid";
 
 export const POST = async (request: Request) => {
   if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {

@@ -80,7 +80,6 @@ export const getDateAvailableTimeSlots = actionClient
 
     for (let time = start; time <= end; time += interval) {
       const timeString = minutesToTime(time);
-      console.log("timeString", timeString);
       if (!occupiedSlots.includes(timeString)) {
         dynamicSlots.push(timeString);
       }

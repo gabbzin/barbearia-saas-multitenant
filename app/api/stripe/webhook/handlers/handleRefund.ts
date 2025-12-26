@@ -15,6 +15,7 @@ export async function handleRefund(event: Stripe.Event) {
       stripeChargeId: chargeId,
     },
     data: {
+      // Colocar status de reembolsado também
       status: "CANCELLED",
       cancelledAt: new Date(),
     },

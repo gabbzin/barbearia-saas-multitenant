@@ -10,6 +10,7 @@ interface BookingItemProps {
   booking: {
     id: string;
     date: Date;
+    stripeChargeId?: string | null;
     service: {
       name: string;
       priceInCents: number;
