@@ -2,14 +2,15 @@
 
 import type { Barber, BarberService, User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
-import { getDateAvailableTimeSlots } from "@/features/booking/actions/get-date-available-time-slots";
 import { createBooking } from "@/features/booking/actions/create-booking";
 import { createBookingCheckoutSession } from "@/features/booking/actions/create-booking-checkout-session";
+import { getDateAvailableTimeSlots } from "@/features/booking/actions/get-date-available-time-slots";
 import type { SubscriptionInfo } from "@/features/user/repository/user.repository";
 import { isPastTimeSlot } from "@/utils/isPastTimeSlot";
 import PagamentForm, { type payMethods } from "./pagament-form";
@@ -46,7 +47,7 @@ const AppointmentSheet = ({
     useAction(createBookingCheckoutSession);
 
   const selectedDateKey = selectedDate
-    ? selectedDate.toISOString().split("T")[0]
+    ? format(selectedDate, "yyyy-MM-dd")
     : null;
 
   const { data: availableTimeSlots, isPending: isAvailableTimePending } =
@@ -57,16 +58,22 @@ const AppointmentSheet = ({
         selectedDateKey,
       ],
       queryFn: async () => {
+        console.log("Fetching available time slots for date:", selectedDate);
         const result = await getDateAvailableTimeSlots({
           barberId: service.barberId,
           // biome-ignore lint/style/noNonNullAssertion: <Sempre vai ter valor aqui>
           date: selectedDate!,
         });
+        console.log("result", result);
+        if (result.validationErrors || result.serverError) {
+          console.error(
+            "Erro ao buscar horários disponíveis:",
+            result.validationErrors?._errors?.[0] || result.serverError,
+          );
+          return [];
+        }
 
-        if (Array.isArray(result)) return result;
-        if (Array.isArray(result?.data)) return result.data;
-
-        return [];
+        return result?.data || [];
       },
       enabled: !!selectedDate,
     });
@@ -153,8 +160,6 @@ const AppointmentSheet = ({
     priceFree = 0;
   }
 
-  console.log(availableTimeSlots);
-
   return (
     <SheetContent className="w-[370px] overflow-y-auto p-0">
       <div className="flex h-full flex-col gap-6">
@@ -184,7 +189,7 @@ const AppointmentSheet = ({
                     <Spinner />
                   </div>
                 ) : (
-                  <div className="flex flex-1 justify-center">
+                  <div className="flex flex-1 justify-center gap-3">
                     {availableTimeSlots && availableTimeSlots.length > 0 ? (
                       availableTimeSlots.map(time => (
                         <Button

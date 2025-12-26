@@ -8,7 +8,7 @@ import { actionClient } from "@/lib/actionClient";
 import { prisma } from "@/lib/prisma";
 
 const inputSchema = z.object({
-  barberId: z.uuid(),
+  barberId: z.string(),
   date: z.date(),
 });
 
@@ -63,15 +63,14 @@ export const getDateAvailableTimeSlots = actionClient
 
     const day = date.getDay(); // 0 (Domingo) a 6 (Sábado)
 
-    if (!availability?.daysOfWeek.includes(day)) {
-      return [];
-    }
-
     if (!availability) {
       return [];
     }
+    if (!availability.daysOfWeek.includes(day)) {
+      return [];
+    }
+
     const occupiedSlots = bookings.map(b => format(b.date, "HH:mm"));
-    console.log("occupiedSlots", occupiedSlots);
 
     const start = timeToMinutes(availability.startTime);
     const end = timeToMinutes(availability.endTime);
@@ -79,7 +78,7 @@ export const getDateAvailableTimeSlots = actionClient
 
     const dynamicSlots: string[] = [];
 
-    for (let time = start; time + interval <= end; time += interval) {
+    for (let time = start; time <= end; time += interval) {
       const timeString = minutesToTime(time);
       console.log("timeString", timeString);
       if (!occupiedSlots.includes(timeString)) {
