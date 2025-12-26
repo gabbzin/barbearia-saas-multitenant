@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { getBarbers } from "@/features/barber/services/barbers.repository";
+import { LogoLink } from "./logo-link";
 import { SidebarMenu } from "./sidebar-menu";
 import { AnimatedThemeToggler } from "./ui/animated-theme-toggler";
 
@@ -8,7 +8,7 @@ const Header = async () => {
 
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between border-b-2 bg-background px-5 py-6">
-      <Image src="/logo.svg" alt="Aparatus" width={80} height={26.09} />
+      <LogoLink />
       <div className="flex items-center gap-2">
         {/* {session ? (
           <div className="flex items-center gap-2">
