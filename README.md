@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AgendaBarber
+Plataforma de agendamento online para barbearias.
 
-## Getting Started
+## Visão Geral
+O AgendaBarber é um sistema criado para simplificar o gerenciamento de horários, serviços e atendimentos em barbearias. Ele permite que clientes realizem agendamentos online de forma rápida, enquanto a equipe organiza a agenda diária com praticidade.
 
-First, run the development server:
+## Principais Funcionalidades
+- Agendamento online de horários
+- Visualização da agenda diária da barbearia
+- Cadastro e gerenciamento de barbeiros
+- Cadastro e gerenciamento de serviços
+- Histórico de agendamentos
+- Controle de horários disponíveis
+- Painel administrativo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Fluxo Geral de Uso
+1. O cliente acessa a plataforma.
+2. Seleciona o serviço e o barbeiro.
+3. Escolhe um horário disponível.
+4. Confirma o agendamento.
+5. A barbearia acompanha os agendamentos pelo painel administrativo.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Perfis de Usuário
+- Administrador da barbearia: gerencia barbeiros, serviços, horários e agenda.
+- Barbeiro: visualiza seus horários e atendimentos.
+- Cliente: realiza e acompanha seus agendamentos.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Acesso ao Sistema
+Os usuários entram com credenciais cadastradas pela barbearia. Cada perfil possui permissões específicas no painel: administradores configuram a operação, barbeiros consultam sua própria agenda e clientes acessam seus agendamentos confirmados e futuros. O acesso é individual e seguro, respeitando o nível de permissão de cada usuário.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Requisitos para Utilização
+- Acesso à internet
+- Navegador atualizado (Google Chrome, Edge, Firefox ou similares)
+- Dispositivo desktop, tablet ou smartphone
 
-## Learn More
+## Boas Práticas de Uso
+- Manter dados cadastrais atualizados
+- Respeitar os horários agendados
+- Cancelar ou reagendar com antecedência
 
-To learn more about Next.js, take a look at the following resources:
+## Limitações Conhecidas
+- Alterações de agenda feitas muito perto do horário marcado podem não ser refletidas para todos os usuários em tempo real.
+- A disponibilidade exibida depende do cadastro correto de horários e serviços pela barbearia.
+- O funcionamento requer conexão estável à internet.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Suporte e Atendimento
+Para suporte técnico, dúvidas ou solicitações de melhorias, entre em contato com a equipe AgendaBarber pelo e-mail suporte@agendabarber.com ou pelo canal oficial informado no painel administrativo.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Atualizações Futuras
+O AgendaBarber evolui continuamente para oferecer uma experiência cada vez melhor. Estão previstas melhorias em notificações inteligentes, novas opções de personalização da agenda e integrações adicionais para facilitar o atendimento e a comunicação com os clientes.
