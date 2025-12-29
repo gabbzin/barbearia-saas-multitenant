@@ -45,6 +45,19 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
 
   const now = new Date();
 
+  if (!bookings || bookings.length === 0) {
+    return (
+      <PageContainer>
+        <h1 className="font-bold text-xl">Agendamentos</h1>
+        <PageSection>
+          <p className="text-muted-foreground text-sm">
+            Você não tem agendamentos.
+          </p>
+        </PageSection>
+      </PageContainer>
+    );
+  }
+
   const confirmedBookings = bookings.filter(
     booking => booking.date > now && booking.status === "SCHEDULED",
   );

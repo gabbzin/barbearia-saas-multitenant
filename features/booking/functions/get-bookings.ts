@@ -24,6 +24,28 @@ export async function getBookingsBarber(barberId: string) {
   });
 }
 
+export async function getBookingsUser(userId: string) {
+  return await prisma.booking.findMany({
+    where: {
+      userId: userId,
+    },
+    include: {
+      service: {
+        include: {
+          barber: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      date: "asc",
+    },
+  });
+}
+
 export async function getNextBooking(userId: string) {
   return await prisma.booking.findFirst({
     where: {

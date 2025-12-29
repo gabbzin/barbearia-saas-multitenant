@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
+import { getBookingsUser } from "@/features/booking/functions/get-bookings";
 import { verifySession } from "@/features/user/repository/user.repository";
-import { prisma } from "@/lib/prisma";
 import Footer from "@/shared/components/footer";
 import Header from "@/shared/components/header";
 import BookingsClient from "./_components/bookingsClient";
@@ -12,25 +12,7 @@ const BookingsPage = async () => {
     redirect("/");
   }
 
-  const bookings = await prisma.booking.findMany({
-    where: {
-      userId: session.id,
-    },
-    include: {
-      service: {
-        include: {
-          barber: {
-            include: {
-              user: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: {
-      date: "asc",
-    },
-  });
+  const bookings = await getBookingsUser(session.id);
 
   return (
     <div className="flex min-h-screen flex-1 flex-col justify-between">

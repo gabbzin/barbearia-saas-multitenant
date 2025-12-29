@@ -48,7 +48,9 @@ export default function ConfirmAlertDialog({
           <AlertDialogDescription>
             {description ||
               "Tem certeza que deseja executar esta ação? Esta ação não pode ser desfeita."}
-            {infos && <div className="mt-4">{infos}</div>}
+            <br />
+            <br />
+            {infos && <span className="mt-4">{infos}</span>}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

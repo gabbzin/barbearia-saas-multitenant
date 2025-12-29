@@ -47,7 +47,7 @@ export function ScheduleCard({ barberId }: { barberId: string }) {
           <TabsTrigger value="completed">Finalizados</TabsTrigger>
         </TabsList>
         <TabsContent value="incompleted">
-          {incompletedBookings && incompletedBookings.length > 0 && (
+          {incompletedBookings && incompletedBookings.length > 0 ? (
             <div className="flex flex-col gap-4">
               {incompletedBookings?.map(booking => (
                 <ConfirmAlertDialog
@@ -85,6 +85,8 @@ export function ScheduleCard({ barberId }: { barberId: string }) {
                 </ConfirmAlertDialog>
               ))}
             </div>
+          ) : (
+            <p>Nenhum agendamento pendente.</p>
           )}
         </TabsContent>
         <TabsContent value="completed">
