@@ -1,11 +1,11 @@
 "use client";
 
-import { PlusIcon } from "lucide-react";
+import { ScissorsIcon } from "lucide-react";
+import { useSettingsBarber } from "@/features/barber/settings/useSettingsBarber";
 import {
   type TimesSchemaData,
   timesSchema,
 } from "@/features/booking/schema/timesSchema";
-import { useSettingsBarber } from "@/features/barber/settings/useSettingsBarber";
 import CheckboxForm from "@/shared/components/form/checkbox-form";
 import GenericForm from "@/shared/components/form/generic-form";
 import InputForm from "@/shared/components/form/input-form";
@@ -29,7 +29,15 @@ const daysOptions = [
   { label: "Sábado", value: false, index: 6 },
 ];
 
-export default function FormTimesServices({ barberId }: { barberId: string }) {
+interface FormTimesServicesProps {
+  barberId: string;
+  defaultValues?: TimesSchemaData;
+}
+
+export default function FormTimesServices({
+  barberId,
+  defaultValues,
+}: FormTimesServicesProps) {
   const { saveSettings } = useSettingsBarber(barberId);
 
   const handleSubmit = async (data: TimesSchemaData) => {
@@ -43,10 +51,18 @@ export default function FormTimesServices({ barberId }: { barberId: string }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          <PlusIcon />
-          Verificar horários e serviços
-        </Button>
+        <div className="flex items-center justify-end gap-3">
+          <span className="rounded bg-primary/90 px-2 py-1 text-background">
+            {"Configurar horários"}
+          </span>
+          <Button
+            size="icon"
+            variant="secondary"
+            className="h-14 w-14 rounded-full shadow-lg"
+          >
+            <ScissorsIcon className="size-4" />
+          </Button>
+        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -59,6 +75,7 @@ export default function FormTimesServices({ barberId }: { barberId: string }) {
           </DialogDescription>
         </DialogHeader>
         <GenericForm
+          defaultValues={defaultValues}
           schema={timesSchema}
           submitText="Salvar Configurações"
           onSubmit={handleSubmit}

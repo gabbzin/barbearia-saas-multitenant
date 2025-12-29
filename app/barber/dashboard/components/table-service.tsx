@@ -41,37 +41,32 @@ export function TableService({ barberId }: { barberId: string }) {
           <Spinner className="size-8" />
         </div>
       ) : (
-        <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Ações</TableHead>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nome</TableHead>
+              <TableHead>Preço</TableHead>
+              <TableHead>Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="">
+            {services.map(service => (
+              <TableRow key={service.id} className="w-full">
+                <TableCell>{service.name}</TableCell>
+                <TableCell>{convertBRL(service.priceInCents)}</TableCell>
+                <TableCell className="flex gap-2">
+                  <FormService barberId={barberId} service={service} />
+                  <Button
+                    variant={"destructive"}
+                    onClick={() => deleteService(service.id)}
+                  >
+                    <Trash2Icon />
+                  </Button>
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody className="">
-              {services.map(service => (
-                <TableRow key={service.id} className="w-full">
-                  <TableCell>{service.name}</TableCell>
-                  <TableCell>{convertBRL(service.priceInCents)}</TableCell>
-                  <TableCell className="flex gap-2">
-                    <FormService barberId={barberId} service={service} />
-                    <Button
-                      variant={"destructive"}
-                      onClick={() => deleteService(service.id)}
-                    >
-                      <Trash2Icon />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="flex flex-1 justify-end">
-            <FormService barberId={barberId} />
-          </div>
-        </>
+            ))}
+          </TableBody>
+        </Table>
       )}
     </>
   );

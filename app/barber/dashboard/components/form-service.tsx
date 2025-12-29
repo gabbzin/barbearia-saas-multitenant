@@ -68,10 +68,18 @@ export function FormService({ barberId, service }: FormServiceProps) {
             <PencilIcon />
           </Button>
         ) : (
-          <Button disabled={isLoading}>
-            <PlusIcon />
-            Adicionar Serviço
-          </Button>
+          <div className="flex items-center justify-end gap-3">
+            <span className="rounded bg-primary/90 px-2 py-1 text-background">
+              Adicionar Serviço
+            </span>
+            <Button
+              size="icon"
+              variant="secondary"
+              className="h-14 w-14 rounded-full shadow-lg"
+            >
+              <PlusIcon className="size-4" />
+            </Button>
+          </div>
         )}
       </DialogTrigger>
       <DialogContent>

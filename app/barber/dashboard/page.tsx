@@ -1,7 +1,16 @@
-import { AlertCircle, Banknote, Scissors, UserIcon } from "lucide-react";
+import { format } from "date-fns";
+import {
+  AlertCircle,
+  Banknote,
+  Calendar,
+  Scissors,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { SpeedDial } from "@/app/barber/dashboard/components/SpeedDial";
 import { verifySession } from "@/features/user/repository/user.repository";
+import { prisma } from "@/lib/prisma";
 import CardInfo from "@/shared/components/barber/card-info";
 import Header from "@/shared/components/header";
 import { Alert, AlertTitle } from "@/shared/components/ui/alert";
@@ -11,8 +20,8 @@ import { Card, CardContent } from "@/shared/components/ui/card";
 import { PageContainer } from "@/shared/components/ui/page";
 import { Separator } from "@/shared/components/ui/separator";
 import { getBarberDashboardInfos } from "./actions/getInfos";
-import FormTimesServices from "./components/form-times-services";
 import { TableService } from "./components/table-service";
+import { TableSettings } from "./components/table-times-services";
 
 const BarberDashboardPage = async () => {
   const session = await verifySession();
@@ -24,6 +33,24 @@ const BarberDashboardPage = async () => {
   const barberId = session.id;
 
   const info = await getBarberDashboardInfos({ barberId });
+
+  const horariosData = await prisma.disponibility.findFirst({
+    where: { barberId: barberId },
+  });
+
+  const defaultTimesValues = horariosData
+    ? {
+        horario_abertura: horariosData.startTime,
+        horario_fechamento: horariosData.endTime,
+        "0": horariosData.daysOfWeek.includes(0),
+        "1": horariosData.daysOfWeek.includes(1),
+        "2": horariosData.daysOfWeek.includes(2),
+        "3": horariosData.daysOfWeek.includes(3),
+        "4": horariosData.daysOfWeek.includes(4),
+        "5": horariosData.daysOfWeek.includes(5),
+        "6": horariosData.daysOfWeek.includes(6),
+      }
+    : undefined;
 
   return (
     <div>
@@ -41,16 +68,16 @@ const BarberDashboardPage = async () => {
           Olá {session.name ?? "Usuario"}
         </h2>
         <h3 className="font-bold text-lg lg:text-2xl">Resumo de hoje</h3>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           <CardInfo
             Icon={Scissors}
-            title="Atendimentos realizados"
+            title="Realizados"
             value={info.data?.servicesPerformed}
             variant="blue"
           />
           <CardInfo
             Icon={UserIcon}
-            title="Atendimentos agendados"
+            title="Agendados"
             value={info.data?.totalSchedules}
             variant="red"
           />
@@ -59,6 +86,12 @@ const BarberDashboardPage = async () => {
             title="Faturamento"
             value={info.data?.todayBilling}
             variant="green"
+          />
+          <CardInfo
+            Icon={Calendar}
+            title="Dia de hoje"
+            value={format(new Date(), "dd/MM")}
+            variant="yellow"
           />
         </div>
       </PageContainer>
@@ -108,11 +141,11 @@ const BarberDashboardPage = async () => {
         <TableService barberId={barberId} />
       </PageContainer>
       <PageContainer>
-        <h3 className="font-bold text-lg lg:text-2xl">Configurações</h3>
-        <div className="flex items-center justify-center">
-          <FormTimesServices barberId={barberId} />
-        </div>
+        <h3 className="font-bold text-lg lg:text-2xl">Seus horários padrão</h3>
+        <TableSettings barberId={barberId} />
       </PageContainer>
+      <div className="h-20" />
+      <SpeedDial barberId={barberId} defaultTimes={defaultTimesValues} />
     </div>
   );
 };

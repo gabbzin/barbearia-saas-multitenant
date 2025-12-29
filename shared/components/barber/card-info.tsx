@@ -20,15 +20,15 @@ export default function CardInfo({
   variant,
 }: CardInfoProps) {
   return (
-    <Card variant={variant} className="relative">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between gap-2 font-bold">
+    <Card variant={variant} className="relative py-4">
+      <CardHeader className="px-4">
+        <CardTitle className="flex items-center justify-between font-semibold text-sm">
           {title}
           {Icon && <Icon className="h-5 w-5 opacity-50" />}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <p className="font-bold text-2xl">{value}</p>
+      <CardContent className="px-4">
+        <p className="font-bold font-geist text-xl">{value}</p>
       </CardContent>
     </Card>
   );
