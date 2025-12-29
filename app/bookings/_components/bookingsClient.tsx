@@ -1,3 +1,5 @@
+"use server";
+
 import type { Barber, BarberService, Booking, User } from "@prisma/client";
 import BookingItem from "@/shared/components/booking-item";
 import { PageContainer, PageSection } from "@/shared/components/ui/page";
@@ -12,7 +14,9 @@ interface BookingsClientProps {
   })[];
 }
 
-export default function BookingsClient({ bookings }: BookingsClientProps) {
+export default async function BookingsClient({
+  bookings,
+}: BookingsClientProps) {
   const now = new Date();
 
   const confirmedBookings = bookings.filter(
@@ -26,6 +30,7 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
   const finishedBookings = bookings.filter(
     booking => booking.date <= now && booking.status !== "CANCELLED",
   );
+
   return (
     <PageContainer>
       <h1 className="font-bold text-xl">Agendamentos</h1>

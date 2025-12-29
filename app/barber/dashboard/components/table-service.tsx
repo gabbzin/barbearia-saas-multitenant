@@ -1,7 +1,8 @@
 "use client";
 
-import { Trash2Icon } from "lucide-react";
+import { AlertTriangleIcon, Trash2Icon } from "lucide-react";
 import { useServicesCRUD } from "@/features/service/hooks/useServices";
+import { Alert, AlertTitle } from "@/shared/components/ui/alert";
 import { Button } from "@/shared/components/ui/button";
 import { Spinner } from "@/shared/components/ui/spinner";
 import {
@@ -17,6 +18,20 @@ import { FormService } from "./form-service";
 
 export function TableService({ barberId }: { barberId: string }) {
   const { services, isLoading, deleteService } = useServicesCRUD(barberId);
+
+  if (typeof services === "undefined" || services?.length === 0) {
+    return (
+      <Alert>
+        <AlertTitle className="flex flex-col items-center justify-center gap-2 text-yellow-600">
+          <div className="flex items-center gap-2">
+            <AlertTriangleIcon />
+            Nenhum serviço cadastrado.
+          </div>
+          <FormService barberId={barberId} />
+        </AlertTitle>
+      </Alert>
+    );
+  }
 
   return (
     <>
@@ -36,7 +51,7 @@ export function TableService({ barberId }: { barberId: string }) {
               </TableRow>
             </TableHeader>
             <TableBody className="">
-              {services?.map(service => (
+              {services.map(service => (
                 <TableRow key={service.id} className="w-full">
                   <TableCell>{service.name}</TableCell>
                   <TableCell>{convertBRL(service.priceInCents)}</TableCell>

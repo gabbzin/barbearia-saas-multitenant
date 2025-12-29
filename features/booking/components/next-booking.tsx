@@ -40,8 +40,10 @@ interface NextBookingProps {
 export function NextBooking({ nextBooking }: NextBookingProps) {
   if (!nextBooking) {
     return (
-      <Card>
-        <CardHeader>Sem próximo agendamento</CardHeader>
+      <Card className="flex flex-col gap-5">
+        <CardHeader className="text-md">
+          <CardTitle className="text-center">Sem agendamentos</CardTitle>
+        </CardHeader>
       </Card>
     );
   }

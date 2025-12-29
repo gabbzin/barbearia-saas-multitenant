@@ -3,12 +3,17 @@
 import { format } from "date-fns";
 import { confirmBooking } from "@/features/booking/functions/confirm-booking";
 import { useBookings } from "@/features/booking/hooks/useBookings";
+import { SpinLoader } from "@/shared/components/spinLoader";
 import { Avatar, AvatarImage } from "@/shared/components/ui/avatar";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent } from "@/shared/components/ui/card";
 
 export function ScheduleCard({ barberId }: { barberId: string }) {
-  const { data: bookings } = useBookings(barberId);
+  const { data: bookings, isLoading } = useBookings(barberId);
+
+  if (isLoading) {
+    return <SpinLoader />;
+  }
 
   return (
     <div>
@@ -33,7 +38,6 @@ export function ScheduleCard({ barberId }: { barberId: string }) {
                 </p>
                 <p>
                   <span className="font-bold">Horário: </span>
-                  {/* {booking.date.toTimeString().substring(0, 5)} */}
                   {format(new Date(booking.date), "dd/MM/yyyy HH:mm")}
                 </p>
               </div>

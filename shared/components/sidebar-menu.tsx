@@ -60,7 +60,7 @@ export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
         </Button>
       </SheetTrigger>
 
-      <SheetContent side="right" className="w-[90vw] max-w-[370px] gap-6 p-0">
+      <SheetContent side="right" className="w-[80vw] max-w-[370px] gap-6 p-0">
         <SheetHeader className="px-5 py-2 text-left">
           <SheetTitle className="font-bold text-lg">Menu</SheetTitle>
         </SheetHeader>

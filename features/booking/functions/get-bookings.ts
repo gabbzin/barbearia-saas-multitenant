@@ -2,11 +2,17 @@
 
 import { prisma } from "@/lib/prisma";
 
-export async function getBookings(barberId: string) {
+export async function getBookingsBarber(barberId: string) {
+  const startDay = new Date().setHours(0, 0, 0, 0);
+  const endDay = new Date().setHours(23, 59, 59, 999);
+
   return await prisma.booking.findMany({
     where: {
-      status: "SCHEDULED",
       barberId: barberId,
+      date: {
+        gte: new Date(startDay),
+        lte: new Date(endDay),
+      },
     },
     include: {
       user: true,

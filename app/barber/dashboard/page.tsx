@@ -65,7 +65,7 @@ const BarberDashboardPage = async () => {
       <Separator />
       <PageContainer>
         <h3 className="font-bold text-lg lg:text-2xl">Próximo atendimento</h3>
-        <Card className="border-2 border-primary">
+        <Card className="border border-primary">
           <CardContent className="flex flex-col gap-3">
             {info.data?.nextBooking ? (
               <>
@@ -91,7 +91,7 @@ const BarberDashboardPage = async () => {
                 </div>
               </>
             ) : (
-              <p>Nenhum agendamento encontrado</p>
+              <p className="text-center">Nenhum agendamento encontrado</p>
             )}
 
             <Button variant={"outline"} asChild>
@@ -109,7 +109,9 @@ const BarberDashboardPage = async () => {
       </PageContainer>
       <PageContainer>
         <h3 className="font-bold text-lg lg:text-2xl">Configurações</h3>
-        <FormTimesServices barberId={barberId} />
+        <div className="flex items-center justify-center">
+          <FormTimesServices barberId={barberId} />
+        </div>
       </PageContainer>
     </div>
   );
