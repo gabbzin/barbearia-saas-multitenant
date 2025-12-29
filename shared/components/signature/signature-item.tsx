@@ -53,7 +53,7 @@ const SignatureItem = ({ plan, myPlanName }: SignatureItemProps) => {
   return (
     <CarouselItem className="relative md:basis-1/2 lg:basis-1/3">
       {myPlanName?.toLowerCase() === plan.name.toLowerCase() ? (
-        <div className="absolute m-auto rounded bg-foreground px-2 font-semibold text-background">
+        <div className="absolute m-auto rounded-tl-2xl rounded-br-lg bg-foreground px-2 font-semibold text-background text-sm">
           Plano atual
         </div>
       ) : (
@@ -61,25 +61,22 @@ const SignatureItem = ({ plan, myPlanName }: SignatureItemProps) => {
       )}
       <Card className="z-10 border-2 shadow-lg dark:border-white">
         <CardHeader className="mt-5 text-center">
-          <CardTitle className="font-bold text-3xl">
+          <CardTitle className="font-bold text-4xl">
             <AuroraText className="font-geist">
               {convertCapitalize(plan.name)}
             </AuroraText>
           </CardTitle>
           <CardDescription>
-            <p className="whitespace-pre font-bold text-card-foreground text-md leading-[1.4]">
-              <span className="text-3xl">{priceInReais.split(",")[0]}</span>
-              /mês
+            <p className="whitespace-pre font-bold text-3xl text-card-foreground text-md leading-[1.4]">
+              {priceInReais.split(",")[0]}/mês
             </p>
           </CardDescription>
         </CardHeader>
 
-        <Separator className="my-6" />
-
         <CardContent className="mt-2">
-          <h3 className="font-bold text-lg">Beneficios </h3>
+          <Separator className="my-6 py-px" />
           <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
-            <li>1º Beneficio</li>
+            <li>{plan.description}</li>
             <li>2º Beneficio</li>
             <li>3º Beneficio</li>
             <li>4º Beneficio</li>
@@ -87,9 +84,7 @@ const SignatureItem = ({ plan, myPlanName }: SignatureItemProps) => {
           </ul>
         </CardContent>
 
-        <Separator className="my-6" />
-
-        <CardFooter className="mt-2 flex items-end justify-between">
+        <CardFooter className="mt-6 flex items-end justify-between">
           <Button className="w-full" asChild>
             <ShimmerButton
               onClick={handleConfirm}

@@ -91,21 +91,21 @@ async function seedDatabase() {
     const Plans = [
       {
         id: "plano-1",
-        name: "Corte ilimitado",
+        name: "Hair",
         description: "Cortes de cabelo ilimitados por mês",
         priceInCents: 8000,
         stripePriceId: "price_1Sf3aPLZmTtv3cllAd2ewhDQ", // R$ 80
       },
       {
         id: "plano-2",
-        name: "Barba ilimitada",
+        name: "Beard",
         description: "Serviços de barba ilimitados por mês",
         priceInCents: 7000,
         stripePriceId: "price_1SfJCWLZmTtv3cllEvJ1kLV8", // R$ 70
       },
       {
         id: "plano-3",
-        name: "Corte e barba ilimitados",
+        name: "Hair and Beard",
         description: "Cortes e barba ilimitados por mês",
         priceInCents: 15000,
         stripePriceId: "price_1SfJCmLZmTtv3cllXAzpWq1a", // R$ 150
