@@ -25,6 +25,9 @@ export const auth = betterAuth({
       stripeCustomerId: {
         type: "string",
       },
+      barberId: {
+        type: "string",
+      },
     },
   },
 

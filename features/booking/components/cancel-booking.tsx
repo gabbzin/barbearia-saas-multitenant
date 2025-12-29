@@ -5,47 +5,32 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
+import type { BookingClient } from "@/app/bookings/_components/bookingsClient";
 import { cancelBooking } from "@/features/booking/functions/cancel-booking";
 import { cancelBookingCheckoutSession } from "@/features/booking/functions/cancel-booking-checkout-session";
-import CancelAlertDialog from "./cancel-alert-dialog";
-import { PhoneItem } from "./phone-item";
-import { Avatar, AvatarImage } from "./ui/avatar";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
+import CancelAlertDialog from "@/shared/components/cancel-alert-dialog";
+import { PhoneItem } from "@/shared/components/phone-item";
+import { Avatar, AvatarImage } from "@/shared/components/ui/avatar";
+import { Button } from "@/shared/components/ui/button";
+import { Card } from "@/shared/components/ui/card";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "./ui/sheet";
+} from "@/shared/components/ui/sheet";
 
 interface CancelBookingProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  booking: {
-    id: string;
-    date: Date;
-    stripeChargeId?: string | null;
-    service: {
-      name: string;
-      priceInCents: number;
-    };
-    barber: {
-      name: string;
-      imageUrl: string;
-      phone: string[];
-    };
-  };
-  status: "confirmed" | "finished" | "cancelled";
+  booking: BookingClient | null;
 }
 
 export function CancelBooking({
   open,
   onOpenChange,
   booking,
-  status,
 }: CancelBookingProps) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -76,6 +61,10 @@ export function CancelBooking({
       },
     },
   );
+
+  if (!booking) {
+    return null;
+  }
 
   const handleCancelBooking = () => {
     setIsLoading(true);
@@ -132,24 +121,6 @@ export function CancelBooking({
               </div>
             </Card>
           </div>
-
-          {/* Badge de Status */}
-          <Badge
-            variant={
-              status === "confirmed"
-                ? "default"
-                : status === "cancelled"
-                  ? "destructive"
-                  : "secondary"
-            }
-            className="w-fit font-semibold text-xs uppercase tracking-tight"
-          >
-            {status === "confirmed"
-              ? "Confirmado"
-              : status === "cancelled"
-                ? "Cancelado"
-                : "Finalizado"}
-          </Badge>
 
           {/* Card de Informações do Agendamento */}
           <Card className="flex flex-col gap-3 p-3">

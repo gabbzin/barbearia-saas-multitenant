@@ -1,5 +1,5 @@
 import type { Barber, BarberService, Booking, User } from "@prisma/client";
-import BookingItem from "@/shared/components/booking-item";
+import BookingItem from "@/features/booking/components/booking-item";
 import { PageContainer, PageSection } from "@/shared/components/ui/page";
 
 interface BookingsClientProps {
