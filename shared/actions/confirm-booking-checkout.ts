@@ -1,3 +1,6 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
 import { returnValidationErrors } from "next-safe-action";
 import { object, string } from "zod";
 import { confirmBooking } from "@/features/booking/functions/confirm-booking";
@@ -21,4 +24,7 @@ export const confirmBookingAction = actionClient
     }
 
     confirmBooking(bookingId);
+
+    revalidatePath("/barber/schedule");
+    return { success: true };
   });

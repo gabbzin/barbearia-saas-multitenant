@@ -159,15 +159,13 @@ export function CancelBooking({
           >
             Voltar
           </Button>
-          {status === "confirmed" && booking.date > new Date() && (
-            <CancelAlertDialog
-              handleCancel={handleCancelBooking}
-              isLoading={isLoading}
-              title="Cancelar Reserva"
-              description="Tem certeza que deseja cancelar esta reserva? Esta ação não pode ser desfeita."
-              cancelButtonText="Não, manter reserva"
-            />
-          )}
+          <CancelAlertDialog
+            handleCancel={handleCancelBooking}
+            isLoading={isLoading}
+            title="Cancelar Reserva"
+            description="Tem certeza que deseja cancelar esta reserva? Esta ação não pode ser desfeita."
+            cancelButtonText="Não, manter reserva"
+          />
         </div>
       </SheetContent>
     </Sheet>

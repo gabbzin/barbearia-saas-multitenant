@@ -1,54 +1,35 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <Eu posso usar> */
 "use client";
 
-import { format } from "date-fns";
 import { useAction } from "next-safe-action/hooks";
+import BookingItem from "@/features/booking/components/booking-item";
+import { BookingSkeleton } from "@/features/booking/components/booking-skeleton";
+import ConfirmAlertDialog from "@/features/booking/components/confirm-booking-dialog";
 import { useBookings } from "@/features/booking/hooks/useBookings";
 import { confirmBookingAction } from "@/shared/actions/confirm-booking-checkout";
-import ConfirmAlertDialog from "@/shared/components/confirm-alert-dialog";
-import { SpinLoader } from "@/shared/components/spinLoader";
-import { Avatar, AvatarImage } from "@/shared/components/ui/avatar";
-import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/shared/components/ui/card";
-
-interface contentCardProps {
-  booking: any;
-  footer?: React.ReactNode;
-}
-
-function ContentCard({ booking, footer }: contentCardProps) {
-  return (
-    <>
-      <CardContent>
-        <div className="flex items-center gap-4 font-semibold">
-          <Avatar>
-            <AvatarImage
-              src={booking.user.image ?? "https://github.com/shadcn.png"}
-              alt={booking.user.name ?? "User Avatar"}
-              className="object-cover"
-            />
-          </Avatar>
-          <p>{booking.user.name}</p>
-        </div>
-        <div className="space-y-1">
-          <p>
-            <span className="font-bold">Serviço: </span>
-            {booking.service.name}
-          </p>
-          <p>
-            <span className="font-bold">Horário: </span>
-            {format(new Date(booking.date), "dd/MM/yyyy HH:mm")}
-          </p>
-        </div>
-      </CardContent>
-      <CardFooter>{footer}</CardFooter>
-    </>
-  );
-}
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 
 export function ScheduleCard({ barberId }: { barberId: string }) {
   const { data: bookings, isLoading } = useBookings(barberId);
 
   const { execute, isPending } = useAction(confirmBookingAction);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4">
+        {Array(3)
+          .fill(0)
+          .map((_, index) => (
+            <BookingSkeleton key={`i${index}`} />
+          ))}
+      </div>
+    );
+  }
 
   const completedBookings = bookings?.filter(
     booking => booking.status === "COMPLETED",
@@ -58,54 +39,73 @@ export function ScheduleCard({ barberId }: { barberId: string }) {
     booking => booking.status !== "COMPLETED",
   );
 
-  if (isLoading) {
-    return <SpinLoader />;
-  }
-
   return (
-    <div>
-      {incompletedBookings && incompletedBookings.length > 0 && (
-        <>
-          <h3 className="mt-8 mb-4 font-bold text-lg">
-            Agendamentos Pendentes
-          </h3>
-          <div>
-            {incompletedBookings?.map(booking => (
-              <Card key={booking.id} className="mb-4">
-                <ContentCard
-                  booking={booking}
-                  footer={
-                    <div className="flex w-full items-center justify-around gap-3 pt-3">
-                      <Button variant={"destructive"}>Cancelar</Button>
-                      <ConfirmAlertDialog
-                        title="Confirmar"
-                        isLoading={isPending}
-                        handleConfirm={() => execute({ bookingId: booking.id })}
-                      >
-                        <Button variant={"success"}>Confirmar</Button>
-                      </ConfirmAlertDialog>
-                    </div>
+    <div className="flex flex-col gap-6">
+      <Tabs defaultValue="incompleted">
+        <TabsList className="mb-4">
+          <TabsTrigger value="incompleted">Pendentes</TabsTrigger>
+          <TabsTrigger value="completed">Finalizados</TabsTrigger>
+        </TabsList>
+        <TabsContent value="incompleted">
+          {incompletedBookings && incompletedBookings.length > 0 && (
+            <div className="flex flex-col gap-4">
+              {incompletedBookings?.map(booking => (
+                <ConfirmAlertDialog
+                  key={booking.id}
+                  handleConfirm={() => execute({ bookingId: booking.id })}
+                  isLoading={isPending}
+                  title="Confirmar Agendamento"
+                  infos={
+                    <span>
+                      Você está prestes a confirmar o agendamento de{" "}
+                      <strong>{booking.service.name}</strong> para{" "}
+                      <strong>
+                        {new Date(booking.date).toLocaleDateString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </strong>{" "}
+                      de <strong>{booking.user.name}</strong>.
+                    </span>
                   }
+                >
+                  <BookingItem
+                    key={booking.id}
+                    serviceName={booking.service.name}
+                    date={booking.date}
+                    status="confirmed"
+                    counterPart={{
+                      name: booking.user.name,
+                      imageUrl: booking.user.image ?? "",
+                    }}
+                  />
+                </ConfirmAlertDialog>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="completed">
+          {completedBookings && completedBookings.length > 0 && (
+            <div className="flex flex-col gap-4">
+              {completedBookings?.map(booking => (
+                <BookingItem
+                  key={booking.id}
+                  serviceName={booking.service.name}
+                  date={booking.date}
+                  status="finished"
+                  counterPart={{
+                    name: booking.user.name,
+                    imageUrl: booking.user.image ?? "",
+                  }}
                 />
-              </Card>
-            ))}
-          </div>
-        </>
-      )}
-      {completedBookings && completedBookings.length > 0 && (
-        <>
-          <h3 className="mt-8 mb-4 font-bold text-lg">
-            Agendamentos Concluídos
-          </h3>
-          <div>
-            {completedBookings?.map(booking => (
-              <Card key={booking.id} className="mb-4">
-                <ContentCard booking={booking} />
-              </Card>
-            ))}
-          </div>
-        </>
-      )}
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

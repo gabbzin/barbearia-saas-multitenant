@@ -9,16 +9,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "./ui/alert-dialog";
-import { Button } from "./ui/button";
+} from "../../../shared/components/ui/alert-dialog";
+import { Button } from "../../../shared/components/ui/button";
 
-interface CancelAlertDialogProps {
+interface ConfirmBookingAlertProps {
   handleConfirm: () => void;
   isLoading: boolean;
   title: string;
   description?: React.ReactNode;
-  confirmButtonText?: string;
+  cancelButtonText?: string;
   children?: React.ReactNode;
+  infos?: React.ReactNode;
 }
 
 export default function ConfirmAlertDialog({
@@ -26,9 +27,10 @@ export default function ConfirmAlertDialog({
   isLoading,
   title,
   description,
-  confirmButtonText,
+  cancelButtonText,
   children,
-}: CancelAlertDialogProps) {
+  infos,
+}: ConfirmBookingAlertProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -40,17 +42,21 @@ export default function ConfirmAlertDialog({
           </Button>
         )}
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="flex flex-col gap-8">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
             {description ||
               "Tem certeza que deseja executar esta ação? Esta ação não pode ser desfeita."}
+            {infos && <div className="mt-4">{infos}</div>}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>
-            {confirmButtonText || "Sim, executar"}
+          <AlertDialogCancel
+            disabled={isLoading}
+            className="bg-destructive/80 hover:bg-destructive/90"
+          >
+            {cancelButtonText || "Não, cancelar"}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}

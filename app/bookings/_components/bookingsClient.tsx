@@ -5,6 +5,12 @@ import { useState } from "react";
 import BookingItem from "@/features/booking/components/booking-item";
 import { CancelBooking } from "@/features/booking/components/cancel-booking";
 import { PageContainer, PageSection } from "@/shared/components/ui/page";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/components/ui/tabs";
 
 interface BookingsClientProps {
   bookings: (Booking & {
@@ -32,9 +38,9 @@ export type BookingClient = {
 };
 
 export default function BookingsClient({ bookings }: BookingsClientProps) {
-  const [selectedBooking, setSelectedBooking] = useState<
-    BookingClient | null
-  >(null);
+  const [selectedBooking, setSelectedBooking] = useState<BookingClient | null>(
+    null,
+  );
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const now = new Date();
@@ -60,91 +66,95 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
     <>
       <PageContainer>
         <h1 className="font-bold text-xl">Agendamentos</h1>
-        <PageSection>
-          <h2 className="font-bold text-muted-foreground text-xs uppercase">
-            Confirmados
-          </h2>
-          {confirmedBookings.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              Você não tem agendamentos confirmados.
-            </p>
-          ) : (
-            confirmedBookings.map(booking => (
-              <BookingItem
-                key={booking.id}
-                serviceName={booking.service.name}
-                date={booking.date}
-                counterPart={{
-                  name: booking.service.barber.user?.name ?? "Barbeiro",
-                  imageUrl: booking.service.barber.imageUrl,
-                }}
-                status="confirmed"
-                onClick={() =>
-                  handleClickBooking({
-                    id: booking.id,
-                    date: booking.date,
-                    stripeChargeId: booking.stripeChargeId,
-                    service: {
-                      name: booking.service.name,
-                      priceInCents: booking.service.priceInCents,
-                    },
-                    barber: {
+        <Tabs defaultValue="confirmed">
+          <TabsList className="mb-4">
+            <TabsTrigger value="confirmed">Confirmados</TabsTrigger>
+            <TabsTrigger value="cancelled">Cancelados</TabsTrigger>
+            <TabsTrigger value="finished">Finalizados</TabsTrigger>
+          </TabsList>
+          <TabsContent value="confirmed">
+            <PageSection>
+              {confirmedBookings.length === 0 ? (
+                <p className="text-muted-foreground text-sm">
+                  Você não tem agendamentos confirmados.
+                </p>
+              ) : (
+                confirmedBookings.map(booking => (
+                  <BookingItem
+                    key={booking.id}
+                    serviceName={booking.service.name}
+                    date={booking.date}
+                    counterPart={{
                       name: booking.service.barber.user?.name ?? "Barbeiro",
                       imageUrl: booking.service.barber.imageUrl,
-                      phone: booking.service.barber.phone,
-                    },
-                  })
-                }
-              />
-            ))
-          )}
-        </PageSection>
-        <PageSection>
-          <h2 className="font-bold text-muted-foreground text-xs uppercase">
-            Cancelados
-          </h2>
-          {cancelledBookings.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              Você não tem agendamentos cancelados.
-            </p>
-          ) : (
-            cancelledBookings.map(booking => (
-              <BookingItem
-                key={booking.id}
-                serviceName={booking.service.name}
-                date={booking.date}
-                counterPart={{
-                  name: booking.service.barber.user?.name ?? "Barbeiro",
-                  imageUrl: booking.service.barber.imageUrl,
-                }}
-                status="cancelled"
-              />
-            ))
-          )}
-        </PageSection>
-        <PageSection>
-          <h2 className="font-bold text-muted-foreground text-xs uppercase">
-            Finalizados
-          </h2>
-          {finishedBookings.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              Você não tem agendamentos finalizados.
-            </p>
-          ) : (
-            finishedBookings.map(booking => (
-              <BookingItem
-                key={booking.id}
-                serviceName={booking.service.name}
-                date={booking.date}
-                counterPart={{
-                  name: booking.service.barber.user?.name ?? "Barbeiro",
-                  imageUrl: booking.service.barber.imageUrl,
-                }}
-                status="finished"
-              />
-            ))
-          )}
-        </PageSection>
+                    }}
+                    status="confirmed"
+                    onClick={() =>
+                      handleClickBooking({
+                        id: booking.id,
+                        date: booking.date,
+                        stripeChargeId: booking.stripeChargeId,
+                        service: {
+                          name: booking.service.name,
+                          priceInCents: booking.service.priceInCents,
+                        },
+                        barber: {
+                          name: booking.service.barber.user?.name ?? "Barbeiro",
+                          imageUrl: booking.service.barber.imageUrl,
+                          phone: booking.service.barber.phone,
+                        },
+                      })
+                    }
+                  />
+                ))
+              )}
+            </PageSection>
+          </TabsContent>
+          <TabsContent value="cancelled">
+            <PageSection>
+              {cancelledBookings.length === 0 ? (
+                <p className="text-muted-foreground text-sm">
+                  Você não tem agendamentos cancelados.
+                </p>
+              ) : (
+                cancelledBookings.map(booking => (
+                  <BookingItem
+                    key={booking.id}
+                    serviceName={booking.service.name}
+                    date={booking.date}
+                    counterPart={{
+                      name: booking.service.barber.user?.name ?? "Barbeiro",
+                      imageUrl: booking.service.barber.imageUrl,
+                    }}
+                    status="cancelled"
+                  />
+                ))
+              )}
+            </PageSection>
+          </TabsContent>
+          <TabsContent value="finished">
+            <PageSection>
+              {finishedBookings.length === 0 ? (
+                <p className="text-muted-foreground text-sm">
+                  Você não tem agendamentos finalizados.
+                </p>
+              ) : (
+                finishedBookings.map(booking => (
+                  <BookingItem
+                    key={booking.id}
+                    serviceName={booking.service.name}
+                    date={booking.date}
+                    counterPart={{
+                      name: booking.service.barber.user?.name ?? "Barbeiro",
+                      imageUrl: booking.service.barber.imageUrl,
+                    }}
+                    status="finished"
+                  />
+                ))
+              )}
+            </PageSection>
+          </TabsContent>
+        </Tabs>
       </PageContainer>
 
       <CancelBooking
