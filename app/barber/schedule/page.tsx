@@ -16,7 +16,7 @@ export default async function BarberSchedulePage() {
       <Header />
       <main>
         <PageContainer>
-          <h1 className="mb-4 font-bold text-xl">Agenda Completa de hoje</h1>
+          <h1 className="mb-4 font-bold text-xl">Agenda Completa de Hoje</h1>
           <ScheduleCard barberId={session.id} />
         </PageContainer>
       </main>

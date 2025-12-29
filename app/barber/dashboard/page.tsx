@@ -55,14 +55,19 @@ const BarberDashboardPage = async () => {
   return (
     <div>
       <Header />
-      <Alert>
-        <AlertTitle className="flex items-center gap-2">
-          <AlertCircle />
-          {/* {horarios
-            ? " Seus horários padrão estão configurados."
-            : " Você ainda não configurou seus horários padrão. Por favor, configure-os nas configurações abaixo."} */}
-        </AlertTitle>
-      </Alert>
+      {!horariosData && (
+        <Alert>
+          <AlertTitle className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-10 w-10" />
+              <span>
+                Você ainda não configurou seus horários padrão. Por favor,
+                configure-os nas configurações abaixo.
+              </span>
+            </div>
+          </AlertTitle>
+        </Alert>
+      )}
       <PageContainer>
         <h2 className="font-bold text-2xl lg:text-3xl">
           Olá {session.name ?? "Usuario"}
