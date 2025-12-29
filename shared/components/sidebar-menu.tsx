@@ -39,12 +39,23 @@ const ROUTES = [
   { name: "Assinatura", path: "/signature", icon: CreditCard },
 ];
 
+// Rotas exclusivas de barbeiro
+const BARBER_ROUTES = [
+  { name: "Dashboard", path: "/barber/dashboard", icon: Home },
+  { name: "Agenda", path: "/barber/schedule", icon: Calendar },
+];
+
 interface SidebarMenuProps {
   barbers: (Barber & { user: User | null })[];
   isSubscriber: boolean;
+  role?: string;
 }
 
-export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
+export const SidebarMenu = ({
+  barbers,
+  isSubscriber,
+  role,
+}: SidebarMenuProps) => {
   const { data: session } = authClient.useSession();
   const { push } = useRouter();
 
@@ -136,6 +147,30 @@ export const SidebarMenu = ({ barbers, isSubscriber }: SidebarMenuProps) => {
         </div>
 
         <Separator className="p-0.5" />
+
+        {role === "BARBER" && (
+          <>
+            <h3 className="text-center font-bold font-geist text-xs uppercase">
+              Área do Barbeiro
+            </h3>
+            <div className="flex w-full flex-col px-2">
+              {BARBER_ROUTES.map(route => (
+                <Button
+                  key={route.name}
+                  variant="ghost"
+                  className="w-full justify-start gap-3 rounded-full px-5 py-3"
+                  asChild
+                >
+                  <Link href={route.path}>
+                    <route.icon className="size-4" />
+                    <span className="font-medium text-sm">{route.name}</span>
+                  </Link>
+                </Button>
+              ))}
+            </div>
+            <Separator className="p-0.5" />
+          </>
+        )}
 
         <div className="flex flex-col px-2">
           {isSubscriber && (
