@@ -52,13 +52,14 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
   const month = format(nextBooking?.date, "MMM", {
     locale: ptBR,
   }).toUpperCase();
-  const time = format(nextBooking?.date, "HH:mm");
+  const time = nextBooking?.date;
+  const timeEnd = new Date(time?.setMinutes(time.getMinutes() + 30));
 
   // Atualizar para usar dados reais do nextBooking
   const eventConfig: CalendarOptions = {
     title: `${nextBooking?.service.name} com ${nextBooking?.service?.barber?.user?.name}`,
     start: nextBooking?.date,
-    end: nextBooking?.date,
+    end: timeEnd,
     description: `Agendamento de serviço na barbearia com ${nextBooking?.service?.barber?.user?.name}.`,
     location: "Barbearia XYZ",
   };
@@ -104,7 +105,7 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
             </div>
             <div className="flex items-center gap-2">
               <ClockIcon size={12} />
-              <p>{time}</p>
+              <p>{format(time, "HH:mm")}</p>
             </div>
           </div>
 
