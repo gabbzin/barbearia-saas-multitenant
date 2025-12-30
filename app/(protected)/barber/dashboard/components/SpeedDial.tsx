@@ -2,10 +2,10 @@
 
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import FormTimesServices from "@/app/barber/dashboard/components/form-times-services";
 import type { TimesSchemaData } from "@/features/booking/schema/timesSchema";
 import { Button } from "@/shared/components/ui/button";
 import { FormService } from "./form-service";
+import FormTimesServices from "./form-times-services";
 
 interface SpeedDialProps {
   barberId: string;

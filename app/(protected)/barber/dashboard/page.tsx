@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SpeedDial } from "@/app/barber/dashboard/components/SpeedDial";
 import { verifySession } from "@/features/user/repository/user.repository";
 import { prisma } from "@/lib/prisma";
 import CardInfo from "@/shared/components/barber/card-info";
@@ -20,6 +19,7 @@ import { Card, CardContent } from "@/shared/components/ui/card";
 import { PageContainer } from "@/shared/components/ui/page";
 import { Separator } from "@/shared/components/ui/separator";
 import { getBarberDashboardInfos } from "./actions/getInfos";
+import { SpeedDial } from "./components/SpeedDial";
 import { TableService } from "./components/table-service";
 import { TableSettings } from "./components/table-times-services";
 
