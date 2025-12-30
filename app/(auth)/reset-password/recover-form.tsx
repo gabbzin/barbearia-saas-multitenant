@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { toast } from "sonner";
 import {
   recoverPasswordSchema,
   type recoverPasswordSchemaType,
 } from "@/features/user/schema/userSchema";
+import { authClient } from "@/lib/auth-client";
 import GenericForm from "@/shared/components/form/generic-form";
 import InputForm from "@/shared/components/form/input-form";
 import { Button } from "@/shared/components/ui/button";
@@ -12,8 +14,42 @@ import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 import { PasswordStrength } from "./passwordStrength";
 
 export default function RecoverPassword() {
-  const handleRecoverPassword = (data: recoverPasswordSchemaType) => {
-    console.log(data);
+  const token = new URLSearchParams(window.location.search).get("token") || "";
+
+  if (!token) {
+    return (
+      <Card className="w-full max-w-md space-y-2">
+        <CardHeader className="text-center font-bold text-2xl">
+          Recuperar senha
+        </CardHeader>
+        <CardContent className="px-8">
+          <p className="text-center">
+            Token de recuperação inválido ou ausente.
+          </p>
+          <div className="mt-4 text-center">
+            <Button variant={"destructive"} type="button" asChild>
+              <Link href={"/login"}>Voltar</Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const handleRecoverPassword = async (data: recoverPasswordSchemaType) => {
+    const res = await authClient.resetPassword({
+      newPassword: data.senha,
+      token,
+    });
+
+    if (res.error) {
+      toast.error(
+        res.error.message || "Erro ao recuperar a senha. Tente novamente.",
+      );
+    }
+
+    toast.success("Senha recuperada com sucesso!");
+    window.location.href = "/login";
   };
 
   return (

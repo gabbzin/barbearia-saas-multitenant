@@ -1,8 +1,8 @@
 "use server";
 
 import { NextResponse } from "next/server";
-import VerifyAccountEmail from "@/emails/verify-account-email";
 import { resendClient } from "../resend-client";
+import TemplateEmailRecoverPass from "@/emails/recover-password-email";
 
 interface SendVerificationEmailParams {
   to: string[];
@@ -27,11 +27,11 @@ export async function sendRecoveryEmail({
       from: "Barbearia <onboarding@resend.dev>",
       to,
       subject: "Recuperação de senha - Barbearia SaaS",
-      react: VerifyAccountEmail({
-        token,
+      react: TemplateEmailRecoverPass({
         barbershopName: "Barbearia SaaS",
         userName,
-      }),
+        token,
+      })
     });
 
     if (error) {

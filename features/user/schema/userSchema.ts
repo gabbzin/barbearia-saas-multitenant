@@ -37,7 +37,6 @@ export type registerSchemaType = z.infer<typeof registerSchema>;
 
 export const recoverPasswordSchema = z
   .object({
-    email: z.email("Email inválido"),
     senha: z
       .string("Senha inválida")
       .min(8, "A senha deve ter no mínimo 8 caracteres")
