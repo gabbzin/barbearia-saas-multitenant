@@ -37,6 +37,7 @@ export type registerSchemaType = z.infer<typeof registerSchema>;
 
 export const recoverPasswordSchema = z
   .object({
+    email: z.email("Email inválido"),
     senha: z
       .string("Senha inválida")
       .min(8, "A senha deve ter no mínimo 8 caracteres")
@@ -47,3 +48,5 @@ export const recoverPasswordSchema = z
     message: "As senhas não coincidem",
     path: ["confirmarSenha"],
   });
+
+export type recoverPasswordSchemaType = z.infer<typeof recoverPasswordSchema>;

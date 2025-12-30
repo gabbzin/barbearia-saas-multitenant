@@ -17,6 +17,12 @@ export const auth = betterAuth({
     },
   },
 
+  // emailVerification: {
+  //   sendVerificationEmail: async ( {user, url, token}) => {
+  //     void
+  //   }
+  // }
+
   user: {
     additionalFields: {
       role: {

@@ -43,6 +43,10 @@ export default function LoginForm() {
     }
   };
 
+  // const handleRecoverPassword = async () => {
+  //   await authClient.requestPasswordReset()
+  // }
+
   return (
     <Card className="w-full max-w-md space-y-2">
       <CardHeader className="text-center font-bold text-3xl">

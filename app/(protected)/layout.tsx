@@ -1,4 +1,5 @@
 import { SubscriptionStatus } from "@prisma/client";
+import { redirect } from "next/navigation";
 import { verifySession } from "@/features/user/repository/user.repository";
 import { prisma } from "@/lib/prisma";
 
@@ -30,6 +31,10 @@ export default async function ProtectedLayout({
       },
       update: {},
     });
+  }
+
+  if (!session) {
+    return redirect("/login");
   }
 
   return <>{children}</>;
