@@ -60,7 +60,13 @@ export const SidebarMenu = ({
   const { push } = useRouter();
 
   const handleLogout = async () => {
-    await authClient.signOut();
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          push("/login");
+        },
+      },
+    });
   };
 
   return (

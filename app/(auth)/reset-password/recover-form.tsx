@@ -33,12 +33,6 @@ export default function RecoverPassword() {
           }
         >
           <InputForm
-            name="email"
-            label="Email"
-            type="email"
-            placeholder="Digite seu email"
-          />
-          <InputForm
             name="senha"
             label="Nova senha"
             type="password"

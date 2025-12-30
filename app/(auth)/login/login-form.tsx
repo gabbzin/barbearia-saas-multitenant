@@ -17,6 +17,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/shared/components/ui/card";
+import { ForgotPasswordButton } from "./forgot-password-button";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -43,10 +44,6 @@ export default function LoginForm() {
     }
   };
 
-  // const handleRecoverPassword = async () => {
-  //   await authClient.requestPasswordReset()
-  // }
-
   return (
     <Card className="w-full max-w-md space-y-2">
       <CardHeader className="text-center font-bold text-3xl">
@@ -72,9 +69,7 @@ export default function LoginForm() {
               type="password"
               placeholder="Digite sua senha"
             />
-            <p className="absolute right-0 text-blue-500 text-sm">
-              <Link href={"/recover-password"}>Esqueceu a senha?</Link>
-            </p>
+            <ForgotPasswordButton />
           </div>
         </GenericForm>
       </CardContent>
