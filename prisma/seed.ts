@@ -1,6 +1,12 @@
 import { prisma } from "@/lib/prisma";
 
 async function seedDatabase() {
+  const barbers = [];
+  const pastDates = [];
+
+  const startTime = "09:00";
+  const endTime = "21:00";
+
   try {
     const images = [
       "https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png",
@@ -26,7 +32,16 @@ async function seedDatabase() {
       "https://utfs.io/f/0522fdaf-0357-4213-8f52-1d83c3dcb6cd-18e.png",
     ];
 
-    const barberNames = ["Ceara do Corte", "Tuco do Corte", "Davi Barber"];
+    const barbershopNames = ["Barbearia do Zé", "BarberShop 2w"];
+
+    const barberNames = [
+      "Ceara do Corte",
+      "Tuco do Corte",
+      "Davi Barber",
+      "Rafael Cuts",
+      "Lucas Barbeiro",
+      "Pedro Style",
+    ];
 
     const services = [
       {
@@ -88,7 +103,7 @@ async function seedDatabase() {
     ];
 
     // Criar planos de assinatura
-    const Plans = [
+    const plans = [
       {
         id: "plano-1",
         name: "Hair",
@@ -119,119 +134,142 @@ async function seedDatabase() {
       },
     ];
 
-    for (const plan of Plans) {
-      await prisma.plan.create({
-        data: plan,
-      });
-    }
-
-    const barbershops = [];
-    for (let i = 0; i < barberNames.length; i++) {
-      const name = barberNames[i];
-      const imageUrl = images[i];
-      const email = `${name.toLowerCase().replace(/ /g, ".")}@barber.com`;
-
-      const user = await prisma.user.create({
+    // Criando a barbearia no banco de dados
+    for (const barbershopName of barbershopNames) {
+      const tenant = await prisma.barbershop.create({
         data: {
-          id: `barber-${i + 1}`,
-          name,
-          email,
-          emailVerified: true,
-          role: "BARBER",
-          image: imageUrl,
+          name: barbershopName,
+          address: "Endereço padrão",
+          logo: "https://3tlh7aktl6.ufs.sh/f/tcFRjMXVSkQ0Asb1IxZDwZ30bIph8P2qjXfOcVJmTvFtnMxi",
         },
       });
 
-      const barber = await prisma.barber.create({
-        data: {
-          imageUrl,
-          phone: ["(11) 99999-9999"],
-          userId: user.id,
-        },
-      });
-
-      for (const service of services) {
-        await prisma.barberService.create({
+      for (const plan of plans) {
+        await prisma.plan.create({
           data: {
-            name: service.name,
-            description: service.description,
-            priceInCents: service.price * 100,
-            barber: {
-              connect: {
-                id: barber.id,
-              },
-            },
-            imageUrl: service.imageUrl,
+            ...plan,
+            tenantId: tenant.id,
           },
         });
       }
 
-      barbershops.push(barber);
-    }
+      for (let i = 0; i < barberNames.length; i++) {
+        const name = barberNames[i];
+        const imageUrl = images[i];
+        const email = `${name.toLowerCase().replace(/ /g, ".")}@barber.com`;
 
-    // Criar usuário cliente para os agendamentos
-    const clientUser = await prisma.user.create({
-      data: {
-        id: "client-user-1",
-        name: "João Silva",
-        email: "joao.silva@example.com",
-        emailVerified: true,
-        role: "USER",
-      },
-    });
+        const user = await prisma.user.create({
+          data: {
+            id: `barber-${i + 1}`,
+            name,
+            email,
+            emailVerified: true,
+            role: "BARBER",
+            image: imageUrl,
+          },
+        });
 
-    // Criar agendamentos passados para o primeiro barbeiro
-    const firstBarber = barbershops[0];
-    const barberServices = await prisma.barberService.findMany({
-      where: { barberId: firstBarber.id },
-      take: 4,
-    });
+        const barber = await prisma.barber.create({
+          data: {
+            imageUrl,
+            phone: "(11) 99999-9999",
+            userId: user.id,
+            tenantId: tenant.id,
+          },
+        });
 
-    // Datas passadas (últimos 30 dias)
-    const pastDates = [
-      new Date("2024-11-01T10:00:00Z"),
-      new Date("2024-11-05T14:00:00Z"),
-      new Date("2024-11-12T16:00:00Z"),
-      new Date("2024-11-18T11:00:00Z"),
-      new Date("2024-11-22T15:00:00Z"),
-      new Date("2024-11-28T09:00:00Z"),
-    ];
+        for (const service of services) {
+          await prisma.barberService.create({
+            data: {
+              name: service.name,
+              description: service.description,
+              priceInCents: service.price * 100,
+              barber: {
+                connect: {
+                  id: barber.id,
+                },
+              },
+              imageUrl: service.imageUrl,
+              tenant: {
+                connect: {
+                  id: tenant.id,
+                },
+              }
+            },
+          });
+        }
 
-    for (let i = 0; i < pastDates.length; i++) {
-      const service = barberServices[i % barberServices.length];
+        barbers.push(barber);
+      }
 
-      await prisma.booking.create({
+      // Criar usuário cliente para os agendamentos
+      const clientUser = await prisma.user.create({
         data: {
-          date: pastDates[i],
-          status: "COMPLETED",
-          userId: clientUser.id,
-          barberId: firstBarber.id,
-          serviceId: service.id,
-          paidWithSubscription: false,
-          priceInCents: service.priceInCents,
+          id: "client-user-1",
+          name: "João Silva",
+          email: "joao.silva@example.com",
+          emailVerified: true,
+          role: "CLIENT",
         },
       });
-    }
 
-    const startTime = "09:00";
-    const endTime = "21:00";
-
-    // Criar disponibilidade para os barbeiros
-    for (const barber of barbershops) {
-      await prisma.disponibility.create({
-        data: {
-          barberId: barber.id,
-          daysOfWeek: [1, 2, 3, 4, 5], // Segunda-feira a sexta-feira
-          startTime: startTime,
-          endTime: endTime,
-        },
+      // Criar agendamentos passados para o primeiro barbeiro
+      const firstBarber = barbers[0];
+      const barberServices = await prisma.barberService.findMany({
+        where: { barberId: firstBarber.id },
+        take: 4,
       });
+
+      // Datas passadas (últimos 30 dias)
+      const pasts = [
+        new Date("2024-12-01T10:00:00Z"),
+        new Date("2024-12-05T14:00:00Z"),
+        new Date("2024-12-12T16:00:00Z"),
+        new Date("2024-12-18T11:00:00Z"),
+        new Date("2024-12-22T15:00:00Z"),
+        new Date("2024-12-28T09:00:00Z"),
+      ];
+
+      for (const date of pasts) {
+        pastDates.push(date);
+      }
+
+      for (let i = 0; i < pastDates.length; i++) {
+        const service = barberServices[i % barberServices.length];
+
+        await prisma.booking.create({
+          data: {
+            date: pastDates[i],
+            status: "COMPLETED",
+            userId: clientUser.id,
+            barberId: firstBarber.id,
+            serviceId: service.id,
+            paidWithSubscription: false,
+            priceInCents: service.priceInCents,
+            tenantId: tenant.id,
+          },
+        });
+      }
+
+      // Criar disponibilidade para os barbeiros
+      for (const barber of barbers) {
+        for (let day = 1; day <= 5; day++) {
+          await prisma.barberDisponibility.create({
+            data: {
+              barberId: barber.id,
+              dayOfWeek: day, // Segunda-feira a sexta-feira
+              startTime: startTime,
+              endTime: endTime,
+            },
+          });
+        }
+      }
     }
 
     console.log("✅ Seed concluído com sucesso!");
-    console.log(`- ${barbershops.length} barbeiros criados`);
+    console.log(`- ${barbers.length} barbeiros criados`);
     console.log(`- ${pastDates.length} agendamentos passados criados`);
-    console.log(`- ${Plans.length} planos criados`);
+    console.log(`- ${plans.length} planos criados`);
     console.log(
       `- Configurações de disponibilidade criadas para cada barbeiro iniciando as ${startTime} até ${endTime} de segunda a sexta.`,
     );
