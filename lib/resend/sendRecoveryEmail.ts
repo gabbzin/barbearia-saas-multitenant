@@ -1,19 +1,21 @@
 "use server";
 
 import { NextResponse } from "next/server";
-import { resendClient } from "../resend-client";
 import TemplateEmailRecoverPass from "@/emails/recover-password-email";
+import { resendClient } from "../resend-client";
 
 interface SendVerificationEmailParams {
   to: string[];
   userName?: string;
   token: string;
+  barberShopSlug: string;
 }
 
 export async function sendRecoveryEmail({
   to,
   userName,
   token,
+  barberShopSlug,
 }: SendVerificationEmailParams) {
   try {
     if (!to || !token) {
@@ -31,7 +33,8 @@ export async function sendRecoveryEmail({
         barbershopName: "Barbearia SaaS",
         userName,
         token,
-      })
+        barberShopSlug,
+      }),
     });
 
     if (error) {

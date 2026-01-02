@@ -9,12 +9,14 @@ interface SendVerificationEmailParams {
   to: string[];
   userName?: string;
   token: string;
+  barbershopSlug: string;
 }
 
 export async function sendVerificationEmail({
   to,
   userName,
   token,
+  barbershopSlug,
 }: SendVerificationEmailParams) {
   try {
     if (!to || !token) {
@@ -32,6 +34,7 @@ export async function sendVerificationEmail({
         token,
         barbershopName: "Barbearia SaaS",
         userName,
+        barbershopSlug,
       }),
     });
 

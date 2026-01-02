@@ -5,12 +5,14 @@ import { button, heading, paragraph } from "./styles/style";
 
 interface TemplateEmailPageProps {
   barbershopName: string;
+  barberShopSlug: string;
   userName?: string;
   token: string;
 }
 
 export default function TemplateEmailRecoverPass({
   barbershopName = "Apartus",
+  barberShopSlug,
   userName,
   token,
 }: TemplateEmailPageProps) {
@@ -28,7 +30,10 @@ export default function TemplateEmailRecoverPass({
         Para realiza-lá, pedimos que você clique no link abaixo.
       </Text>
 
-      <Button style={button} href={`${baseUrl}/reset-password?token=${token}`}>
+      <Button
+        style={button}
+        href={`${baseUrl}/${barberShopSlug}/reset-password?token=${token}`}
+      >
         Redefinir Senha
       </Button>
     </TemplateEmailBody>

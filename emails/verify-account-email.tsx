@@ -7,12 +7,14 @@ interface VerifyAccountEmailProps {
   userName?: string;
   token: string;
   barbershopName: string;
+  barbershopSlug: string;
 }
 
 export default function VerifyAccountEmail({
   userName,
   token,
   barbershopName = "Aparatus",
+  barbershopSlug,
 }: VerifyAccountEmailProps) {
   return (
     <TemplateEmailBody barbershopName={barbershopName}>
@@ -30,7 +32,10 @@ export default function VerifyAccountEmail({
         conta, por favor, ignore este email.
       </Text>
 
-      <Button style={button} href={`${baseUrl}/verify-account?token=${token}`}>
+      <Button
+        style={button}
+        href={`${baseUrl}/${barbershopSlug}/verify-account?token=${token}`}
+      >
         Verificar Email
       </Button>
     </TemplateEmailBody>

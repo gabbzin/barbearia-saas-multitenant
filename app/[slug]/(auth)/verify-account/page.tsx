@@ -9,13 +9,18 @@ interface Props {
 
 export default async function VerifyAccountPage({ searchParams }: Props) {
   const token = (await searchParams).token as string | undefined;
+  const slug = (await searchParams).slug as string | undefined;
 
   try {
     if (!token) {
       throw new Error("Token is required");
     }
+    if (!slug) {
+      throw new Error("Slug is required");
+    }
+
     await verifyEmail(token);
-    redirect("/login?verified=true");
+    redirect(`/${slug}/login?verified=true`);
   } catch {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-4">

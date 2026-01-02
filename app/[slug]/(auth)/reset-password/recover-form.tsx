@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import {
   recoverPasswordSchema,
@@ -14,7 +15,10 @@ import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 import { PasswordStrength } from "./passwordStrength";
 
 export default function RecoverPassword() {
-  const token = new URLSearchParams(window.location.search).get("token") || "";
+  const { slug } = useParams() as { slug: string };
+  const token = useSearchParams().get("token") || "";
+
+  const loginRedirect = `/${slug}/login`;
 
   if (!token) {
     return (
@@ -28,7 +32,7 @@ export default function RecoverPassword() {
           </p>
           <div className="mt-4 text-center">
             <Button variant={"destructive"} type="button" asChild>
-              <Link href={"/login"}>Voltar</Link>
+              <Link href={loginRedirect}>Voltar</Link>
             </Button>
           </div>
         </CardContent>
@@ -49,7 +53,7 @@ export default function RecoverPassword() {
     }
 
     toast.success("Senha recuperada com sucesso!");
-    window.location.href = "/login";
+    window.location.href = loginRedirect;
   };
 
   return (
@@ -64,7 +68,7 @@ export default function RecoverPassword() {
           submitText="Criar nova senha"
           buttons={
             <Button variant={"destructive"} type="button" asChild>
-              <Link href={"/login"}>Voltar</Link>
+              <Link href={loginRedirect}>Voltar</Link>
             </Button>
           }
         >

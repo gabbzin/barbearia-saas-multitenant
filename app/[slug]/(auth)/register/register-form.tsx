@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation"; // Use router.push em Client Components
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation"; // Use router.push em Client Components
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -11,10 +12,16 @@ import { authClient } from "@/lib/auth-client";
 import GenericForm from "@/shared/components/form/generic-form";
 import InputForm from "@/shared/components/form/input-form";
 import { GoogleButton } from "@/shared/components/google-button";
-import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/shared/components/ui/card";
 
 const RegisterForm = () => {
   const router = useRouter();
+  const { slug } = useParams() as { slug: string };
   const [emailSend, setEmailSend] = useState(false);
 
   const handleRegister = async (data: registerSchemaType) => {
@@ -69,12 +76,12 @@ const RegisterForm = () => {
       <CardHeader className="text-center font-bold text-3xl">
         Criar conta
       </CardHeader>
-      <CardContent className="px-8">
+      <CardContent className="px-8 py-4">
         <GenericForm<registerSchemaType>
           schema={registerSchema}
           onSubmit={handleRegister}
           submitText="Criar conta"
-          buttons={<GoogleButton />}
+          buttons={<GoogleButton slug={slug} />}
         >
           <InputForm
             name="nome"
@@ -96,6 +103,12 @@ const RegisterForm = () => {
           />
         </GenericForm>
       </CardContent>
+      <CardFooter className="flex flex-col items-center justify-center">
+        <p className="text-center">Já possui conta? </p>
+        <Link href={`/${slug}/login`} className="text-blue-500">
+          Faça login aqui.
+        </Link>
+      </CardFooter>
     </Card>
   );
 };

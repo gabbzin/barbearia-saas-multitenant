@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import CancelAlertDialog from "./cancel-alert-dialog";
 import {
@@ -59,11 +59,14 @@ export const SidebarMenu = ({
   const { data: session } = authClient.useSession();
   const { push } = useRouter();
 
+  const { slug } = useParams();
+  const loginRedirect = `/${slug}/login`;
+
   const handleLogout = async () => {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          push("/login");
+          push(loginRedirect);
         },
       },
     });
@@ -102,7 +105,7 @@ export const SidebarMenu = ({
         ) : (
           <div className="flex items-center justify-between px-5 pb-3">
             <p className="font-semibold text-base">Olá. Faça seu login!</p>
-            <Button onClick={() => push("/login")} size="sm" className="gap-2">
+            <Button onClick={() => push(loginRedirect)} size="sm" className="gap-2">
               Login <LogIn className="size-4" />
             </Button>
           </div>

@@ -32,10 +32,10 @@ export default function LoginForm({
 
   useEffect(() => {
     const syncCookie = async () => {
-      await setTenantCookie(tenantId);
+      await setTenantCookie(tenantId, slug);
     };
     syncCookie();
-  }, [tenantId]);
+  }, [tenantId, slug]);
 
   const handleLogin = async (data: loginSchemaType) => {
     try {
@@ -90,7 +90,7 @@ export default function LoginForm({
       </CardContent>
       <CardFooter className="flex flex-col">
         <p className="w-4/6 text-center">Ainda não possui conta? </p>
-        <Link href={"/register"} className="text-blue-500">
+        <Link href={`/${slug}/register`} className="text-blue-500">
           Crie uma agora.
         </Link>
       </CardFooter>

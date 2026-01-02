@@ -2,6 +2,7 @@ import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { cookies } from "next/headers";
+import { getSlugByCookie } from "./get-slug-cookie";
 import { prisma } from "./prisma";
 import { sendRecoveryEmail } from "./resend/sendRecoveryEmail";
 import { sendVerificationEmail } from "./resend/sendVerifyEmail";
@@ -13,11 +14,12 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     requireEmailVerification: true,
-    sendResetPassword: async ({ user, token }) => {
-      sendRecoveryEmail({
+    sendResetPassword: async ({ user, token, url }) => {
+      await sendRecoveryEmail({
         to: [user.email],
         token,
         userName: user.name,
+        barberShopSlug: await getSlugByCookie(),
       });
     },
   },
@@ -127,6 +129,7 @@ export const auth = betterAuth({
         to: [user.email],
         token,
         userName: user.name,
+        barbershopSlug: await getSlugByCookie(),
       });
     },
     expiresIn: 60 * 15, // 15 minutes
