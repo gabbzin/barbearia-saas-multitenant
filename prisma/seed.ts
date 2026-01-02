@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
+import { timeStringToDate } from "@/utils/timeStringToDate";
 
 async function seedDatabase() {
   const barbers = [];
   const pastDates = [];
 
-  const startTime = "09:00";
-  const endTime = "21:00";
+  const startTime = timeStringToDate("09:00");
+  const endTime = timeStringToDate("21:00");
 
   try {
     const images = [
@@ -139,16 +140,19 @@ async function seedDatabase() {
       const tenant = await prisma.barbershop.create({
         data: {
           name: barbershopName,
+          slug: barbershopName.toLowerCase().replace(/ /g, "-"),
           address: "Endereço padrão",
           logo: "https://3tlh7aktl6.ufs.sh/f/tcFRjMXVSkQ0Asb1IxZDwZ30bIph8P2qjXfOcVJmTvFtnMxi",
         },
       });
 
+      const tenantId = tenant.id;
+
       for (const plan of plans) {
         await prisma.plan.create({
           data: {
             ...plan,
-            tenantId: tenant.id,
+            tenantId,
           },
         });
       }
@@ -166,6 +170,7 @@ async function seedDatabase() {
             emailVerified: true,
             role: "BARBER",
             image: imageUrl,
+            tenantId,
           },
         });
 
@@ -174,7 +179,7 @@ async function seedDatabase() {
             imageUrl,
             phone: "(11) 99999-9999",
             userId: user.id,
-            tenantId: tenant.id,
+            tenantId,
           },
         });
 
@@ -192,9 +197,9 @@ async function seedDatabase() {
               imageUrl: service.imageUrl,
               tenant: {
                 connect: {
-                  id: tenant.id,
+                  id: tenantId,
                 },
-              }
+              },
             },
           });
         }
@@ -210,6 +215,7 @@ async function seedDatabase() {
           email: "joao.silva@example.com",
           emailVerified: true,
           role: "CLIENT",
+          tenantId,
         },
       });
 
@@ -246,7 +252,7 @@ async function seedDatabase() {
             serviceId: service.id,
             paidWithSubscription: false,
             priceInCents: service.priceInCents,
-            tenantId: tenant.id,
+            tenantId,
           },
         });
       }
