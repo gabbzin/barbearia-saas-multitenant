@@ -131,6 +131,7 @@ model Barbershop {
   // Basic Info
   id        String   @id @default(uuid())
   name      String
+  slug      String   @unique
   address   String
   logo      String   @default("https://3tlh7aktl6.ufs.sh/f/tcFRjMXVSkQ0Asb1IxZDwZ30bIph8P2qjXfOcVJmTvFtnMxi")
 
@@ -290,7 +291,7 @@ model BarberDisponibility {
   barber   Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
 
   @@index([barberId, dayOfWeek])
-  @@unique([barberId, dayOfWeek, startTime, endTime])
+  @@unique([barberId, dayOfWeek])
 }
 
 model ExceptionDate {

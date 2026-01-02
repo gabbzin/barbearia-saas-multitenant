@@ -11,9 +11,10 @@ export async function getSettingsByBarberId({
   barberId: string;
 }) {
   try {
-    const settings = await prisma.disponibility.findFirst({
+    const settings = await prisma.barberDisponibility.findMany({
       where: {
         barberId: barberId,
+        
       },
     });
     return settings;
@@ -35,23 +36,33 @@ export async function createDisponibility(
     }
   }
 
-  const startTime = data.horario_abertura;
-  const endTime = data.horario_fechamento;
+  const startTime = new Date(data.horario_abertura);
+  const endTime = new Date(data.horario_fechamento);
 
-  return await prisma.disponibility.upsert({
-    where: {
-      barberId: barberId,
-    },
-    create: {
-      daysOfWeek: selectedDates,
-      barberId: barberId,
-      startTime: startTime,
-      endTime: endTime,
-    },
-    update: {
-      daysOfWeek: selectedDates,
-      startTime: startTime,
-      endTime: endTime,
-    },
-  });
+  for (const day of selectedDates) {
+    if (startTime >= endTime) {
+      throw new Error(
+        `No dia ${day}, o horário de abertura deve ser antes do horário de fechamento.`,
+      );
+    }
+    await prisma.barberDisponibility.upsert({
+      where: {
+        barberId_dayOfWeek: {
+          barberId,
+          dayOfWeek: day,
+        },
+      },
+      create: {
+        dayOfWeek: day,
+        barberId,
+        startTime,
+        endTime,
+      },
+      update: {
+        dayOfWeek: day,
+        startTime,
+        endTime,
+      },
+    });
+  }
 }
