@@ -9,7 +9,7 @@ import { ServiceItem } from "@/shared/components/service-item";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 
-const BarberPage = async (props: PageProps<"/barber/[id]">) => {
+const BarberPage = async (props: PageProps<"/[slug]/barber/[id]">) => {
   const { id } = await props.params;
 
   const barber = await prisma.barber.findUnique({
@@ -114,14 +114,7 @@ const BarberPage = async (props: PageProps<"/barber/[id]">) => {
             Contato
           </h2>
           <div className="space-y-3">
-            {barber.phone.map(phone => (
-              <div
-                key={phone}
-                className="flex w-full flex-col items-center justify-between"
-              >
-                <PhoneItem phone={phone} />
-              </div>
-            ))}
+            <PhoneItem phone={barber.phone} />
           </div>
         </div>
 
