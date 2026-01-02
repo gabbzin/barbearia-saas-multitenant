@@ -42,30 +42,30 @@ enum BookingStatus {
 }
 
 // ========================================================
-// AUTHENTICATION & USER MODELS
+// USER & TENANT MODELS
 // ========================================================
 
 model User {
   // Basic Info
-  id               String   @id @default(uuid())
-  name             String
-  image            String?
-  email            String   @unique
-  emailVerified    Boolean  @default(false)
-  role             userRole @default(CLIENT)
-  passwordHash     String?
+  id            String  @id @default(uuid())
+  name          String
+  image         String?
+  email         String  @unique
+  emailVerified Boolean @default(false)
+  passwordHash  String?
 
   // Stripe Info
   stripeCustomerId String?
 
+  // Tenant Info
+  tenantId String?
 
   // Relations
-  sessions      Session[]
-  accounts      Account[]
-  bookings      Booking[]
-  barberProfile Barber?   @relation("BarberAccount")
-  tenantId      String
-  subscription Subscription?
+  sessions Session[]
+  accounts Account[]
+
+  tenants       UserTenant[]
+  barberProfile Barber[]
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -73,6 +73,50 @@ model User {
 
   @@map("user")
 }
+
+model UserTenant {
+  // Relations between User and Barbershop (Tenant)
+  userId   String
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId String
+  tenant   Barbershop @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  // User Rule in the Tenant
+  role     userRole   @default(CLIENT)
+
+  // Relations
+
+  bookings     Booking[]
+  subscription Subscription?
+
+  @@id([userId, tenantId])
+  @@index([tenantId])
+}
+
+model Barbershop {
+  // Basic Info
+  id      String @id @default(uuid())
+  name    String
+  slug    String @unique
+  address String
+  logo    String @default("https://3tlh7aktl6.ufs.sh/f/tcFRjMXVSkQ0Asb1IxZDwZ30bIph8P2qjXfOcVJmTvFtnMxi")
+  timezone String @default("America/Sao_Paulo")
+
+  // Relations
+  users    UserTenant[] // Users associated with this Barbershop
+  barbers  Barber[] // Barbers working at this Barbershop
+  services BarberService[] // Services offered at barbers in this Barbershop
+  plan     Plan[] // Subscription Plans available for this Barbershop
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("barbershops")
+}
+
+// ========================================================
+// AUTHENTICATION MODELS
+// ========================================================
 
 model Session {
   id        String   @id
@@ -85,6 +129,8 @@ model Session {
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tenantId String?
 
   @@index([userId])
   @@map("session")
@@ -124,57 +170,39 @@ model Verification {
 }
 
 // ========================================================
-// BARBERSHOP MODELS
+// BARBER & SERVICE MODELS
 // ========================================================
-
-model Barbershop {
-  // Basic Info
-  id        String   @id @default(uuid())
-  name      String
-  slug      String   @unique
-  address   String
-  logo      String   @default("https://3tlh7aktl6.ufs.sh/f/tcFRjMXVSkQ0Asb1IxZDwZ30bIph8P2qjXfOcVJmTvFtnMxi")
-
-  // Relations
-  barbers  Barber[]
-  services BarberService[]
-  plan    Plan[]
-  bookings Booking[]
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 model Barber {
   // Basic Info
-  id       String   @id @default(uuid())
-  imageUrl String   @default("https://3tlh7aktl6.ufs.sh/f/tcFRjMXVSkQ0Asb1IxZDwZ30bIph8P2qjXfOcVJmTvFtnMxi")
-  phone    String
+  id    String @id @default(uuid())
+  phone String
 
   // Relations
-  userId String @unique
-  user   User   @relation("BarberAccount", fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
   tenantId String
   tenant   Barbershop @relation(fields: [tenantId], references: [id])
-  
-  services BarberService[]
-  bookings Booking[]
 
-  disponibility BarberDisponibility[]
+  // Services & Bookings & Settings
+  services       BarberService[]
+  bookings       Booking[]
+  disponibility  BarberDisponibility[]
   exceptionDates ExceptionDate[]
 
+  @@unique([userId, tenantId])
   @@index([userId])
 }
 
 model BarberService {
   // Basic Info
-  id           String @id @default(uuid())
-  name         String
-  description  String
-  imageUrl     String
-  priceInCents Int
+  id                String @id @default(uuid())
+  name              String
+  description       String
+  imageUrl          String
+  priceInCents      Int
+  durationInMinutes Int    @default(30)
 
   // Relations
   barberId String
@@ -185,55 +213,7 @@ model BarberService {
 
   bookings Booking[]
 
-  @@index([barberId])
-}
-
-// ========================================================
-// SUBSCRIPTION & PLAN MODELS
-// ========================================================
-
-model Subscription {
-  // Basic Info
-  id                   String              @id @default(uuid())
-
-  // Relations
-  plan                 Plan?               @relation(fields: [planId], references: [id])
-  planId               String?
-  
-  // Subscription Details
-  stripeCustomerId     String?
-  stripeSubscriptionId String?             @unique
-  status               SubscriptionStatus? @default(INCOMPLETE)
-  periodStart          DateTime?
-  periodEnd            DateTime?
-  trialStart           DateTime?
-  trialEnd             DateTime?
-  cancelAtPeriodEnd    Boolean?            @default(false)
-  seats                Int?
-  userId               String              @unique
-  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId, planId])
-  @@map("subscription")
-}
-
-model Plan {
-  // Basic Info
-  id            String  @id
-  name          String
-  description   String
-  priceInCents  Int
-  stripePriceId String? @unique
-  
-  // Relations
-  tenantId String
-  tenant   Barbershop @relation(fields: [tenantId], references: [id])
-  subscriptions Subscription[]
-
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  @@index([barberId, tenantId])
 }
 
 // ========================================================
@@ -249,16 +229,16 @@ model Booking {
   priceInCents Int
 
   // Relations
-  serviceId    String
-  service      BarberService @relation(fields: [serviceId], references: [id])
+  serviceId String
+  service   BarberService @relation(fields: [serviceId], references: [id])
 
   // User & Barber & Barbershop
-  userId   String
-  user     User   @relation(fields: [userId], references: [id])
+  userId     String
+  tenantId   String
+  userTenant UserTenant @relation(fields: [userId, tenantId], references: [userId, tenantId], onDelete: Cascade)
+
   barberId String
   barber   Barber @relation(fields: [barberId], references: [id])
-  tenantId String
-  tenant   Barbershop @relation(fields: [tenantId], references: [id])
 
   // Subscription (optional)
   userSubscriptionId   String?
@@ -273,7 +253,62 @@ model Booking {
   updatedAt   DateTime  @updatedAt
   cancelledAt DateTime? @db.Timestamptz
 
-  @@index([userId, tenantId, date, status])
+  @@index([userId, tenantId])
+  @@index([barberId, date])
+  @@index([tenantId, date])
+}
+
+// ========================================================
+// SUBSCRIPTION & PLAN MODELS
+// ========================================================
+
+model Subscription {
+  // Basic Info
+  id String @id @default(uuid())
+
+  // Relations
+  plan   Plan?   @relation(fields: [planId], references: [id])
+  planId String?
+
+  // Subscription Details
+  stripeCustomerId     String?
+  stripeSubscriptionId String?             @unique
+  status               SubscriptionStatus? @default(INCOMPLETE)
+  periodStart          DateTime?
+  periodEnd            DateTime?
+  trialStart           DateTime?
+  trialEnd             DateTime?
+  cancelAtPeriodEnd    Boolean?            @default(false)
+  seats                Int?
+
+  // User & Tenant
+  userId     String
+  tenantId   String
+  userTenant UserTenant @relation(fields: [userId, tenantId], references: [userId, tenantId], onDelete: Cascade)
+
+  @@unique([userId, tenantId])
+  @@index([userId, planId])
+  @@map("subscription")
+}
+
+model Plan {
+  // Basic Info
+  id            String  @id @default(uuid())
+  name          String
+  description   String
+  priceInCents  Int
+  stripePriceId String? @unique
+
+  // Relations
+  tenantId      String?
+  tenant        Barbershop?     @relation(fields: [tenantId], references: [id])
+  subscriptions Subscription[]
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, stripePriceId])
 }
 
 // ========================================================
@@ -281,32 +316,31 @@ model Booking {
 // ========================================================
 model BarberDisponibility {
   // Basic Info
-  id      String  @id @default(uuid())
+  id        String   @id @default(uuid())
   dayOfWeek Int // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  startTime  DateTime @db.Time()
-  endTime    DateTime @db.Time()
+  startTime DateTime @db.Time()
+  endTime   DateTime @db.Time()
 
   // Relations
-  barberId String 
+  barberId String
   barber   Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
 
-  @@index([barberId, dayOfWeek])
   @@unique([barberId, dayOfWeek])
+  @@index([barberId, dayOfWeek])
 }
 
 model ExceptionDate {
   // Basic Info
-  id       String   @id @default(uuid())
-  date      DateTime @db.Date()
-  isClosed  Boolean  @default(true)
+  id        String    @id @default(uuid())
+  date      DateTime  @db.Date()
+  isClosed  Boolean   @default(true)
   startTime DateTime? @db.Time()
   endTime   DateTime? @db.Time()
 
   // Relations
   barberId String
-  barber   Barber   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  barber   Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
 
-
-  @@index([barberId, date])
   @@unique([barberId, date])
+  @@index([barberId, date])
 }

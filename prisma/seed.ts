@@ -4,6 +4,7 @@ import { timeStringToDate } from "@/utils/timeStringToDate";
 async function seedDatabase() {
   const barbers = [];
   const pastDates = [];
+  const tenants = [];
 
   const startTime = timeStringToDate("09:00");
   const endTime = timeStringToDate("21:00");
@@ -106,34 +107,36 @@ async function seedDatabase() {
     // Criar planos de assinatura
     const plans = [
       {
-        id: "plano-1",
         name: "Hair",
         description: "Cortes de cabelo ilimitados por mês",
         priceInCents: 8000,
         stripePriceId: "price_1Sf3aPLZmTtv3cllAd2ewhDQ", // R$ 80
       },
       {
-        id: "plano-2",
         name: "Beard",
         description: "Serviços de barba ilimitados por mês",
         priceInCents: 7000,
         stripePriceId: "price_1SfJCWLZmTtv3cllEvJ1kLV8", // R$ 70
       },
       {
-        id: "plano-3",
         name: "Hair and Beard",
         description: "Cortes e barba ilimitados por mês",
         priceInCents: 15000,
         stripePriceId: "price_1SfJCmLZmTtv3cllXAzpWq1a", // R$ 150
       },
-      {
-        id: "plano-4",
-        name: "FREE",
-        description: "Plano gratuito com serviços limitados",
-        priceInCents: 0,
-        stripePriceId: null, // Plano gratuito sem cobrança
-      },
     ];
+
+    await prisma.plan.upsert({
+      where: { id: "global-free" },
+      update: {},
+      create: {
+        id: "global-free",
+        name: "FREE",
+        description: "Plano gratuito padrão",
+        priceInCents: 0,
+        tenantId: null, // GLOBAL!
+      },
+    });
 
     // Criando a barbearia no banco de dados
     for (const barbershopName of barbershopNames) {
@@ -146,6 +149,7 @@ async function seedDatabase() {
         },
       });
 
+      tenants.push(tenant);
       const tenantId = tenant.id;
 
       for (const plan of plans) {
@@ -157,6 +161,7 @@ async function seedDatabase() {
         });
       }
 
+      // Criação dos barbeiros e seus serviços
       for (let i = 0; i < barberNames.length; i++) {
         const name = barberNames[i];
         const imageUrl = images[i];
@@ -164,22 +169,26 @@ async function seedDatabase() {
 
         const user = await prisma.user.create({
           data: {
-            id: `barber-${i + 1}`,
             name,
             email,
             emailVerified: true,
-            role: "BARBER",
             image: imageUrl,
+          },
+        });
+
+        await prisma.userTenant.create({
+          data: {
+            userId: user.id,
             tenantId,
+            role: "BARBER",
           },
         });
 
         const barber = await prisma.barber.create({
           data: {
-            imageUrl,
-            phone: "(11) 99999-9999",
             userId: user.id,
             tenantId,
+            phone: "(11) 99999-9999",
           },
         });
 
@@ -214,9 +223,15 @@ async function seedDatabase() {
           name: "João Silva",
           email: "joao.silva@example.com",
           emailVerified: true,
-          role: "CLIENT",
-          tenantId,
         },
+      });
+
+      await prisma.userTenant.upsert({
+        where: {
+          userId_tenantId: { userId: clientUser.id, tenantId: tenantId },
+        },
+        update: {},
+        create: { userId: clientUser.id, tenantId: tenantId, role: "CLIENT" },
       });
 
       // Criar agendamentos passados para o primeiro barbeiro
@@ -247,11 +262,12 @@ async function seedDatabase() {
           data: {
             date: pastDates[i],
             status: "COMPLETED",
+            paidWithSubscription: false,
+            priceInCents: service.priceInCents,
+
             userId: clientUser.id,
             barberId: firstBarber.id,
             serviceId: service.id,
-            paidWithSubscription: false,
-            priceInCents: service.priceInCents,
             tenantId,
           },
         });
@@ -273,6 +289,7 @@ async function seedDatabase() {
     }
 
     console.log("✅ Seed concluído com sucesso!");
+    console.log(`- ${tenants.length} barbearias criadas`);
     console.log(`- ${barbers.length} barbeiros criados`);
     console.log(`- ${pastDates.length} agendamentos passados criados`);
     console.log(`- ${plans.length} planos criados`);

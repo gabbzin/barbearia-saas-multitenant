@@ -5,7 +5,7 @@ import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { RainbowButton } from "./ui/rainbow-button";
 
-export const GoogleButton = () => {
+export const GoogleButton = ({ slug }: { slug: string }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
@@ -13,7 +13,7 @@ export const GoogleButton = () => {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/",
+        callbackURL: `/${slug}`,
       });
     } catch (error) {
       console.error("Erro no login social", error);
@@ -33,6 +33,7 @@ export const GoogleButton = () => {
         <span>Redirecionando...</span>
       ) : (
         <>
+          {/** biome-ignore lint/a11y/noSvgWithoutTitle: <Funciona!> */}
           <svg
             width="20"
             height="20"

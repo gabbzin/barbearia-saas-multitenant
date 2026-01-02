@@ -3,6 +3,7 @@ import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/features/barber/services/barbers.repository";
 import { NextBooking } from "@/features/booking/components/next-booking";
 import { getNextBooking } from "@/features/booking/functions/get-bookings";
+import { getCurrentSubscriptionAction } from "@/features/signature/actions/get-current-subscription";
 import { verifySession } from "@/features/user/repository/user.repository";
 import BarberItem from "@/shared/components/barber-item";
 import Footer from "@/shared/components/footer";
@@ -14,7 +15,6 @@ import {
   PageSectionScroller,
   PageSectionTitle,
 } from "@/shared/components/ui/page";
-import { getCurrentSubscriptionAction } from "../../features/signature/actions/get-current-subscription";
 
 const Home = async () => {
   const user = await verifySession();
@@ -107,7 +107,7 @@ const Home = async () => {
                 barber={{
                   id: barber.id,
                   name: barber.user?.name ?? "Barbeiro",
-                  imageUrl: barber.imageUrl,
+                  imageUrl: barber.user?.image ?? "",
                 }}
               />
             ))}

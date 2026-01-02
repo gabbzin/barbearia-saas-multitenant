@@ -1,40 +1,33 @@
-import { SubscriptionStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { verifySession } from "@/features/user/repository/user.repository";
 import { prisma } from "@/lib/prisma";
 
-interface ProtectedLayoutProps {
-  children: React.ReactNode;
-}
-
 export default async function ProtectedLayout({
   children,
-}: ProtectedLayoutProps) {
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
   const session = await verifySession();
 
-  const plans = await prisma.plan.findFirstOrThrow({
+  if (!session) {
+    return redirect(`/${slug}/login`);
+  }
+
+  const memberShip = await prisma.userTenant.findUnique({
     where: {
-      name: "FREE",
+      userId_tenantId: {
+        tenantId: session.tenantId,
+        userId: session.id,
+      },
     },
   });
 
-  if (session?.id) {
-    await prisma.subscription.upsert({
-      where: { userId: session.id },
-      create: {
-        userId: session.id,
-        planId: plans.id,
-        status: SubscriptionStatus.ACTIVE,
-        periodStart: new Date(),
-        // Plano gratuito sem data de término
-        periodEnd: null,
-      },
-      update: {},
-    });
-  }
-
-  if (!session) {
-    return redirect("/login");
+  if (!memberShip) {
+    return redirect(`/${slug}/login`);
   }
 
   return <>{children}</>;

@@ -1,6 +1,7 @@
 import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { cookies } from "next/headers";
 import { prisma } from "./prisma";
 import { sendRecoveryEmail } from "./resend/sendRecoveryEmail";
 import { sendVerificationEmail } from "./resend/sendVerifyEmail";
@@ -27,6 +28,99 @@ export const auth = betterAuth({
     },
   },
 
+  user: {
+    additionalFields: {
+      stripeCustomerId: {
+        type: "string",
+      },
+      tenantId: {
+        type: "string",
+      },
+    },
+  },
+
+  session: {
+    additionalFields: {
+      tenantId: {
+        type: "string",
+      },
+    },
+    cookieCache: {
+      enabled: true,
+      maxAge: 60 * 5, // 5 minutes
+    },
+  },
+
+  databaseHooks: {
+    user: {
+      create: {
+        after: async user => {
+          const cookieStore = await cookies();
+          const tenantId = cookieStore.get("tenantId")?.value;
+
+          if (tenantId) {
+            await prisma.userTenant.create({
+              data: { userId: user.id, tenantId, role: "CLIENT" },
+            });
+          }
+        },
+      },
+    },
+
+    session: {
+      create: {
+        before: async session => {
+          const cookieStore = await cookies();
+          const tenantId = cookieStore.get("tenantId")?.value;
+
+          if (tenantId) {
+            await prisma.userTenant.upsert({
+              where: {
+                userId_tenantId: { userId: session.userId, tenantId },
+              },
+              create: { userId: session.userId, tenantId, role: "CLIENT" },
+              update: {},
+            });
+
+            const globalPlanFree = await prisma.plan.findFirstOrThrow({
+              where: {
+                name: "FREE",
+                tenantId: null,
+              },
+            });
+
+            if (globalPlanFree) {
+              await prisma.subscription.upsert({
+                where: {
+                  userId_tenantId: {
+                    userId: session.userId,
+                    tenantId,
+                  },
+                },
+                create: {
+                  userId: session.userId,
+                  planId: globalPlanFree.id,
+                  tenantId,
+                  status: "ACTIVE",
+                  periodStart: new Date(),
+                  // Plano gratuito sem data de término
+                  periodEnd: null,
+                },
+                update: {},
+              });
+            }
+            return {
+              data: {
+                ...session,
+                tenantId,
+              },
+            };
+          }
+        },
+      },
+    },
+  },
+
   emailVerification: {
     sendVerificationEmail: async ({ user, token }) => {
       await sendVerificationEmail({
@@ -36,20 +130,6 @@ export const auth = betterAuth({
       });
     },
     expiresIn: 60 * 15, // 15 minutes
-  },
-
-  user: {
-    additionalFields: {
-      role: {
-        type: "string",
-      },
-      stripeCustomerId: {
-        type: "string",
-      },
-      barberId: {
-        type: "string",
-      },
-    },
   },
 
   plugins: [

@@ -4,20 +4,20 @@ export function Middleware(req: NextRequest) {
   const host = req.headers.get("host") ?? "";
   const subdomain = host.split(".")[0];
 
-  if (
-    subdomain === "www" ||
-    subdomain === "app" ||
-    host.includes("localhost")
-  ) {
+  if (["www", "app", "localhost"].includes(subdomain)) {
     return NextResponse.next();
   }
+  const res = NextResponse.next();
 
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set("x-tenant", subdomain);
+  const currentTenantId = req.cookies.get("currentTenantId")?.value;
 
-  return NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  if (subdomain && subdomain !== currentTenantId) {
+    res.cookies.set("tenantId", subdomain, {
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 1 semana
+      sameSite: "lax",
+    });
+  }
+
+  return res;
 }

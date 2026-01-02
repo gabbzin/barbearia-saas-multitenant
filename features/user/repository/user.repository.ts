@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { cache } from "react";
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/get-db";
 import { prisma } from "@/lib/prisma";
 
 export const verifySession = cache(async () => {
@@ -14,11 +15,24 @@ export const verifySession = cache(async () => {
     return null;
   }
 
+  const role = await prisma.userTenant.findUnique({
+    where: {
+      userId_tenantId: {
+        userId: session.user.id,
+        tenantId: session.session.tenantId,
+      },
+    },
+    select: {
+      role: true,
+    },
+  });
+
   return {
     id: session.user.id,
     name: session.user.name,
     email: session.user.email,
-    role: session.user.role,
+    tenantId: session.session.tenantId,
+    role: role?.role,
     stripeCustomerId: session.user.stripeCustomerId,
   };
 });
@@ -42,17 +56,23 @@ export const getCurrentSubscription = cache(async () => {
     return PLAN;
   }
 
-  return isSubscriber(session.id);
+  return isSubscriber(session.id, session.tenantId);
 });
 
 export const isSubscriber = cache(
-  async (userId: string | undefined): Promise<SubscriptionInfo> => {
-    if (!userId) {
+  async (
+    userId: string | undefined,
+    tenantId: string | undefined,
+  ): Promise<SubscriptionInfo> => {
+    if (!userId || !tenantId) {
       return PLAN;
     }
-    const sub = await prisma.subscription.findUnique({
+    const sub = await db.subscription.findUnique({
       where: {
-        userId,
+        userId_tenantId: {
+          userId,
+          tenantId,
+        },
       },
       select: {
         periodEnd: true,

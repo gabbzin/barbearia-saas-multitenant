@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import {
   loginSchema,
   type loginSchemaType,
 } from "@/features/user/schema/userSchema";
 import { authClient } from "@/lib/auth-client";
+import { setTenantCookie } from "@/shared/actions/set-tenant-cookie";
 import GenericForm from "@/shared/components/form/generic-form";
 import InputForm from "@/shared/components/form/input-form";
 import { GoogleButton } from "@/shared/components/google-button";
@@ -19,8 +21,21 @@ import {
 } from "@/shared/components/ui/card";
 import { ForgotPasswordButton } from "./forgot-password-button";
 
-export default function LoginForm() {
+export default function LoginForm({
+  tenantId,
+  slug,
+}: {
+  tenantId: string;
+  slug: string;
+}) {
   const router = useRouter();
+
+  useEffect(() => {
+    const syncCookie = async () => {
+      await setTenantCookie(tenantId);
+    };
+    syncCookie();
+  }, [tenantId]);
 
   const handleLogin = async (data: loginSchemaType) => {
     try {
@@ -34,7 +49,7 @@ export default function LoginForm() {
       }
 
       router.refresh();
-      router.push("/");
+      router.push(`/${slug}`);
     } catch (error) {
       toast.error(
         error instanceof Error
@@ -54,7 +69,7 @@ export default function LoginForm() {
           schema={loginSchema}
           onSubmit={handleLogin}
           submitText="Logar conta"
-          buttons={<GoogleButton />}
+          buttons={<GoogleButton slug={slug} />}
         >
           <InputForm
             name="email"
