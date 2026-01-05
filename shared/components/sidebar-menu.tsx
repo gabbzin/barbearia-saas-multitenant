@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import CancelAlertDialog from "./cancel-alert-dialog";
+import { SmartLink } from "./me/smartLink";
 import {
   Accordion,
   AccordionContent,
@@ -105,7 +106,11 @@ export const SidebarMenu = ({
         ) : (
           <div className="flex items-center justify-between px-5 pb-3">
             <p className="font-semibold text-base">Olá. Faça seu login!</p>
-            <Button onClick={() => push(loginRedirect)} size="sm" className="gap-2">
+            <Button
+              onClick={() => push(loginRedirect)}
+              size="sm"
+              className="gap-2"
+            >
               Login <LogIn className="size-4" />
             </Button>
           </div>
@@ -123,10 +128,10 @@ export const SidebarMenu = ({
                 className="w-full justify-start gap-3 rounded-full px-5 py-3"
                 asChild
               >
-                <Link href={route.path}>
+                <SmartLink href={route.path}>
                   <route.icon className="size-4" />
                   <span className="font-medium text-sm">{route.name}</span>
-                </Link>
+                </SmartLink>
               </Button>
             ) : (
               <Accordion key={route.name} type="single" collapsible>
@@ -140,13 +145,13 @@ export const SidebarMenu = ({
 
                   <AccordionContent className="flex flex-col">
                     {barbers.map(barber => (
-                      <Link
+                      <SmartLink
                         key={barber.id}
                         href={`/barber/${barber.id}`}
                         className="px-10 py-2 text-sm hover:bg-accent hover:text-accent-foreground hover:underline dark:hover:bg-accent/50"
                       >
                         {barber.user?.name}
-                      </Link>
+                      </SmartLink>
                     ))}
                   </AccordionContent>
                 </AccordionItem>

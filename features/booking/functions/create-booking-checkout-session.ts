@@ -5,7 +5,7 @@ import { returnValidationErrors } from "next-safe-action";
 import z from "zod";
 import { verifySession } from "@/features/user/repository/user.repository";
 import { actionClient } from "@/lib/actionClient";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 import { stripeClient } from "@/lib/stripe-client";
 
 const inputSchema = z.object({
@@ -29,7 +29,7 @@ export const createBookingCheckoutSession = actionClient
       });
     }
 
-    const service = await prisma.barberService.findUnique({
+    const service = await db.barberService.findUnique({
       where: {
         id: serviceId,
       },
@@ -55,6 +55,7 @@ export const createBookingCheckoutSession = actionClient
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/bookings`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}`,
       metadata: {
+        tenantId: session.tenantId,
         serviceId: serviceId,
         barberId: service.barber.id,
         userId: session.id,

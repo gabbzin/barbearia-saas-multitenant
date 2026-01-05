@@ -1,9 +1,9 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 
 export async function confirmBooking(bookingId: string) {
-  return await prisma.booking.update({
+  return await db.booking.update({
     where: {
       id: bookingId,
     },

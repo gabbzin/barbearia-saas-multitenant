@@ -60,6 +60,7 @@ export const createBooking = actionClient
         barberId: service.barberId,
         userId: user.id,
         serviceId: serviceId,
+        tenantId: user.tenantId,
         date,
         priceInCents: service.priceInCents,
       },

@@ -1,20 +1,17 @@
 "use server";
 
 import { endOfDay, format, startOfDay } from "date-fns";
-// import { returnValidationErrors } from "next-safe-action";
-import z from "zod";
+import { date, object, string } from "zod";
 import { actionClient } from "@/lib/actionClient";
-// import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 
-const inputSchema = z.object({
-  barberId: z.string(),
-  date: z.date(),
+const inputSchema = object({
+  barberId: string(),
+  date: date(),
 });
 
-const timeToMinutes = (time: string) => {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
+const timeToMinutes = (time: Date) => {
+  return time.getHours() * 60 + time.getMinutes();
 };
 
 // Função para converter minutos de volta para "HH:mm"
@@ -30,16 +27,15 @@ export const getDateAvailableTimeSlots = actionClient
   .inputSchema(inputSchema)
   .action(async ({ parsedInput: { barberId, date } }) => {
     // lógica para buscar horários disponíveis para o serviço na data fornecida
-    // const { headers } = await import("next/headers");
-    // const session = await auth.api.getSession({ headers: await headers() });
+    // const session = await verifySession();
 
-    // if (!session?.user) {
+    // if (!session) {
     //   return returnValidationErrors(inputSchema, {
     //     _errors: ["Unauthorized"],
     //   });
     // }
 
-    const bookings = await prisma.booking.findMany({
+    const bookings = await db.booking.findMany({
       where: {
         service: {
           barberId: barberId,
@@ -55,18 +51,24 @@ export const getDateAvailableTimeSlots = actionClient
       },
     });
 
-    const availability = await prisma.disponibility.findFirst({
+    const day = date.getDay(); // 0 (Domingo) a 6 (Sábado)
+
+    const availability = await db.barberDisponibility.findFirst({
       where: {
         barberId,
+        dayOfWeek: day,
+      },
+      select: {
+        dayOfWeek: true,
+        startTime: true,
+        endTime: true,
       },
     });
-
-    const day = date.getDay(); // 0 (Domingo) a 6 (Sábado)
 
     if (!availability) {
       return [];
     }
-    if (!availability.daysOfWeek.includes(day)) {
+    if (availability.dayOfWeek !== day) {
       return [];
     }
 

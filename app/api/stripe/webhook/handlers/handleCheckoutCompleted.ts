@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import type Stripe from "stripe";
+import { db } from "@/lib/funcs/get-db";
 import { prisma } from "@/lib/prisma";
 import { stripeClient } from "@/lib/stripe-client";
 
@@ -17,8 +18,9 @@ export async function handleCheckoutCompleted(
     const userId = session.metadata?.userId;
     const eventId = event.id;
     const barberId = session.metadata?.barberId;
+    const tenantId = session.metadata?.tenantId;
 
-    const exists = await prisma.booking.findUnique({
+    const exists = await db.booking.findUnique({
       where: {
         stripeEventId: eventId,
       },
@@ -27,7 +29,7 @@ export async function handleCheckoutCompleted(
     if (exists) {
       return { ok: true };
     }
-    if (!date || !serviceId || !userId || !barberId) {
+    if (!date || !serviceId || !userId || !barberId || !tenantId) {
       return { ok: false };
     }
 
@@ -52,6 +54,7 @@ export async function handleCheckoutCompleted(
         date,
         userId,
         barberId,
+        tenantId,
         stripeChargeId: chargeId || null,
         stripeEventId: eventId,
         priceInCents: session.amount_total ?? 0,

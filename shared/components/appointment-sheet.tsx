@@ -4,7 +4,6 @@ import type { Barber, BarberService, User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -13,6 +12,7 @@ import { createBookingCheckoutSession } from "@/features/booking/functions/creat
 import { getDateAvailableTimeSlots } from "@/features/booking/functions/get-date-available-time-slots";
 import type { SubscriptionInfo } from "@/features/user/repository/user.repository";
 import { isPastTimeSlot } from "@/utils/isPastTimeSlot";
+import { useSmartRouter } from "../hooks/useSmartRouter";
 import PagamentForm, { type payMethods } from "./pagament-form";
 import { SpinLoader } from "./spinLoader";
 import { Button } from "./ui/button";
@@ -36,7 +36,7 @@ const AppointmentSheet = ({
   service,
   plan,
 }: AppointmentSheetProps) => {
-  const router = useRouter();
+  const router = useSmartRouter();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
   const [payMethod, setPayMethod] = useState<payMethods>("cartao");
@@ -64,7 +64,6 @@ const AppointmentSheet = ({
           // biome-ignore lint/style/noNonNullAssertion: <Sempre vai ter valor aqui>
           date: selectedDate!,
         });
-        console.log("result", result);
         if (result.validationErrors || result.serverError) {
           console.error(
             "Erro ao buscar horários disponíveis:",
@@ -136,7 +135,7 @@ const AppointmentSheet = ({
       }
     }
 
-    router.push("/bookings"); // Redirect to bookings page after successful booking
+    router.replace("/bookings"); // Redirect to bookings page after successful booking
 
     toast.success("Agendamento criado com sucesso!");
     setSelectedDate(undefined);
@@ -175,6 +174,16 @@ const AppointmentSheet = ({
             disabled={{ before: today }}
             className="w-full p-0"
             locale={ptBR}
+            formatters={{
+              formatCaption: (date: Date) => {
+                return (
+                  format(date, "MMMM 'de' yyyy", {
+                    locale: ptBR,
+                  })[0].toUpperCase() +
+                  format(date, "MMMM 'de' yyyy", { locale: ptBR }).slice(1)
+                );
+              },
+            }}
           />
         </div>
 
