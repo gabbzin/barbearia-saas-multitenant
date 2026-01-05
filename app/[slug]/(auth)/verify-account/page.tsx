@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { verifyEmail } from "@/lib/resend/sendVerifyEmail";
+import { verifyEmail } from "@/lib/emails/sendVerifyEmail";
 import { Card, CardContent, CardHeader } from "@/shared/components/ui/card";
 
 interface Props {

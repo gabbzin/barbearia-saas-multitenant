@@ -1,11 +1,12 @@
 import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { getSlugByCookie } from "./get-slug-cookie";
+import { getSlugByCookie } from "./funcs/get-slug-cookie";
 import { prisma } from "./prisma";
-import { sendRecoveryEmail } from "./resend/sendRecoveryEmail";
-import { sendVerificationEmail } from "./resend/sendVerifyEmail";
+import { sendRecoveryEmail } from "./emails/sendRecoveryEmail";
+import { sendVerificationEmail } from "./emails/sendVerifyEmail";
 import { stripeClient } from "./stripe-client";
+import { getTenantIdByCookie } from "./funcs/get-tenantId-cookie";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -56,7 +57,7 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async user => {
-          const tenantId = await getSlugByCookie();
+          const tenantId = await getTenantIdByCookie();
 
           return {
             data: {
@@ -66,7 +67,7 @@ export const auth = betterAuth({
           };
         },
         after: async user => {
-          const tenantId = await getSlugByCookie();
+          const tenantId = await getTenantIdByCookie();
 
           if (tenantId) {
             await prisma.userTenant.create({
@@ -80,7 +81,7 @@ export const auth = betterAuth({
     session: {
       create: {
         before: async session => {
-          const tenantId = await getSlugByCookie();
+          const tenantId = await getTenantIdByCookie();
 
           if (tenantId) {
             await prisma.userTenant.upsert({

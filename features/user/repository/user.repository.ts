@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { cache } from "react";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/get-db";
+import { db } from "@/lib/funcs/get-db";
 import { prisma } from "@/lib/prisma";
 
 export const verifySession = cache(async () => {

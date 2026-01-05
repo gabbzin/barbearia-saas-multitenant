@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { db } from "@/lib/get-db";
+import { db } from "@/lib/funcs/get-db";
 
 export const getBarbers = cache(async () => {
   return await db.barber.findMany({

@@ -1,5 +1,6 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: <Pode usar any dboa> */
 import { verifySession } from "@/features/user/repository/user.repository";
-import { basePrisma, getTenantPrisma } from "./prisma";
+import { basePrisma, getTenantPrisma } from "@/lib/prisma";
 
 // Esta função recupera o cliente Prisma correto para a requisição atual
 async function getContextualDb() {
@@ -15,7 +16,7 @@ async function getContextualDb() {
     }
 
     return getTenantPrisma(tenantId);
-  } catch (error) {
+  } catch (_error: any) {
     // Fallback para o prisma base caso headers() falhe (ex: fora do ciclo de request)
     return basePrisma;
   }
