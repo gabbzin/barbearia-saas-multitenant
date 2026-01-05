@@ -22,7 +22,7 @@ const BarberPage = async (props: PageProps<"/[slug]/barber/[id]">) => {
     },
   });
 
-  if (!barber) {
+  if (!barber || !barber.user) {
     return notFound();
   }
 
@@ -31,8 +31,8 @@ const BarberPage = async (props: PageProps<"/[slug]/barber/[id]">) => {
       {/* Header com Banner */}
       <div className="relative h-[297px] w-full">
         <Image
-          src={barber.imageUrl}
-          alt={barber.user?.name ?? ""}
+          src={barber.user.image ?? ""}
+          alt={barber.user.name ?? ""}
           fill
           className="object-cover"
           priority
@@ -60,14 +60,14 @@ const BarberPage = async (props: PageProps<"/[slug]/barber/[id]">) => {
           <div className="mb-1 flex items-center gap-2">
             <div className="relative size-[30px] overflow-hidden rounded-full">
               <Image
-                src={barber.imageUrl}
-                alt={barber.user?.name ?? ""}
+                src={barber.user.image ?? ""}
+                alt={barber.user.name ?? ""}
                 fill
                 className="object-cover"
               />
             </div>
             <h1 className="font-bold text-foreground text-xl">
-              {barber.user?.name}
+              {barber.user.name}
             </h1>
           </div>
           {/* <p className="text-muted-foreground text-sm">{barber.address}</p> */}
@@ -76,14 +76,14 @@ const BarberPage = async (props: PageProps<"/[slug]/barber/[id]">) => {
         <Separator />
 
         {/* Sobre Nós */}
-        {/* <div className="space-y-3 px-5">
-          <h2 className="text-foreground text-xs font-bold uppercase">
-            Sobre Nós
+        <div className="space-y-3 px-5">
+          <h2 className="font-bold text-foreground text-xs uppercase">
+            Sobre
           </h2>
           <p className="text-foreground text-sm leading-relaxed">
-            {barber.description}
+            Bio do barbeiro
           </p>
-        </div> */}
+        </div>
 
         <Separator />
 
@@ -98,8 +98,7 @@ const BarberPage = async (props: PageProps<"/[slug]/barber/[id]">) => {
                 key={service.id}
                 service={{
                   ...service,
-                  // biome-ignore lint/style/noNonNullAssertion: <User tem que existir aqui>
-                  barber: { ...barber, user: barber.user! },
+                  barber: { ...barber, user: barber.user },
                 }}
               />
             ))}
