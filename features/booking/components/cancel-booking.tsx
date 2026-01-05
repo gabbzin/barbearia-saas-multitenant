@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { BookingClient } from "@/app/(protected)/bookings/_components/bookingsClient";
+import type { BookingClient } from "@/app/[slug]/(protected)/bookings/_components/bookingsClient";
 import { cancelBooking } from "@/features/booking/functions/cancel-booking";
 import { cancelBookingCheckoutSession } from "@/features/booking/functions/cancel-booking-checkout-session";
 import CancelAlertDialog from "@/shared/components/cancel-alert-dialog";
@@ -144,9 +144,7 @@ export function CancelBooking({
 
           {/* Telefones */}
           <div className="flex flex-col gap-3">
-            {booking.barber.phone.map((phone, index) => (
-              <PhoneItem key={String(index)} phone={phone} />
-            ))}
+            <PhoneItem phone={booking.barber.phone} />
           </div>
         </div>
 

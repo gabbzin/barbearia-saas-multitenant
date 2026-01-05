@@ -1,11 +1,10 @@
 "use server";
 
-import { headers } from "next/headers";
 import { returnValidationErrors } from "next-safe-action";
 import { z } from "zod";
+import { verifySession } from "@/features/user/repository/user.repository";
 import { actionClient } from "@/lib/actionClient";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 
 const inputSchema = z.object({
   bookingId: z.uuid(),
@@ -14,17 +13,15 @@ const inputSchema = z.object({
 export const cancelBooking = actionClient
   .inputSchema(inputSchema)
   .action(async ({ parsedInput: { bookingId } }) => {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await verifySession();
 
-    if (!session?.user) {
+    if (!session) {
       return returnValidationErrors(inputSchema, {
         _errors: ["Unauthorized"],
       });
     }
 
-    const booking = await prisma.booking.findUnique({
+    const booking = await db.booking.findUnique({
       where: {
         id: bookingId,
       },
@@ -36,13 +33,13 @@ export const cancelBooking = actionClient
       });
     }
 
-    if (booking.userId !== session.user.id) {
+    if (booking.userId !== session.id) {
       return returnValidationErrors(inputSchema, {
         _errors: ["Unauthorized"],
       });
     }
 
-    await prisma.booking.update({
+    await db.booking.update({
       where: {
         id: bookingId,
       },

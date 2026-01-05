@@ -1,11 +1,12 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { verifySession } from "@/features/user/repository/user.repository";
+import { db } from "@/lib/funcs/get-db";
 
 // Aqui vão as ações dos serviços do barbeiro
 
 export async function getServicesByBarberId(data: { barberId: string }) {
-  return await prisma.barberService.findMany({
+  return await db.barberService.findMany({
     where: {
       barberId: data.barberId,
     },
@@ -13,7 +14,13 @@ export async function getServicesByBarberId(data: { barberId: string }) {
 }
 
 export async function createService(data: FormData, barberId: string) {
-  return await prisma.barberService.create({
+  const user = await verifySession();
+
+  if (!user || user?.role === "CLIENT") {
+    throw new Error("Unauthorized");
+  }
+
+  return await db.barberService.create({
     data: {
       name: data.get("name") as string,
       description: data.get("description") as string,
@@ -21,6 +28,7 @@ export async function createService(data: FormData, barberId: string) {
       imageUrl:
         "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
       barberId: barberId,
+      tenantId: user.tenantId,
     },
   });
 }
@@ -32,7 +40,7 @@ export async function patchService({
   data: FormData;
   serviceId: string;
 }) {
-  return await prisma.barberService.update({
+  return await db.barberService.update({
     where: {
       id: serviceId,
     },
@@ -46,7 +54,7 @@ export async function patchService({
 }
 
 export async function deleteService({ serviceId }: { serviceId: string }) {
-  await prisma.barberService.delete({
+  await db.barberService.delete({
     where: {
       id: serviceId,
     },

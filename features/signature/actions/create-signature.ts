@@ -4,7 +4,7 @@ import { returnValidationErrors } from "next-safe-action";
 import z from "zod";
 import { verifySession } from "@/features/user/repository/user.repository";
 import { actionClient } from "@/lib/actionClient";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 import { stripeClient } from "@/lib/stripe-client";
 
 const inputSchema = z.object({
@@ -27,7 +27,7 @@ export const createSignature = actionClient
       });
     }
 
-    const hasActiveSubscription = await prisma.subscription.findFirst({
+    const hasActiveSubscription = await db.subscription.findFirst({
       where: {
         userId: user.id,
         planId: planId,
@@ -40,7 +40,7 @@ export const createSignature = actionClient
       });
     }
 
-    const plan = await prisma.plan.findUnique({
+    const plan = await db.plan.findUnique({
       where: {
         id: planId,
       },
@@ -65,6 +65,7 @@ export const createSignature = actionClient
           metadata: {
             userId: user.id,
             planId: plan.id,
+            tenantId: user.tenantId,
           },
         },
         line_items: [
@@ -77,6 +78,7 @@ export const createSignature = actionClient
         metadata: {
           userId: user.id,
           planId: plan.id,
+          tenantId: user.tenantId,
         },
 
         success_url: `${process.env.NEXT_PUBLIC_BASE_URL}`, // Criar a página de sucesso
@@ -95,5 +97,3 @@ export const createSignature = actionClient
       });
     }
   });
-
-//  You may only specify one of these parameters: customer, customer_email

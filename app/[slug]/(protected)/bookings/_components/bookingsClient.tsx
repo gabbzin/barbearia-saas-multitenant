@@ -1,6 +1,12 @@
 "use client";
 
-import type { Barber, BarberService, Booking, User } from "@prisma/client";
+import type {
+  Barber,
+  BarberService,
+  Booking,
+  User,
+  UserTenant,
+} from "@prisma/client";
 import { useState } from "react";
 import BookingItem from "@/features/booking/components/booking-item";
 import { CancelBooking } from "@/features/booking/components/cancel-booking";
@@ -14,11 +20,9 @@ import {
 
 interface BookingsClientProps {
   bookings: (Booking & {
-    service: BarberService & {
-      barber: Barber & {
-        user: User | null;
-      };
-    };
+    service: BarberService;
+    userTenant: UserTenant & { user: User };
+    barber: Barber & { user: User };
   })[];
 }
 
@@ -33,7 +37,7 @@ export type BookingClient = {
   barber: {
     name: string;
     imageUrl: string;
-    phone: string[];
+    phone: string;
   };
 };
 
@@ -98,8 +102,8 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                     serviceName={booking.service.name}
                     date={booking.date}
                     counterPart={{
-                      name: booking.service.barber.user?.name ?? "Barbeiro",
-                      imageUrl: booking.service.barber.imageUrl,
+                      name: booking.barber.user?.name ?? "Barbeiro",
+                      imageUrl: booking.barber.user.image ?? "",
                     }}
                     status="confirmed"
                     onClick={() =>
@@ -112,9 +116,9 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                           priceInCents: booking.service.priceInCents,
                         },
                         barber: {
-                          name: booking.service.barber.user?.name ?? "Barbeiro",
-                          imageUrl: booking.service.barber.imageUrl,
-                          phone: booking.service.barber.phone,
+                          name: booking.barber.user?.name ?? "Barbeiro",
+                          imageUrl: booking.barber.user.image ?? "",
+                          phone: booking.barber.phone,
                         },
                       })
                     }
@@ -136,8 +140,8 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                     serviceName={booking.service.name}
                     date={booking.date}
                     counterPart={{
-                      name: booking.service.barber.user?.name ?? "Barbeiro",
-                      imageUrl: booking.service.barber.imageUrl,
+                      name: booking.barber.user?.name ?? "Barbeiro",
+                      imageUrl: booking.barber.user.image ?? "",
                     }}
                     status="cancelled"
                   />
@@ -158,8 +162,8 @@ export default function BookingsClient({ bookings }: BookingsClientProps) {
                     serviceName={booking.service.name}
                     date={booking.date}
                     counterPart={{
-                      name: booking.service.barber.user?.name ?? "Barbeiro",
-                      imageUrl: booking.service.barber.imageUrl,
+                      name: booking.barber.user?.name ?? "Barbeiro",
+                      imageUrl: booking.barber.user.image ?? "",
                     }}
                     status="finished"
                   />

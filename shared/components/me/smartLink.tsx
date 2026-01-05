@@ -15,7 +15,7 @@ export function SmartLink({ href, children, ...props }: SmartLinkProps) {
 
   const finalHref =
     slug && typeof href === "string" && href.startsWith("/")
-      ? `${slug}${href}`
+      ? `/${slug}${href}`
       : href;
 
   return (
