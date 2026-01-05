@@ -1,7 +1,6 @@
 import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { cookies } from "next/headers";
 import { getSlugByCookie } from "./get-slug-cookie";
 import { prisma } from "./prisma";
 import { sendRecoveryEmail } from "./resend/sendRecoveryEmail";
@@ -14,7 +13,7 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     requireEmailVerification: true,
-    sendResetPassword: async ({ user, token, url }) => {
+    sendResetPassword: async ({ user, token }) => {
       await sendRecoveryEmail({
         to: [user.email],
         token,
@@ -56,9 +55,18 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
+        before: async user => {
+          const tenantId = await getSlugByCookie();
+
+          return {
+            data: {
+              ...user,
+              tenantId: tenantId ?? null,
+            },
+          };
+        },
         after: async user => {
-          const cookieStore = await cookies();
-          const tenantId = cookieStore.get("tenantId")?.value;
+          const tenantId = await getSlugByCookie();
 
           if (tenantId) {
             await prisma.userTenant.create({
@@ -72,8 +80,7 @@ export const auth = betterAuth({
     session: {
       create: {
         before: async session => {
-          const cookieStore = await cookies();
-          const tenantId = cookieStore.get("tenantId")?.value;
+          const tenantId = await getSlugByCookie();
 
           if (tenantId) {
             await prisma.userTenant.upsert({

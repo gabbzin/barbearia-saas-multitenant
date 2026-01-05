@@ -34,7 +34,7 @@ async function seedDatabase() {
       "https://utfs.io/f/0522fdaf-0357-4213-8f52-1d83c3dcb6cd-18e.png",
     ];
 
-    const barbershopNames = ["Barbearia do Zé", "BarberShop 2w"];
+    const barbershopNames = ["BarberShop 2w", "Barbearia do Zé"];
 
     const barberNames = [
       "Ceara do Corte",
@@ -165,7 +165,7 @@ async function seedDatabase() {
       for (let i = 0; i < barberNames.length; i++) {
         const name = barberNames[i];
         const imageUrl = images[i];
-        const email = `${name.toLowerCase().replace(/ /g, ".")}@barber.com`;
+        const email = `${name.toLowerCase().replace(/ /g, ".") + i}@barber.com`;
 
         const user = await prisma.user.create({
           data: {

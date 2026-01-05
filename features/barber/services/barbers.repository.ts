@@ -1,8 +1,8 @@
 import { cache } from "react";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/get-db";
 
 export const getBarbers = cache(async () => {
-  return await prisma.barber.findMany({
+  return await db.barber.findMany({
     include: {
       user: true,
     },
@@ -10,7 +10,7 @@ export const getBarbers = cache(async () => {
 });
 
 export const getBarberById = cache(async (barberId: string) => {
-  return await prisma.barber.findUnique({
+  return await db.barber.findUnique({
     where: {
       id: barberId,
     },

@@ -297,7 +297,7 @@ model Plan {
   name          String
   description   String
   priceInCents  Int
-  stripePriceId String? @unique
+  stripePriceId String?
 
   // Relations
   tenantId      String?
@@ -308,7 +308,7 @@ model Plan {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([tenantId, stripePriceId])
+  @@index([tenantId])
 }
 
 // ========================================================
