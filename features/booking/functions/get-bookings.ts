@@ -62,8 +62,10 @@ export async function getNextBooking(userId: string) {
     },
     include: {
       service: true,
-      userTenant: {
-        include: { user: true },
+      barber: {
+        include: {
+          user: true,
+        },
       },
     },
     orderBy: {

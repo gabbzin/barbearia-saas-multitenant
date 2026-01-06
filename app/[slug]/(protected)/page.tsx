@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/features/barber/services/barbers.repository";
+import { NextBooking } from "@/features/booking/components/next-booking";
 import { getNextBooking } from "@/features/booking/functions/get-bookings";
 import { getCurrentSubscriptionAction } from "@/features/signature/actions/get-current-subscription";
 import { verifySession } from "@/features/user/repository/user.repository";
@@ -82,7 +83,7 @@ const Home = async () => {
 
         <PageSection>
           <PageSectionTitle>Próximo agendamento</PageSectionTitle>
-          {/* <NextBooking nextBooking={nextBooking} /> */}
+          <NextBooking nextBooking={nextBooking} />
         </PageSection>
 
         <PageSection>

@@ -24,15 +24,10 @@ import AddEventCalendar from "../functions/download-ics";
 interface NextBookingProps {
   nextBooking: Prisma.BookingGetPayload<{
     include: {
-      service: {
-        include: {
-          barber: {
-            include: {
-              user: true;
-            };
-          };
-        };
+      barber: {
+        include: { user: true };
       };
+      service: true;
     };
   }> | null;
 }
@@ -57,10 +52,10 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
 
   // Atualizar para usar dados reais do nextBooking
   const eventConfig: CalendarOptions = {
-    title: `${nextBooking?.service.name} com ${nextBooking?.service?.barber?.user?.name}`,
+    title: `${nextBooking?.service.name} com ${nextBooking?.barber?.user?.name}`,
     start: nextBooking?.date,
     end: timeEnd,
-    description: `Agendamento de serviço na barbearia com ${nextBooking?.service?.barber?.user?.name}.`,
+    description: `Agendamento de serviço na barbearia com ${nextBooking?.barber?.user?.name}.`,
     location: "Barbearia XYZ",
   };
 
@@ -101,7 +96,7 @@ export function NextBooking({ nextBooking }: NextBookingProps) {
           <div>
             <div className="flex items-center gap-2">
               <ScissorsIcon size={12} />
-              <p>{nextBooking?.service?.barber?.user?.name}</p>
+              <p>{nextBooking?.barber?.user?.name}</p>
             </div>
             <div className="flex items-center gap-2">
               <ClockIcon size={12} />
