@@ -17,6 +17,10 @@ export const basePrisma =
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = basePrisma;
 
 export const getTenantPrisma = (tenantId: string) => {
+  if (!tenantId) {
+    throw new Error("TenantId obrigatório para prisma tenant-scoped");
+  }
+
   return basePrisma.$extends({
     query: {
       $allModels: {

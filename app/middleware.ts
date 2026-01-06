@@ -7,17 +7,14 @@ export function Middleware(req: NextRequest) {
   if (["www", "app", "localhost"].includes(subdomain)) {
     return NextResponse.next();
   }
+  
   const res = NextResponse.next();
 
-  const currentTenantId = req.cookies.get("currentTenantId")?.value;
-
-  if (subdomain && subdomain !== currentTenantId) {
-    res.cookies.set("tenantId", subdomain, {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7, // 1 semana
-      sameSite: "lax",
-    });
-  }
+  res.cookies.set("tenantSlug", subdomain, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7, // 1 semana
+    sameSite: "lax",
+  });
 
   return res;
 }

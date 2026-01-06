@@ -61,7 +61,15 @@ export async function handleCheckoutCompleted(
       },
     });
 
-    revalidatePath("/bookings");
+    const tenant = await prisma.barbershop.findUnique({
+      where: { id: tenantId },
+      select: { slug: true },
+    });
+
+    if (tenant) {
+      revalidatePath(`/${tenant.slug}/bookings`);
+    }
+
     return { ok: true };
   } catch (error) {
     return {

@@ -10,9 +10,7 @@ async function getContextualDb() {
     const tenantId = session?.tenantId;
 
     if (!tenantId) {
-      // Se não houver tenant na sessão, retorna o Prisma base (sem filtros)
-      // Ou você pode lançar um erro se quiser que o app seja 100% privado
-      return basePrisma;
+      throw new Error("Tenant ID não encontrado na sessão.");
     }
 
     return getTenantPrisma(tenantId);
