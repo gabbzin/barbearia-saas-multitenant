@@ -23,10 +23,10 @@ export function useSettingsBarber(barberId: string) {
   const saveSettingsMutation = useMutation({
     mutationFn: (data: TimesSchemaData) => createDisponibility(data, barberId),
 
-    onSuccess: newSettings => {
+    onSuccess: () => {
       toast.success("Horários salvos com sucesso!");
 
-      queryClient.setQueryData(key, newSettings);
+      queryClient.invalidateQueries({ queryKey: key });
     },
     onError: () => {
       toast.error("Erro ao salvar configurações.");

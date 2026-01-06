@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
@@ -18,8 +17,6 @@ export default async function TenantLayout({
   if (!tenant) {
     return notFound();
   }
-
-  (await cookies()).set("tenantId", tenant.id);
 
   return <>{children}</>;
 }

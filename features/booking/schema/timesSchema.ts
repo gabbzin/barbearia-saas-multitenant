@@ -12,6 +12,7 @@ export const timesSchema = z
     6: z.boolean().default(false),
 
     // Validação de horário no formato "HH:mm"
+    // Primeiro passa em String e antes de salvar no banco converte para Date
     horario_abertura: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, {
       message: "Use o formato HH:mm (ex: 09:00)",
     }),

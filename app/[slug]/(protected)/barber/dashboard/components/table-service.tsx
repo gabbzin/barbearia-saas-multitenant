@@ -27,7 +27,6 @@ export function TableService({ barberId }: { barberId: string }) {
             <AlertTriangleIcon />
             Nenhum serviço cadastrado.
           </div>
-          <FormService barberId={barberId} />
         </AlertTitle>
       </Alert>
     );

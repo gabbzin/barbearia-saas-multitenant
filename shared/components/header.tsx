@@ -11,21 +11,21 @@ const Header = async () => {
   const barbers = await getBarbers();
   const isSubscriber = await getCurrentSubscription();
   const session = await verifySession();
-  let rule = session?.role;
+  let role = session?.role;
 
   if (typeof session?.role === "undefined") {
-    rule = "USER";
+    role = "CLIENT";
   }
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between border-b-2 bg-background px-5 py-6">
+    <header className="sticky top-0 z-50 flex items-center justify-between border-b-2 bg-background px-5 py-4">
       <LogoLink />
       <div className="flex items-center gap-2">
         <AnimatedThemeToggler />
         <SidebarMenu
           barbers={barbers}
           isSubscriber={isSubscriber.hasPlan}
-          role={rule}
+          role={role}
         />
       </div>
     </header>

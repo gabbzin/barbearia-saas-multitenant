@@ -106,6 +106,7 @@ model Barbershop {
   barbers  Barber[] // Barbers working at this Barbershop
   services BarberService[] // Services offered at barbers in this Barbershop
   plan     Plan[] // Subscription Plans available for this Barbershop
+  disponibility  BarberDisponibility[] // Disponibility settings for barbers in this Barbershop
 
   // Timestamps
   createdAt DateTime @default(now())
@@ -324,6 +325,9 @@ model BarberDisponibility {
   // Relations
   barberId String
   barber   Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  tenantId String
+  tenant   Barbershop @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([barberId, dayOfWeek])
   @@index([barberId, dayOfWeek])

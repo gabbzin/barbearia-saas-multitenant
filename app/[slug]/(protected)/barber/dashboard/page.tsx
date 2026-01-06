@@ -6,12 +6,12 @@ import {
   Scissors,
   UserIcon,
 } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getSettingsByBarberId } from "@/features/barber/actions/barber-actions";
 import { verifySession } from "@/features/user/repository/user.repository";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 import CardInfo from "@/shared/components/barber/card-info";
-import Header from "@/shared/components/header";
+import { SmartLink } from "@/shared/components/me/smartLink";
 import { Alert, AlertTitle } from "@/shared/components/ui/alert";
 import { Avatar, AvatarImage } from "@/shared/components/ui/avatar";
 import { Button } from "@/shared/components/ui/button";
@@ -26,35 +26,28 @@ import { TableSettings } from "./components/table-times-services";
 const BarberDashboardPage = async () => {
   const session = await verifySession();
 
+  console.log(session?.role);
   if (session?.role !== "BARBER") {
     notFound();
   }
 
-  const barberId = session.id;
+  const barber = await db.barber.findFirst({
+    where: { userId: session?.id },
+    select: { id: true },
+  });
+
+  if (!barber) {
+    notFound();
+  }
+
+  const barberId = barber.id;
 
   const info = await getBarberDashboardInfos({ barberId });
 
-  const horariosData = await prisma.disponibility.findFirst({
-    where: { barberId: barberId },
-  });
-
-  const defaultTimesValues = horariosData
-    ? {
-        horario_abertura: horariosData.startTime,
-        horario_fechamento: horariosData.endTime,
-        "0": horariosData.daysOfWeek.includes(0),
-        "1": horariosData.daysOfWeek.includes(1),
-        "2": horariosData.daysOfWeek.includes(2),
-        "3": horariosData.daysOfWeek.includes(3),
-        "4": horariosData.daysOfWeek.includes(4),
-        "5": horariosData.daysOfWeek.includes(5),
-        "6": horariosData.daysOfWeek.includes(6),
-      }
-    : undefined;
+  const horariosData = await getSettingsByBarberId({ barberId });
 
   return (
-    <div>
-      <Header />
+    <>
       {!horariosData && (
         <Alert>
           <AlertTitle className="flex items-center gap-2">
@@ -111,11 +104,13 @@ const BarberDashboardPage = async () => {
                   <Avatar>
                     <AvatarImage
                       src={"https://github.com/shadcn.png"}
-                      alt={info.data?.nextBooking.user.name ?? "User Avatar"}
+                      alt={
+                        info.data?.nextBooking.barber.user.name ?? "User Avatar"
+                      }
                       className="object-cover"
                     />
                   </Avatar>
-                  <p>{info.data?.nextBooking.user.name}</p>
+                  <p>{info.data?.nextBooking.barber.user.name}</p>
                 </div>
                 <div className="space-y-1">
                   <p>
@@ -133,7 +128,7 @@ const BarberDashboardPage = async () => {
             )}
 
             <Button variant={"outline"} asChild>
-              <Link href="/barber/schedule">Ver agenda completa</Link>
+              <SmartLink href="/barber/schedule">Ver agenda completa</SmartLink>
             </Button>
           </CardContent>
         </Card>
@@ -150,8 +145,8 @@ const BarberDashboardPage = async () => {
         <TableSettings barberId={barberId} />
       </PageContainer>
       <div className="h-20" />
-      <SpeedDial barberId={barberId} defaultTimes={defaultTimesValues} />
-    </div>
+      <SpeedDial barberId={barberId} />
+    </>
   );
 };
 

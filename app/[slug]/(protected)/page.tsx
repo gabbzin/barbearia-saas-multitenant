@@ -1,13 +1,10 @@
 import { format } from "date-fns";
 import { CheckCircleIcon, TriangleAlertIcon } from "lucide-react";
 import { getBarbers } from "@/features/barber/services/barbers.repository";
-import { NextBooking } from "@/features/booking/components/next-booking";
 import { getNextBooking } from "@/features/booking/functions/get-bookings";
 import { getCurrentSubscriptionAction } from "@/features/signature/actions/get-current-subscription";
 import { verifySession } from "@/features/user/repository/user.repository";
 import BarberItem from "@/shared/components/barber-item";
-import Footer from "@/shared/components/footer";
-import Header from "@/shared/components/header";
 import { Alert, AlertTitle } from "@/shared/components/ui/alert";
 import {
   PageContainer,
@@ -30,8 +27,7 @@ const Home = async () => {
     return nameA.localeCompare(nameB);
   });
   return (
-    <main className="flex min-h-screen flex-col justify-around">
-      <Header />
+    <>
       <div className="mx-auto px-12">
         <Alert variant={user ? "success" : "warn"} className="mb-2">
           <AlertTitle className="flex items-center gap-4">
@@ -74,15 +70,6 @@ const Home = async () => {
             )}
           </AlertTitle>
         </Alert>
-        <Alert variant={"warn"} className="mb-2">
-          <AlertTitle className="flex items-center gap-4">
-            <TriangleAlertIcon />
-            <p>
-              O sistema está em fase beta, para realizar agendamentos é
-              necessário estar logado.
-            </p>
-          </AlertTitle>
-        </Alert>
       </div>
       <PageContainer>
         {/* <SearchInput /> */}
@@ -95,7 +82,7 @@ const Home = async () => {
 
         <PageSection>
           <PageSectionTitle>Próximo agendamento</PageSectionTitle>
-          <NextBooking nextBooking={nextBooking} />
+          {/* <NextBooking nextBooking={nextBooking} /> */}
         </PageSection>
 
         <PageSection>
@@ -114,8 +101,7 @@ const Home = async () => {
           </PageSectionScroller>
         </PageSection>
       </PageContainer>
-      <Footer />
-    </main>
+    </>
   );
 };
 

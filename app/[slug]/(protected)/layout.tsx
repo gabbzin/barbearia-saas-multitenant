@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { verifySession } from "@/features/user/repository/user.repository";
 import { prisma } from "@/lib/prisma";
+import Footer from "@/shared/components/footer";
+import Header from "@/shared/components/header";
 
 export default async function ProtectedLayout({
   children,
@@ -30,5 +32,11 @@ export default async function ProtectedLayout({
     return redirect(`/${slug}/login`);
   }
 
-  return <>{children}</>;
+  return (
+    <main className="flex min-h-screen flex-col justify-around">
+      <Header />
+      {children}
+      <Footer />
+    </main>
+  );
 }

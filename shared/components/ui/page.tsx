@@ -1,5 +1,5 @@
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
-  return <div className="space-y-6 p-5">{children}</div>;
+  return <div className="space-y-6 px-5 py-4">{children}</div>;
 };
 
 export const PageSectionTitle = ({

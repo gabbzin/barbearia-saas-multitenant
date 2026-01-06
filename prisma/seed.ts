@@ -286,6 +286,7 @@ async function seedDatabase() {
           await prisma.barberDisponibility.create({
             data: {
               barberId: entry.barber.id,
+              tenantId: tenant.id,
               dayOfWeek: day,
               startTime,
               endTime,

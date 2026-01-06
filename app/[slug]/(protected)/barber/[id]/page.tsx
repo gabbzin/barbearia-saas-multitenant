@@ -2,7 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 import Footer from "@/shared/components/footer";
 import { PhoneItem } from "@/shared/components/phone-item";
 import { ServiceItem } from "@/shared/components/service-item";
@@ -12,7 +12,7 @@ import { Separator } from "@/shared/components/ui/separator";
 const BarberPage = async (props: PageProps<"/[slug]/barber/[id]">) => {
   const { id } = await props.params;
 
-  const barber = await prisma.barber.findUnique({
+  const barber = await db.barber.findUnique({
     where: {
       id,
     },
@@ -77,9 +77,7 @@ const BarberPage = async (props: PageProps<"/[slug]/barber/[id]">) => {
 
         {/* Sobre Nós */}
         <div className="space-y-3 px-5">
-          <h2 className="font-bold text-foreground text-xs uppercase">
-            Sobre
-          </h2>
+          <h2 className="font-bold text-foreground text-xs uppercase">Sobre</h2>
           <p className="text-foreground text-sm leading-relaxed">
             Bio do barbeiro
           </p>

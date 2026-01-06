@@ -3,7 +3,7 @@
 import { endOfDay, startOfDay } from "date-fns";
 import z from "zod";
 import { actionClient } from "@/lib/actionClient";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 import { convertBRL } from "@/utils/convertBRL";
 
 const inputSchema = z.object({
@@ -20,7 +20,7 @@ export const getBarberDashboardInfos = actionClient
 
       const requests = Promise.allSettled([
         // Próximo agendamento
-        prisma.booking.findFirst({
+        db.booking.findFirst({
           where: {
             barberId: barberId,
             date: {
@@ -30,7 +30,9 @@ export const getBarberDashboardInfos = actionClient
           },
           include: {
             service: true,
-            user: true,
+            barber: {
+              include: { user: true },
+            },
           },
           orderBy: {
             date: "asc",
@@ -38,7 +40,7 @@ export const getBarberDashboardInfos = actionClient
         }),
 
         // Faturamento e atendimentos realizados hoje
-        prisma.booking.aggregate({
+        db.booking.aggregate({
           _sum: {
             priceInCents: true,
           },
@@ -56,7 +58,7 @@ export const getBarberDashboardInfos = actionClient
         }),
 
         // Agendamentos para hoje
-        prisma.booking.count({
+        db.booking.count({
           where: {
             barberId: barberId,
             date: {

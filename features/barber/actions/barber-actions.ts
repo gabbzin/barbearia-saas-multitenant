@@ -1,7 +1,8 @@
 "use server";
 
 import type { TimesSchemaData } from "@/features/booking/schema/timesSchema";
-import { prisma } from "@/lib/prisma";
+import { verifySession } from "@/features/user/repository/user.repository";
+import { db } from "@/lib/funcs/get-db";
 
 // Aqui vão as ações dos serviços do barbeiro
 
@@ -11,10 +12,9 @@ export async function getSettingsByBarberId({
   barberId: string;
 }) {
   try {
-    const settings = await prisma.barberDisponibility.findMany({
+    const settings = await db.barberDisponibility.findMany({
       where: {
         barberId: barberId,
-        
       },
     });
     return settings;
@@ -29,6 +29,11 @@ export async function createDisponibility(
   barberId: string,
 ) {
   const selectedDates: number[] = [];
+  const session = await verifySession();
+
+  if (!session || session?.role !== "BARBER") {
+    throw new Error("Ação não autorizada.");
+  }
 
   for (let i = 0; i <= 6; i++) {
     if (data[i.toString() as "0" | "1" | "2" | "3" | "4" | "5" | "6"]) {
@@ -36,8 +41,14 @@ export async function createDisponibility(
     }
   }
 
-  const startTime = new Date(data.horario_abertura);
-  const endTime = new Date(data.horario_fechamento);
+  await db.barberDisponibility.deleteMany({
+    where: {
+      barberId,
+    },
+  });
+
+  const startTime = new Date(`1970-01-01T${data.horario_abertura}:00`);
+  const endTime = new Date(`1970-01-01T${data.horario_fechamento}:00`);
 
   for (const day of selectedDates) {
     if (startTime >= endTime) {
@@ -45,7 +56,7 @@ export async function createDisponibility(
         `No dia ${day}, o horário de abertura deve ser antes do horário de fechamento.`,
       );
     }
-    await prisma.barberDisponibility.upsert({
+    await db.barberDisponibility.upsert({
       where: {
         barberId_dayOfWeek: {
           barberId,
@@ -53,6 +64,7 @@ export async function createDisponibility(
         },
       },
       create: {
+        tenantId: session.tenantId,
         dayOfWeek: day,
         barberId,
         startTime,
@@ -65,4 +77,21 @@ export async function createDisponibility(
       },
     });
   }
+}
+
+export async function deleteDisponibility(barberId: string, dayOfWeek: number) {
+  const session = await verifySession();
+
+  if (!session || session?.role !== "BARBER") {
+    throw new Error("Ação não autorizada.");
+  }
+
+  await db.barberDisponibility.delete({
+    where: {
+      barberId_dayOfWeek: {
+        barberId,
+        dayOfWeek,
+      },
+    },
+  });
 }

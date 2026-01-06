@@ -1,6 +1,8 @@
 "use client";
 
-import { ScissorsIcon } from "lucide-react";
+import { format } from "date-fns";
+import { PencilIcon, ScissorsIcon } from "lucide-react";
+import { useState } from "react";
 import { useSettingsBarber } from "@/features/barber/settings/useSettingsBarber";
 import {
   type TimesSchemaData,
@@ -31,38 +33,67 @@ const daysOptions = [
 
 interface FormTimesServicesProps {
   barberId: string;
-  defaultValues?: TimesSchemaData;
+  settings?: {
+    barberId: string;
+    id: string;
+    tenantId: string;
+    dayOfWeek: number;
+    startTime: Date;
+    endTime: Date;
+  };
 }
 
 export default function FormTimesServices({
   barberId,
-  defaultValues,
+  settings,
 }: FormTimesServicesProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const { saveSettings } = useSettingsBarber(barberId);
+
+  const isEditing = !!settings;
+
+  const defaultValues = {
+    horario_abertura: format(settings?.startTime ?? new Date(), "HH:mm"),
+    horario_fechamento: format(settings?.endTime ?? new Date(), "HH:mm"),
+    "0": settings?.dayOfWeek === 0,
+    "1": settings?.dayOfWeek === 1,
+    "2": settings?.dayOfWeek === 2,
+    "3": settings?.dayOfWeek === 3,
+    "4": settings?.dayOfWeek === 4,
+    "5": settings?.dayOfWeek === 5,
+    "6": settings?.dayOfWeek === 6,
+  };
 
   const handleSubmit = async (data: TimesSchemaData) => {
     try {
       await saveSettings(data);
+      setIsOpen(false);
     } catch (e) {
       console.error("Erro ao salvar", e);
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <div className="flex items-center justify-end gap-3">
-          <span className="rounded bg-primary/90 px-2 py-1 text-background">
-            {"Configurar horários"}
-          </span>
-          <Button
-            size="icon"
-            variant="secondary"
-            className="h-14 w-14 rounded-full shadow-lg"
-          >
-            <ScissorsIcon className="size-4" />
+        {isEditing ? (
+          <Button variant={"secondary"}>
+            <PencilIcon />
           </Button>
-        </div>
+        ) : (
+          <div className="flex items-center justify-end gap-3">
+            <span className="rounded bg-primary/90 px-2 py-1 text-background">
+              Configurar horários
+            </span>
+            <Button
+              size="icon"
+              variant="secondary"
+              className="h-14 w-14 rounded-full shadow-lg"
+            >
+              <ScissorsIcon className="size-4" />
+            </Button>
+          </div>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -75,20 +106,31 @@ export default function FormTimesServices({
           </DialogDescription>
         </DialogHeader>
         <GenericForm
-          defaultValues={defaultValues}
+          defaultValues={isEditing ? defaultValues : undefined}
           schema={timesSchema}
           submitText="Salvar Configurações"
           onSubmit={handleSubmit}
         >
-          <h3 className="font-semibold text-lg">Dias da Semana</h3>
-          <div className="grid grid-cols-2 gap-3">
-            {daysOptions.map(({ label, index }) => {
-              return (
-                <CheckboxForm key={label} label={label} name={`${index}`} />
-              );
-            })}
-          </div>
-
+          {isEditing ? (
+            <div className="mb-4 text-center">
+              Configurando horário para
+              <br />
+              <span className="font-bold">
+                {daysOptions[settings?.dayOfWeek ?? 0].label}
+              </span>
+            </div>
+          ) : (
+            <>
+              <h3 className="font-semibold text-lg">Dias da Semana</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {daysOptions.map(({ label, index }) => {
+                  return (
+                    <CheckboxForm key={label} label={label} name={`${index}`} />
+                  );
+                })}
+              </div>
+            </>
+          )}
           <InputForm
             name="horario_abertura"
             placeholder="Horário de abertura"
