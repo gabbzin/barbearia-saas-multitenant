@@ -68,7 +68,7 @@ export function ScheduleCard({ barberId }: { barberId: string }) {
                           minute: "2-digit",
                         })}
                       </strong>{" "}
-                      de <strong>{booking.user.name}</strong>.
+                      de <strong>{booking.barber.user.name}</strong>.
                     </span>
                   }
                 >
@@ -78,8 +78,8 @@ export function ScheduleCard({ barberId }: { barberId: string }) {
                     date={booking.date}
                     status="confirmed"
                     counterPart={{
-                      name: booking.user.name,
-                      imageUrl: booking.user.image ?? "",
+                      name: booking.barber.user.name,
+                      imageUrl: booking.barber.user.image ?? "",
                     }}
                   />
                 </ConfirmAlertDialog>
@@ -99,8 +99,8 @@ export function ScheduleCard({ barberId }: { barberId: string }) {
                   date={booking.date}
                   status="finished"
                   counterPart={{
-                    name: booking.user.name,
-                    imageUrl: booking.user.image ?? "",
+                    name: booking.barber.user.name,
+                    imageUrl: booking.barber.user.image ?? "",
                   }}
                 />
               ))}

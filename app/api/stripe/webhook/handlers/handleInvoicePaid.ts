@@ -1,5 +1,5 @@
 import type Stripe from "stripe";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 import { stripeClient } from "@/lib/stripe-client";
 
 export async function handleInvoicePaid(event: Stripe.Event) {
@@ -21,6 +21,7 @@ export async function handleInvoicePaid(event: Stripe.Event) {
 
     const userId = subscription.metadata.userId;
     const planId = subscription.metadata.planId;
+    const tenantId = subscription.metadata.tenantId;
 
     if (!userId || !planId) {
       console.log("Metadados obrigatórios ausentes na assinatura", {
@@ -33,8 +34,8 @@ export async function handleInvoicePaid(event: Stripe.Event) {
     const periodEnd = new Date(invoice.lines.data[0].period.end * 1000);
 
     // Atualizar a assinatura no banco de dados
-    await prisma.subscription.update({
-      where: { userId },
+    await db.subscription.update({
+      where: { userId_tenantId: { userId, tenantId } },
       data: {
         stripeSubscriptionId,
         stripeCustomerId: invoice.customer as string,

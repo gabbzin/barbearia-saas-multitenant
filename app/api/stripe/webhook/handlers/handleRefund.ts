@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import type Stripe from "stripe";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 
 export async function handleRefund(event: Stripe.Event) {
   const refund = event.data.object as Stripe.Refund;
@@ -10,7 +10,7 @@ export async function handleRefund(event: Stripe.Event) {
 
   if (!chargeId) return;
 
-  await prisma.booking.update({
+  await db.booking.update({
     where: {
       stripeChargeId: chargeId,
     },

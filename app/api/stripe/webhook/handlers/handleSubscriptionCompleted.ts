@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import type Stripe from "stripe";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 
 // Lógica para lidar com a finalização da assinatura
 export async function handleSignatureCompleted(event: Stripe.Event) {
@@ -15,6 +15,19 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
       subscription.metadata?.planId ??
       subscription.items.data[0].price.metadata?.planId ??
       null;
+
+    const tenantId = subscription.metadata?.tenantId ?? null;
+
+    if (!tenantId) {
+      return {
+        ok: false,
+        error: "Tenant ID not found in subscription metadata",
+      };
+    }
+
+    if (!planId) {
+      return { ok: false, error: "Plan ID not found in subscription metadata" };
+    }
 
     if (!userId) {
       return { ok: false, error: "User ID not found in subscription metadata" };
@@ -34,9 +47,9 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
           ? "CANCELLED"
           : "INCOMPLETE";
 
-    await prisma.$transaction([
-      prisma.subscription.upsert({
-        where: { userId },
+    await db.$transaction([
+      db.subscription.upsert({
+        where: { userId_tenantId: { userId, tenantId } },
         update: {
           status: mappedStatus,
           planId,
@@ -49,7 +62,8 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
         create: {
           status: mappedStatus,
           userId,
-          planId: planId,
+          planId,
+          tenantId,
           periodStart,
           periodEnd,
           stripeSubscriptionId,
@@ -58,7 +72,7 @@ export async function handleSignatureCompleted(event: Stripe.Event) {
         },
       }),
 
-      prisma.user.update({
+      db.user.update({
         where: { id: userId },
         data: { stripeCustomerId },
       }),

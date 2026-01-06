@@ -1,5 +1,5 @@
 import type Stripe from "stripe";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/funcs/get-db";
 
 export async function handleSubscriptionUpdated(event: Stripe.Event) {
   const subscription = event.data.object as Stripe.Subscription;
@@ -11,6 +11,10 @@ export async function handleSubscriptionUpdated(event: Stripe.Event) {
     subscription.items.data[0].price.metadata?.planId ??
     subscription.metadata.planId;
 
+  const tenantId = subscription.metadata.tenantId;
+
+  if (!planId || !tenantId) return;
+
   const mappedStatus =
     subscription.status === "active" || subscription.status === "trialing"
       ? "ACTIVE"
@@ -18,8 +22,8 @@ export async function handleSubscriptionUpdated(event: Stripe.Event) {
         ? "CANCELLED"
         : "INCOMPLETE";
 
-  await prisma.subscription.update({
-    where: { userId },
+  await db.subscription.update({
+    where: { userId_tenantId: { userId, tenantId } },
     data: {
       planId,
       status: mappedStatus,
