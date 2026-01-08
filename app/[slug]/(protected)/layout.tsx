@@ -33,7 +33,7 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <main className="flex min-h-screen flex-col justify-around">
+    <main className="flex min-h-screen flex-col justify-between">
       <Header />
       {children}
       <Footer />

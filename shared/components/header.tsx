@@ -18,7 +18,7 @@ const Header = async () => {
   }
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between border-b-2 bg-background px-5 py-4">
+    <header className="sticky top-0 z-50 flex items-center justify-between border-b-2 bg-background p-5">
       <LogoLink />
       <div className="flex items-center gap-2">
         <AnimatedThemeToggler />

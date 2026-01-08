@@ -175,10 +175,10 @@ export const SidebarMenu = ({
                   className="w-full justify-start gap-3 rounded-full px-5 py-3"
                   asChild
                 >
-                  <Link href={route.path}>
+                  <SmartLink href={route.path}>
                     <route.icon className="size-4" />
                     <span className="font-medium text-sm">{route.name}</span>
-                  </Link>
+                  </SmartLink>
                 </Button>
               ))}
             </div>
