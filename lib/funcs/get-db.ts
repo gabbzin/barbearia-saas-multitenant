@@ -1,4 +1,6 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <Pode usar any dboa> */
+
+import { cookies } from "next/headers";
 import { verifySession } from "@/features/user/repository/user.repository";
 import { basePrisma, getTenantPrisma } from "@/lib/prisma";
 
@@ -6,6 +8,10 @@ import { basePrisma, getTenantPrisma } from "@/lib/prisma";
 async function getContextualDb() {
   try {
     const session = await verifySession();
+
+    const cookieStore = await cookies();
+
+    cookieStore.get("tenantSlug");
 
     const tenantId = session?.tenantId;
 

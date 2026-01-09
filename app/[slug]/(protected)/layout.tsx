@@ -15,6 +15,8 @@ export default async function ProtectedLayout({
 
   const session = await verifySession();
 
+  console.log(session);
+
   if (!session) {
     return redirect(`/${slug}/login`);
   }
