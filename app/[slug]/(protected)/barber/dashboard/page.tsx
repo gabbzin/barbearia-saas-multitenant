@@ -26,7 +26,6 @@ import { TableSettings } from "./components/table-times-services";
 const BarberDashboardPage = async () => {
   const session = await verifySession();
 
-  console.log(session?.role);
   if (session?.role !== "BARBER") {
     notFound();
   }

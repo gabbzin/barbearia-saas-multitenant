@@ -4,6 +4,7 @@ import type { Barber, BarberService, User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useParams } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -40,6 +41,7 @@ const AppointmentSheet = ({
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<string | undefined>();
   const [payMethod, setPayMethod] = useState<payMethods>("cartao");
+  const { slug } = useParams() as { slug: string };
 
   const { executeAsync, isPending: isBookingPending } =
     useAction(createBooking);
@@ -115,6 +117,7 @@ const AppointmentSheet = ({
       result = await executeCheckoutAsync({
         serviceId: service.id,
         date,
+        slug,
       });
     } else {
       result = await executeAsync({
@@ -135,7 +138,7 @@ const AppointmentSheet = ({
       }
     }
 
-    router.replace("/bookings"); // Redirect to bookings page after successful booking
+    router.replace(`/bookings`); // Redirect to bookings page after successful booking
 
     toast.success("Agendamento criado com sucesso!");
     setSelectedDate(undefined);

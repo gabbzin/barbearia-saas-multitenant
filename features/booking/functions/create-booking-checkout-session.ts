@@ -11,6 +11,7 @@ import { stripeClient } from "@/lib/stripe-client";
 const inputSchema = z.object({
   serviceId: z.uuid(),
   date: z.date(),
+  slug: z.string(),
 });
 
 export const createBookingCheckoutSession = actionClient
@@ -20,7 +21,7 @@ export const createBookingCheckoutSession = actionClient
       url: z.string().nullable(),
     }),
   )
-  .action(async ({ parsedInput: { serviceId, date } }) => {
+  .action(async ({ parsedInput: { serviceId, date, slug } }) => {
     const session = await verifySession();
 
     if (!session) {
@@ -52,7 +53,7 @@ export const createBookingCheckoutSession = actionClient
       customer_email: session.email,
       payment_method_types: ["card"],
       mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/bookings`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/${slug}/bookings`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}`,
       metadata: {
         tenantId: session.tenantId,
